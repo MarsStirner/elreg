@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<regions>
+    <region>
+        <name>Выберите регион</name>
+        <code>0000000000</code>
+    </region>
+    <region>
+        <name>Пенза</name>
+        <code>56401000000</code>
+    </region>
+    <region>
+        <name>Кузнецк</name>
+        <code>56405000000</code>
+    </region>
+ <region>
+        <name>Башмаковский район</name>
+        <code>56203000000</code>
+    </region>
+<region>
+        <name>Бековский район</name>
+        <code>56209000000</code>
+    </region>
+<region>
+        <name>Белинский район</name>
+        <code>56212000000</code>
+    </region>
+<region>
+        <name>Бессоновский район</name>
+        <code>56213000000</code>
+    </region>
+<region>
+        <name>Вадинский район</name>
+        <code>56215000000</code>
+    </region>
+<region>
+        <name>Городищенский район</name>
+        <code>56218000000</code>
+    </region>
+<region>
+        <name>Земетчинский район</name>
+        <code>56223000000</code>
+    </region>
+<region>
+        <name>Иссинский район</name>
+        <code>56226000000</code>
+    </region>
+<region>
+        <name>Каменский район</name>
+        <code>56229000000</code>
+    </region>
+<region>
+        <name>Камешкирский район</name>
+        <code>56231000000</code>
+    </region>
+<region>
+        <name>Колышлейский район</name>
+        <code>56233000000</code>
+    </region>
+<region>
+        <name>Лопатинский район</name>
+        <code>56242000000</code>
+    </region>
+<region>
+        <name>Лунинский район</name>
+        <code>56243000000</code>
+    </region>
+<region>
+        <name>Малосердобинский район</name>
+        <code>56244000000</code>
+    </region>
+<region>
+        <name>Мокшанский район</name>
+        <code>56245000000</code>
+    </region>
+<region>
+        <name>Наровчатский район</name>
+        <code>56247000000</code>
+    </region>
+<region>
+        <name>Неверкинский район</name>
+        <code>56249000000</code>
+    </region>
+<region>
+        <name>Нижнеломовский район</name>
+        <code>56251000000</code>
+    </region>
+<region>
+        <name>Никольский район</name>
+        <code>56253000000</code>
+    </region>
+<region>
+        <name>Пачелмский район</name>
+        <code>56254000000</code>
+    </region>
+<region>
+        <name>Сердобский район</name>
+        <code>56256000000</code>
+    </region>
+<region>
+        <name>Сосновоборский район</name>
+        <code>56257000000</code>
+    </region>
+<region>
+        <name>Тамалинский район</name>
+        <code>56258000000</code>
+    </region>
+<region>
+        <name>Шемышейский район</name>
+        <code>56259000000</code>
+    </region>
+<region>
+        <name>Спасск</name>
+        <code>56206501000</code>
+    </region>
+</regions>
