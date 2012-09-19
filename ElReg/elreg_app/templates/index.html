@@ -1,13 +1,10 @@
-<html>
-    <p>
-        <h1>
-            =INDEX_PAGE=
-        </h1>
-        <h2>
-            {{ now }}
-        </h2>
-    </p>
-    <a href="">
-        Запись на приём к врачу (для граждан через Internet)
-    </a>
-</html>
+{% extends "base.html" %}
+
+
+{% block content %}
+    <p><ul>
+        {% for name_code in names_codes %}
+            <li id = "{{ name_code.1.text }}"><a href ="/lpu/{{ name_code.1.text }}">{{ name_code.0.text }}</a></li>
+        {% endfor %}
+    </ul></p>
+{% endblock %}
