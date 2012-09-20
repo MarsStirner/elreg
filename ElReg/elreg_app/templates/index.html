@@ -4,7 +4,7 @@
 {% block content %}
     <p><ul>
         {% for name_code in names_codes %}
-            <li><a href ="{% url lpu %}{{ name_code.1 }}">{{ name_code.0 }}</a></li>
+            <li><a href ="/lpu/{{ name_code.1 }}/">{{ name_code.0 }}</a></li>
         {% endfor %}
     </ul></p>
 {% endblock %}
