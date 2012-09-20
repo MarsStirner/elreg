@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+<p><b>ЛПУ: {{ current_lpu.title }}</b></p>
+<p>Телефон: {{ current_lpu.phone }}</p>
+<p>E-Mail: {{ current_lpu.email }}</p>
+
+<ul>
+    {% for podrazdelenie in podrazdelenie_list %}
+        <li><a href="">{{ podrazdelenie.title }} ({{ podrazdelenie.address }})</a></li>
+    {% endfor %}
+</ul>
+{% endblock %}
