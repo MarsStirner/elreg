@@ -2,5 +2,10 @@
 
 
 {% block content %}
-    <p>{{ lpu }}</p>
+    <p>{{ x }}</p>
+    <ul>
+        {% for hospital in hospitals_list %}
+            <li><a href="/podrazdelenie/{{ hospital.uid|slice:":2"|cut:"/" }}/">{{ hospital.title }}</a></li>
+        {% endfor %}
+    </ul>
 {% endblock %}
