@@ -6,7 +6,10 @@ from lxml import etree
 
 def index(request):
     tree = etree.parse("elreg_app/regions.xml")
-    names = tree.xpath('/regions/region/name')
-    codes = tree.xpath('/regions/region/code')
+    names, codes = [], []
+    for i in tree.xpath('/regions/region/name'):
+        names.append(i.text)
+    for i in tree.xpath('/regions/region/code'):
+        codes.append(i.text)
     names_codes = zip(names, codes)
     return render_to_response('index.html', {'names_codes': names_codes})
