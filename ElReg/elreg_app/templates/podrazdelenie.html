@@ -8,7 +8,11 @@
 
 <ul>
     {% for podrazdelenie in podrazdelenie_list %}
-        <li><a href="">{{ podrazdelenie.title }} ({{ podrazdelenie.address }})</a></li>
+        <li><a href="/specializaciya/">{{ podrazdelenie }} ({{ podrazdelenie.address }})</a></li>
+    {% endfor %}
+
+    {% for f in new_list %}
+        {{ f }}
     {% endfor %}
 </ul>
 {% endblock %}

@@ -3,8 +3,8 @@
 
 {% block content %}
     <p><ul>
-        {% for name_code in names_codes %}
-            <li><a href ="/lpu/{{ name_code.1 }}/">{{ name_code.0 }}</a></li>
+        {% for region in region_list %}
+            <li><a href ="/lpu/{{ region.code }}/">{{ region.region }}</a></li>
         {% endfor %}
     </ul></p>
 {% endblock %}
