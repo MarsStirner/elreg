@@ -4,7 +4,7 @@
 from django.shortcuts import render_to_response
 from suds.client import Client
 
-def index(request, podrazd='00'):
+def index(request, template_name, podrazd='00'):
     base_url = "http://10.1.2.107/int-server/index.php?wsdl=info"
     client = Client(base_url)
     try:
@@ -18,5 +18,12 @@ def index(request, podrazd='00'):
             for b in c.buildings:
                 podrazdelenie_list.append(b.title)
 
-
-    return render_to_response('podrazdelenie.html', {'podrazdelenie_list': podrazdelenie_list, 'current_lpu': current_lpu})
+    new_list = []
+    base_url = "http://10.1.2.107/int-server/index.php?wsdl=list"
+    client = Client(base_url)
+    y = client.service.listHospitals().hospitals
+    for v in y:
+        for w in podrazdelenie_list:
+            if v.uid.startswith('%s'%(podrazd)) and v.title == w.title:
+                new_list.append(v.uid)
+    return render_to_response(template_name, {'podrazdelenie_list': podrazdelenie_list, 'current_lpu': current_lpu, 'new_list': new_list})
