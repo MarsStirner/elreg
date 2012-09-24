@@ -1,5 +1,7 @@
 # Django settings for ElReg project.
 import os.path
+import redis
+from suds.client import Client
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
@@ -158,3 +160,8 @@ LOGGING = {
         },
     }
 }
+
+redis_db = redis.StrictRedis(host='localhost', port=6379, db=0)
+
+client_info = Client("http://10.1.2.107/int-server/index.php?wsdl=info")
+client_list = Client("http://10.1.2.107/int-server/index.php?wsdl=list")
