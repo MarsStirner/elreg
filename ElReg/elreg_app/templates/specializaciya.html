@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+
+<p>{{ current_podrazd }}</p>
+
+<ul>
+    {% for s in spc %}
+        <li><a href="/vrach?prof={{ s }}">{{ s }}</a></li>
+    {% endfor %}
+</ul>
+{% endblock %}

@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+
+<p>{{ current_podrazd }}</p>
+<p>{{ prof }}</p>
+
+<ul>
+    {% for d in doc %}
+        <li><a href="">{{ d.lastName }} {{ d.firstName }} {{ d.patronymic }}</a></li>
+    {% endfor %}
+</ul>
+{% endblock %}
