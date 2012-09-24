@@ -1,14 +1,17 @@
-<html>
+<html xmlns="http://www.w3.org/1999/html" xmlns="http://www.w3.org/1999/html">
 
 <p><a href="{% url index %}">МО</a>|
     <a href="{% url lpu okato='0' %}">ЛПУ</a>|
-    <a href="">Подразделение</a>|
-    <a href="">Специализация</a>|
-    <a href="">Врач</a>|
+    <a href="{% url podrazdelenie podrazd='0' %}">Подразделение</a>|
+    <a href="{% url specializaciya spec='0' %}">Специализация</a>|
+    <a href="{% url vrach %}">Врач</a>|
     <a href="">Время</a>|
     <a href="">Пациент</a>|
     <a href="">Запись</a></p>
 
+
+<b>ШАГ - {{ step }}</b>
+</br>
 
 {% block content %}
 {% endblock %}
