@@ -161,7 +161,11 @@ LOGGING = {
     }
 }
 
+# redis config
 redis_db = redis.StrictRedis(host='localhost', port=6379, db=0)
 
-client_info = Client("http://10.1.2.107/int-server/index.php?wsdl=info")
-client_list = Client("http://10.1.2.107/int-server/index.php?wsdl=list")
+# suds config (SOAP client)
+IS = "http://10.1.2.107/int-server/index.php?wsdl="
+client_info = Client(IS + "info")
+client_list = Client(IS + "list")
+client_schedule = Client(IS + "schedule")
