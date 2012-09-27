@@ -8,7 +8,9 @@
 
 <ul>
     {% for d in doc %}
-        <li><a href="">{{ d.lastName }} {{ d.firstName }} {{ d.patronymic }}</a></li>
+        <li><a href="/vremya/{{ d.uid }}">{{ d.name.lastName }} {{ d.name.firstName }} {{ d.name.patronymic }}</a></li>
     {% endfor %}
 </ul>
+
+<p><a href="{% url specializaciya spec='0' %}">Назад</a></p>
 {% endblock %}
