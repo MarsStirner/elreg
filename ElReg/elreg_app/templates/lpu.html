@@ -8,4 +8,6 @@
             <li><a href="/podrazdelenie/{{ hospital.uid|slice:":2"|cut:"/" }}/">{{ hospital.title }}</a></li>
         {% endfor %}
     </ul>
+
+<p><a href="{% url index %}">Назад</a></p>
 {% endblock %}
