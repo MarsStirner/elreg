@@ -6,6 +6,9 @@ from django.http import Http404
 from ElReg.settings import redis_db, client_info, client_list
 
 def index(request, template_name, podrazd='404'):
+    """
+    Логика страницы Подразделение
+    """
     if podrazd == '404':
         raise Http404()
     if podrazd == '0':
