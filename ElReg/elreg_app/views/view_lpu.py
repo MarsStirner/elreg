@@ -6,6 +6,9 @@ from elreg_app.models import Region
 from ElReg.settings import redis_db, client_info, client_list
 
 def index(request, template_name, okato='not'):
+    """
+    Логика страниц МО и ЛПУ
+    """
     hospitals_list = []
     if okato == '0':
         try:
