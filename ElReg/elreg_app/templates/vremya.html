@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+
+<p xmlns="http://www.w3.org/1999/html">{{ current_podrazd }}</p>
+<p>{{ prof }}</p>
+<p>{{ docName.lastName }} {{ docName.firstName }} {{ docName.patronymic }}</p>
+
+{% comment %}
+<ul>
+    {% for v in vr %}
+        <li><a href="">{{ v.start }} - {{ v.finish }}:
+            <b>
+                {% ifequal v.status 'free' %}
+                    Записаться
+                {% else %}
+                    Занято!
+                {% endifequal %}
+            </b></a></li>
+    {% endfor %}
+</ul>
+{% endcomment %}
+
+<table border="1">
+
+    <tr>
+        <th>
+            время
+        </th>
+
+        {% for date in dates %}
+        <th>
+            {{ date|date:"d.n, D" }}
+        </th>
+        {% endfor %}
+    </tr>
+
+    {% for start, finish in times %}
+    <tr>
+        <td>
+            {{ start|time:"H:i" }} - {{ finish|time:"H:i" }}
+        </td>
+
+        {% for date in dates %}
+        <td>
+            ({{ forloop.parentloop.counter }}-{{ forloop.counter }}) {{ superList.0 }}
+        </td>
+        {% endfor %}
+    </tr>
+    {% endfor %}
+
+</table>
+
+
+++++++++++++++++++++++++++++++++++++++++++++++++</br>
+
+{{ superList }}
+
+
+<p><a href="{% url vrach %}">Назад</a></p>
+{% endblock %}
