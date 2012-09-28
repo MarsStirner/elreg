@@ -3,32 +3,18 @@
 
 {% block content %}
 
-<p xmlns="http://www.w3.org/1999/html">{{ current_podrazd }}</p>
+<p>{{ current_podrazd }}</p>
 <p>{{ prof }}</p>
 <p>{{ docName.lastName }} {{ docName.firstName }} {{ docName.patronymic }}</p>
 
-{% comment %}
-<ul>
-    {% for v in vr %}
-        <li><a href="">{{ v.start }} - {{ v.finish }}:
-            <b>
-                {% ifequal v.status 'free' %}
-                    Записаться
-                {% else %}
-                    Занято!
-                {% endifequal %}
-            </b></a></li>
-    {% endfor %}
-</ul>
-{% endcomment %}
+
+{% if ticketTable %}
+
+<p><a href="{% url vremya vremya='000' %}">Предудущая</a> - <a href="{% url vremya vremya='00' %}">Следующая</a></p>
 
 <table border="1">
 
     <tr>
-        <th>
-            время
-        </th>
-
         {% for date in dates %}
         <th>
             {{ date|date:"d.n, D" }}
@@ -36,26 +22,28 @@
         {% endfor %}
     </tr>
 
-    {% for start, finish in times %}
+    {% for row in ticketTable %}
     <tr>
+        {% for cell in row %}
         <td>
-            {{ start|time:"H:i" }} - {{ finish|time:"H:i" }}
-        </td>
-
-        {% for date in dates %}
-        <td>
-            ({{ forloop.parentloop.counter }}-{{ forloop.counter }}) {{ superList.0 }}
+            <a href="{% url pacient pacient='00' %}">{{ cell.start.time }}{{ cell.status }}</a>
         </td>
         {% endfor %}
     </tr>
     {% endfor %}
 
+    <tr>
+        {% for date in dates %}
+        <th>
+            {{ date|date:"d.n, D" }}
+        </th>
+        {% endfor %}
+    </tr>
+
 </table>
-
-
-++++++++++++++++++++++++++++++++++++++++++++++++</br>
-
-{{ superList }}
+{% else %}
+<p>Расписания на текущую неделю нет.</p>
+{% endif %}
 
 
 <p><a href="{% url vrach %}">Назад</a></p>
