@@ -1,6 +1,6 @@
 from django.conf.urls import patterns, include, url
 from django.contrib import admin
-from elreg_app.views import view_lpu, view_podrazdelenie, view_specializaciya, view_vrach, view_vremya
+from elreg_app.views import view_lpu, view_podrazdelenie, view_specializaciya, view_vrach, view_vremya, view_pacient
 admin.autodiscover()
 
 urlpatterns = patterns('',
@@ -11,6 +11,7 @@ urlpatterns = patterns('',
     url(r'^specializaciya/(?P<spec>\d{1,13})/$', view_specializaciya.index, {'template_name': 'specializaciya.html'}, name="specializaciya"),
     url(r'^vrach/$', view_vrach.index, {'template_name': 'vrach.html'}, name="vrach"),
     url(r'^vremya/(?P<vremya>\d{2,3})/$', view_vremya.index, {'template_name': 'vremya.html'}, name="vremya"),
+    url(r'^pacient/(?P<pacient>\d{2,3})/$', view_pacient.index, {'template_name': 'pacient.html'}, name="pacient"),
 
     # Examples:
     # url(r'^$', 'ElReg.views.home', name='home'),
