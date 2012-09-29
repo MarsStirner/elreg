@@ -7,11 +7,11 @@
 <p>{{ prof }}</p>
 <p>{{ docName.lastName }} {{ docName.firstName }} {{ docName.patronymic }}</p>
 
+<p><a href="{% url vremya vremya='000' %}">Предудущая</a> - <a href="{% url vremya vremya='00' %}">Следующая</a></p>
 
 {% if ticketTable %}
 
-<p><a href="{% url vremya vremya='000' %}">Предудущая</a> - <a href="{% url vremya vremya='00' %}">Следующая</a></p>
-
+<form action="{% url pacient %}" method="post">
 <table border="1">
 
     <tr>
@@ -26,7 +26,13 @@
     <tr>
         {% for cell in row %}
         <td>
-            <a href="{% url pacient pacient='00' %}">{{ cell.start.time }}{{ cell.status }}</a>
+            {% if cell.status == 'free' %}
+                <button type=submit name=ticket value="{{ cell.start.date|date:"d:m:Y" }}-{{ cell.start.time }}-{{ cell.finish.time }}">
+                    {{ cell.start.time|time:"H:i" }} {{ cell.status }}
+                </button>
+            {% elif cell.status == 'locked'%}
+                Забронировано
+            {% endif %}
         </td>
         {% endfor %}
     </tr>
@@ -41,6 +47,8 @@
     </tr>
 
 </table>
+    <input type=hidden name=doc_name value="123456789">
+</form>
 {% else %}
 <p>Расписания на текущую неделю нет.</p>
 {% endif %}
