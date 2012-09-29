@@ -1,17 +1,14 @@
-<html xmlns="http://www.w3.org/1999/html" xmlns="http://www.w3.org/1999/html">
+<html xmlns="http://www.w3.org/1999/html">
 
-<p><a href="{% url index %}">1.МО</a>|
-    <a href="{% url lpu okato='0' %}">2.ЛПУ</a>|
-    <a href="{% url podrazdelenie podrazd='0' %}">3.Подразделение</a>|
-    <a href="{% url specializaciya spec='0' %}">4.Специализация</a>|
-    <a href="{% url vrach %}">5.Врач</a>|
-    <a href="">6.Время</a>|
-    <a href="">7.Пациент</a>|
-    <a href="">8.Запись</a></p>
+<p>{% if step > 1 %}<a href="{% url index %}">{% elif step == 1 %}<b>{% endif %}1.МО{% if step > 1 %}</a>{% elif step == 1 %}</b>{% endif %}|
+    {% if step > 2 %}<a href="{% url lpu okato='0' %}">{% elif step == 2 %}<b>{% endif %}2.ЛПУ{% if step > 2 %}</a>{% elif step == 2 %}</b>{% endif %}|
+    {% if step > 3 %}<a href="{% url podrazdelenie podrazd='0' %}">{% elif step == 3 %}<b>{% endif %}3.Подразделение{% if step > 3 %}</a>{% elif step == 3 %}</b>{% endif %}|
+    {% if step > 4 %}<a href="{% url specializaciya spec='0' %}">{% elif step == 4 %}<b>{% endif %}4.Специализация{% if step > 4 %}</a>{% elif step == 4 %}</b>{% endif %}|
+    {% if step > 5 %}<a href="{% url vrach %}">{% elif step == 5 %}<b>{% endif %}5.Врач{% if step > 5 %}</a>{% elif step == 5 %}</b>{% endif %}|
+    {% if step > 6 %}<a href="">{% elif step == 6 %}<b>{% endif %}6.Время{% if step > 6 %}</a>{% elif step == 6 %}</b>{% endif %}|
+    {% if step > 7 %}<a href="">{% elif step == 7 %}<b>{% endif %}7.Пациент{% if step > 7 %}</a>{% elif step == 7 %}</b>{% endif %}|
+    {% if step > 8 %}<a href="">{% elif step == 8 %}<b>{% endif %}8.Запись{% if step > 8 %}</a>{% elif step == 8 %}</b>{% endif %}</p>
 
-
-<b>ШАГ - {{ step }}</b>
-</br>
 
 {% block content %}
 {% endblock %}
