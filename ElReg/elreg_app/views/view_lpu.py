@@ -37,4 +37,4 @@ def index(request, template_name, okato='not'):
     return render_to_response(template_name, {'hospitals_list': hospitals_list,
                                               'region_list': region_list,
                                               'current_region': current_region,
-                                              'step': redis_db.get('step')})
+                                              'step': int(redis_db.get('step'))})

@@ -37,4 +37,4 @@ def index(request, template_name, podrazd='404'):
                                               'current_lpu': current_lpu,
                                               'new_list': new_list,
                                               'new': new,
-                                              'step': redis_db.get('step')})
+                                              'step': int(redis_db.get('step'))})

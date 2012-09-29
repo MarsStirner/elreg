@@ -33,4 +33,4 @@ def index(request, template_name, spec='404'):
     redis_db.set('step', 4)
     return render_to_response(template_name, {'spc': spc,
                                               'current_podrazd': current_podrazd,
-                                              'step': redis_db.get('step')})
+                                              'step': int(redis_db.get('step'))})

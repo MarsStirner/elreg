@@ -24,4 +24,4 @@ def index(request, template_name):
     return render_to_response(template_name, {'current_podrazd': current_podrazd,
                                               'prof': prof,
                                               'doc': doc,
-                                              'step': redis_db.get('step')})
+                                              'step': int(redis_db.get('step'))})

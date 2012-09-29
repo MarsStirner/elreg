@@ -55,7 +55,7 @@ def index(request, template_name, vremya='0'):
 
         ticketTable = []
         for time in times:
-            tmpList = [0,0,0,0,0,0,0]
+            tmpList = [0]*7
             for ticket in currentTicketList:
                 if ticket.start.time() == time:
                     tmpList[dates.index(ticket.start.date())] = ticket
@@ -73,4 +73,4 @@ def index(request, template_name, vremya='0'):
                                               'dates': dates,
                                               'times': times,
                                               'ticketTable': ticketTable,
-                                              'step': redis_db.get('step')})
+                                              'step': int(redis_db.get('step'))})
