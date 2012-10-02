@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+<p>
+    <ul>
+        {% for region in region_list %}
+        <li>
+            <a href ="{% url lpu %}{{ region.code }}/">
+                {{ region.region }}
+            </a>
+        </li>
+        {% endfor %}
+    </ul>
+</p>
+{% endblock %}
