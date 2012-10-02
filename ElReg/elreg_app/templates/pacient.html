@@ -5,45 +5,68 @@
 
 <p>{{ current_podrazd }}</p>
 <p>{{ prof }}</p>
-<p>{{ docName.0 }} {{ docName.1 }} {{ docName.2 }}</p>
+<p>{{ docName }}</p>
 
 <p><b>{{ date }} {{ start_time }} - {{ finish_time }}</b></p>
 
-
-
+<p>
+    <font color="red">
+    {% if errors %}
+        <b>***Ошибки на странице***</b><br />
+        {% for error in errors %}
+            <b>{{ error }}</b><br />
+        {% endfor %}
+    {% endif %}
+    </font>
+</p>
 <form id="form" action="" method="post" name="frm">
     <fieldset>
         <div class="field">
             <label for="lastName">Фамилия:</label>
-            <input type="text" name="lastName" id="lastName" value="" maxlength="40" size="30" autocomplete="off" />
+            <input type="text" name="lastName" id="lastName" value="{{ lastName }}" maxlength="40" size="30" autocomplete="off" />
         </div>
 
         <div class="field">
             <label for="firstName">Имя:</label>
-            <input type="text" name="firstName" id="firstName" value="" maxlength="40" size="30" autocomplete="off" />
+            <input type="text" name="firstName" id="firstName" value="{{ firstName }}" maxlength="40" size="30" autocomplete="off" />
         </div>
 
         <div class="field">
             <label for="patronymic">Отчество:</label>
-            <input type="text" name="patronymic" id="patronymic" value="" maxlength="40" size="30" autocomplete="off" />
+            <input type="text" name="patronymic" id="patronymic" value="{{ patronymic }}" maxlength="40" size="30" autocomplete="off" />
         </div>
 
         <div class="field">
             <label for="dd">Дата рождения:</label>
-            <input type="text" name="dd" id="dd" value="" maxlength="2" size="2" autocomplete="off" />
-            <input type="text" name="mm" id="mm" value="" maxlength="2" size="2" autocomplete="off" />
-            <input type="text" name="yy" id="yy" value="" maxlength="4" size="4" autocomplete="off" />
+            <input type="text" name="dd" id="dd" value="{{ dd }}" maxlength="2" size="2" autocomplete="off" />
+            <input type="text" name="mm" id="mm" value="{{ mm }}" maxlength="2" size="2" autocomplete="off" />
+            <input type="text" name="yy" id="yy" value="{{ yy }}" maxlength="4" size="4" autocomplete="off" />
         </div>
 
         <div class="field">
-            <label for="police">Серия и номер полиса:</label>
-            <input type="text" name="police" id="police" value="" maxlength="20" size="15" autocomplete="off" />
+            <label for="radio1">Пол:</label>
+            <input type="radio" name="radio" id="radio1" value="M" /> М
+            <input type="radio" name="radio" id="radio2" value="F" /> Ж
+        </div>
+
+        <div class="field">
+            <label for="policy1">Серия и номер полиса:</label>
+            <input type="text" name="policy1" id="policy1" value="{{ policy1 }}" maxlength="10" size="2" autocomplete="off" />
+            <input type="text" name="policy2" id="policy2" value="{{ policy2 }}" maxlength="20" size="15" autocomplete="off" />
+        </div>
+
+        <div class="field">
+            <label for="email">E-mail:</label>
+            <input type="text" name="email" id="email" value="{{ email }}" maxlength="30" size="30" autocomplete="off" />
         </div>
     </fieldset>
 
     <input type="submit" id="button-submit" value="Подтвердить" />
+    <input type=hidden name=ticket value="{{ ticket }}">
+    <input type=hidden name=flag value=True>
+
 </form>
 
 
-<p><a href="">Назад</a></p>
+<p><a href="{% url vremya vremya='0' %}">Назад</a></p>
 {% endblock %}
