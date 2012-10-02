@@ -5,9 +5,9 @@
 
 <p>{{ current_podrazd }}</p>
 <p>{{ prof }}</p>
-<p>{{ docName.lastName }} {{ docName.firstName }} {{ docName.patronymic }}</p>
+<p>{{ docName }}</p>
 
-<p><a href="{% url vremya vremya='000' %}">Предудущая</a> - <a href="{% url vremya vremya='00' %}">Следующая</a></p>
+<p><a href="{% url vremya vremya='prev' %}">Предудущая</a> - <a href="{% url vremya vremya='next' %}">Следующая</a></p>
 
 {% if ticketTable %}
 
@@ -25,10 +25,10 @@
     {% for row in ticketTable %}
     <tr>
         {% for cell in row %}
-        <td>
+        <td align="center">
             {% if cell.status == 'free' %}
                 <button type=submit name=ticket value="{{ cell.start.date|date:"d:m:Y" }}-{{ cell.start.time }}-{{ cell.finish.time }}">
-                    {{ cell.start.time|time:"H:i" }} {{ cell.status }}
+                    {{ cell.start.time|time:"H:i" }}
                 </button>
             {% elif cell.status == 'locked'%}
                 Забронировано
