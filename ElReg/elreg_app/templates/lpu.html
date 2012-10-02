@@ -2,12 +2,23 @@
 
 
 {% block content %}
-    <p>{{ current_region }}</p>
+<p>
+    {{ current_region }}
+</p>
+<p>
     <ul>
         {% for hospital in hospitals_list %}
-            <li><a href="/podrazdelenie/{{ hospital.uid|slice:":2"|cut:"/" }}/">{{ hospital.title }}</a></li>
+        <li>
+            <a href="{% url podrazdelenie %}{{ hospital.uid|slice:":2"|cut:"/" }}/">
+                {{ hospital.title }}
+            </a>
+        </li>
         {% endfor %}
     </ul>
-
-<p><a href="{% url index %}">Назад</a></p>
+</p>
+<p>
+    <a href="{% url mo %}">
+        Назад
+    </a>
+</p>
 {% endblock %}
