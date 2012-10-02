@@ -1,14 +1,14 @@
 #coding: utf-8
 
 from django.shortcuts import render_to_response
-from ElReg.settings import redis_db, client_list
+from ElReg.settings import redis_db, client
 
 def index(request, template_name):
     """
     Логика страницы Врач
     """
     try:
-        y = client_list.service.listDoctors()
+        y = client("list").service.listDoctors()
     except:
         y = ''
     current_podrazd = redis_db.get('current_podrazd')
