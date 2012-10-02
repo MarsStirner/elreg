@@ -2,7 +2,7 @@
 
 from django.shortcuts import render_to_response
 from django.http import Http404
-from ElReg.settings import redis_db, client_list
+from ElReg.settings import redis_db, client
 
 def index(request, template_name, spec='404'):
     """
@@ -13,7 +13,7 @@ def index(request, template_name, spec='404'):
     if spec == '0':
         spec = redis_db.get('spec')
     try:
-        y = client_list.service.listDoctors()
+        y = client("list").service.listDoctors()
     except:
         y = ''
     spc = []
