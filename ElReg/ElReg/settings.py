@@ -161,11 +161,13 @@ LOGGING = {
     }
 }
 
-# redis config
+# конфигурация redis
 redis_db = redis.StrictRedis(host='localhost', port=6379, db=0)
 
-# suds config (SOAP client)
-IS = "http://10.1.2.107/int-server/index.php?wsdl="
-client_info = Client(IS + "info")
-client_list = Client(IS + "list")
-client_schedule = Client(IS + "schedule")
+def client(wsdl):
+    """
+    Функция для получения SOAP Client с помощью библиотеки suds.
+    К адресу интеграционного сервера (IS) добавляется имя wsdl-файла.
+    """
+    IS = "http://10.1.2.107/int-server/index.php?wsdl="
+    return Client(IS + wsdl)
