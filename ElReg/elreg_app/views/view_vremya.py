@@ -1,36 +1,38 @@
 #coding: utf-8
 
 from django.shortcuts import render_to_response
-from ElReg.settings import redis_db, client_list, client_schedule
+from ElReg.settings import redis_db, client
 import datetime
 
 def index(request, template_name, vremya='0'):
     """
     Логика страницы Время
     """
-    if vremya == '0' or vremya == '00' or vremya == '000':
-        if vremya == '00':
+    if vremya in ['0','next','prev']:
+        if vremya == 'next':
             a = redis_db.get('firstweekday').split('-')
             firstweekday = datetime.date(int(a[0]), int(a[1]), int(a[2])) + datetime.timedelta(days=7)
-        elif vremya == '000':
+        elif vremya == 'prev':
             a = redis_db.get('firstweekday').split('-')
             firstweekday = datetime.date(int(a[0]), int(a[1]), int(a[2])) - datetime.timedelta(days=7)
+        elif vremya == '0':
+            now = datetime.date.today()
+            firstweekday = now - datetime.timedelta(days=datetime.date.isoweekday(now)-1)
         vremya = redis_db.get('vremya')
     else:
         now = datetime.date.today()
         firstweekday = now - datetime.timedelta(days=datetime.date.isoweekday(now)-1)
     try:
         hospital_Uid = redis_db.get('hospital_Uid')
-        ticketList = client_schedule.service.getScheduleInfo(hospitalUid=hospital_Uid, doctorUid=vremya)
+        ticketList = client("schedule").service.getScheduleInfo(hospitalUid=hospital_Uid, doctorUid=vremya)
     except:
         ticketList = []
 
-    current_podrazd = redis_db.get('current_podrazd')
-    prof = redis_db.get('prof')
-    docName = ''
-    for i in client_list.service.listDoctors().doctors:
+    docName = '' # ФИО врача
+    for i in client("list").service.listDoctors().doctors:
         if i.uid == vremya:
             docName = i.name
+            docName = '%s %s %s' % (docName.lastName, docName.firstName, docName.patronymic)
             redis_db.set('docName', docName)
 
     times = [] # Список времен начала записи текущей недели
@@ -62,13 +64,10 @@ def index(request, template_name, vremya='0'):
             ticketTable.append(tmpList)
 
     redis_db.set('vremya', vremya)
-    redis_db.set('docLastName', docName.lastName)
-    redis_db.set('docFirstName', docName.firstName)
-    redis_db.set('docPatronymic', docName.patronymic)
     redis_db.set('firstweekday', firstweekday)
     redis_db.set('step', 6)
-    return render_to_response(template_name, {'current_podrazd': current_podrazd,
-                                              'prof': prof,
+    return render_to_response(template_name, {'current_podrazd': redis_db.get('current_podrazd'),
+                                              'prof': redis_db.get('prof'),
                                               'docName': docName,
                                               'dates': dates,
                                               'times': times,
