@@ -2,7 +2,8 @@
 
 from django.http import HttpResponseRedirect
 from django.shortcuts import render_to_response
-from ElReg.settings import redis_db
+from ElReg.settings import redis_db, client
+from elreg_app.functions import *
 import datetime
 
 def index(request, template_name):
@@ -10,28 +11,6 @@ def index(request, template_name):
     Логика страницы Пациент
     """
     errors = []
-
-    if request.method == 'POST':
-        if not request.POST.get('lastName', ''):
-            errors.append(u"Введите фамилию")
-        else:
-            if not stringcorrect(request.POST.get('lastName', '')):
-                errors.append(u'Введите корректно фамилию')
-        if not request.POST.get('firsName', ''):
-            errors.append(u"Введите имя")
-        else:
-            if not stringcorrect(request.POST.get('firsName')):
-                errors.append(u'Введите корректно имя')
-        if not request.POST.get('patronymic', ''):
-            errors.append(u"Введите отчество")
-        else:
-            if not stringcorrect(request.POST.get('patronymic', '')):
-                errors.append(u'Введите корректно отчество')
-        if not request.POST.get('dd', '') or not request.POST.get('mm', '') or not request.POST.get('yy', ''):
-            errors.append(u'Введите дату рождения')
-        if not request.POST.get('police', ''):
-            errors.append(u"Введите серию и номер полиса")
-
     if request.method == 'POST':
         ticket = request.POST['ticket']
         tmp_lst = ticket.split('-')
@@ -43,19 +22,90 @@ def index(request, template_name):
         finish_time = datetime.time(int(b[0]), int(b[1]), int(b[2])) # Время окончания выбранного приема
         start_date = datetime.datetime.combine(date, start_time) # Дата и время начала выбранного приема
         finish_date = datetime.datetime.combine(date, finish_time) # Дата и время окончания выбранного приема
+        if request.POST.get('flag', ''):
+            # Проверка на заполненность формы пользователем и ее корректность
+            lastName = request.POST.get('lastName', '')
+            if not lastName:
+                errors.append(u"Введите фамилию")
+            else:
+                if not stringcorrect(lastName):
+                    errors.append(u'Введите корректно фамилию')
 
+            firstName = request.POST.get('firstName', '')
+            if not firstName:
+                errors.append(u"Введите имя")
+            else:
+                if not stringcorrect(firstName):
+                    errors.append(u'Введите корректно имя')
+
+            patronymic = request.POST.get('patronymic', '')
+            if not patronymic:
+                errors.append(u"Введите отчество")
+            else:
+                if not stringcorrect(patronymic):
+                    errors.append(u'Введите корректно отчество')
+
+            dd = request.POST.get('dd', '')
+            mm = request.POST.get('mm', '')
+            yy = request.POST.get('yy', '')
+            if not dd or not mm or not yy:
+                errors.append(u'Введите дату рождения')
+
+            policy1 = request.POST.get('policy1', '')
+            policy2 = request.POST.get('policy2', '')
+            if not policy2:
+                errors.append(u"Введите серию и номер полиса")
+
+            email = request.POST.get('email', '')
+            if not email:
+                errors.append(u"Введите e-mail")
+
+            if not errors:
+#                hospital_Uid = redis_db.get('hospital_Uid')
+#                vremya = redis_db.get('vremya')
+#                i = client("schedule").service.getScheduleInfo(hospitalUid=hospital_Uid, doctorUid=vremya, startDate=start_date, endDate=finish_date)
+                redis_db.set('date', date)
+                redis_db.set('start_time', start_time)
+                redis_db.set('finish_time', finish_time)
+                return HttpResponseRedirect('/zapis')
+
+            current_podrazd = redis_db.get('current_podrazd')
+            prof = redis_db.get('prof')
+            docName = redis_db.get('docName')
+
+            redis_db.set('step', 7)
+            return render_to_response(template_name, {'current_podrazd': current_podrazd,
+                                                      'prof': prof,
+                                                      'docName': docName,
+                                                      'errors': errors,
+                                                      'ticket': ticket,
+                                                      'date': date,
+                                                      'start_time': start_time,
+                                                      'finish_time': finish_time,
+                                                      'lastName': lastName,
+                                                      'firstName': firstName,
+                                                      'patronymic': patronymic,
+                                                      'dd': dd,
+                                                      'mm': mm,
+                                                      'yy': yy,
+                                                      'policy1': policy1,
+                                                      'policy2': policy2,
+                                                      'email': email,
+                                                      'step': int(redis_db.get('step'))})
+
+        current_podrazd = redis_db.get('current_podrazd')
+        prof = redis_db.get('prof')
+        docName = redis_db.get('docName')
+
+        redis_db.set('step', 7)
+        return render_to_response(template_name, {'current_podrazd': current_podrazd,
+                                                  'prof': prof,
+                                                  'docName': docName,
+                                                  'errors': errors,
+                                                  'ticket': ticket,
+                                                  'date': date,
+                                                  'start_time': start_time,
+                                                  'finish_time': finish_time,
+                                                  'step': int(redis_db.get('step'))})
     else:
         return HttpResponseRedirect("/")
-
-    current_podrazd = redis_db.get('current_podrazd')
-    prof = redis_db.get('prof')
-    docName = [redis_db.get('docLastName'), redis_db.get('docFirstName'), redis_db.get('docPatronymic')]
-
-    redis_db.set('step', 7)
-    return render_to_response(template_name, {'current_podrazd': current_podrazd,
-                                              'prof': prof,
-                                              'docName': docName,
-                                              'date': date,
-                                              'start_time': start_time,
-                                              'finish_time': finish_time,
-                                              'step': int(redis_db.get('step'))})
