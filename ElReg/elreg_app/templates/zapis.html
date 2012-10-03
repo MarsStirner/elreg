@@ -3,11 +3,20 @@
 
 {% block content %}
 
+<p><b>{{ ticketUid }}</b></p>
 <p>{{ current_podrazd }}</p>
 <p>{{ prof }}</p>
 <p>{{ docName }}</p>
-
 <p><b>{{ date }} {{ start_time }} - {{ finish_time }}</b></p>
 
+
+<form id="form" action="" method="post" name="frm">
+<fieldset>
+    <input type="checkbox" name="option1" value="mail"> - E-mail<br>
+    <input type="checkbox" name="option2" value="print" checked> - Печать<br>
+</fieldset>
+    <input type="submit" id="button-ready" value="Готово" />
+
+</form>
 
 {% endblock %}
