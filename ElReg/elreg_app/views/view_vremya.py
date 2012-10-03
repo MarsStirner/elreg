@@ -4,26 +4,27 @@ from django.shortcuts import render_to_response
 from ElReg.settings import redis_db, client
 import datetime
 
-def index(request, template_name, vremya='0'):
+def index(request, template_name, vremya=0):
     """
     Логика страницы Время
     """
-    if vremya in ['0','next','prev']:
-        if vremya == 'next':
-            a = redis_db.get('firstweekday').split('-')
-            firstweekday = datetime.date(int(a[0]), int(a[1]), int(a[2])) + datetime.timedelta(days=7)
-        elif vremya == 'prev':
-            a = redis_db.get('firstweekday').split('-')
-            firstweekday = datetime.date(int(a[0]), int(a[1]), int(a[2])) - datetime.timedelta(days=7)
-        elif vremya == '0':
+    id = '%s' % request.session.session_key
+    if not vremya or vremya in ['next','prev']:
+        if not vremya:
             now = datetime.date.today()
             firstweekday = now - datetime.timedelta(days=datetime.date.isoweekday(now)-1)
-        vremya = redis_db.get('vremya')
+        elif vremya == 'next':
+            a = redis_db.hget(id, 'firstweekday').split('-')
+            firstweekday = datetime.date(int(a[0]), int(a[1]), int(a[2])) + datetime.timedelta(days=7)
+        elif vremya == 'prev':
+            a = redis_db.hget(id, 'firstweekday').split('-')
+            firstweekday = datetime.date(int(a[0]), int(a[1]), int(a[2])) - datetime.timedelta(days=7)
+        vremya = redis_db.hget(id, 'vremya')
     else:
         now = datetime.date.today()
         firstweekday = now - datetime.timedelta(days=datetime.date.isoweekday(now)-1)
     try:
-        hospital_Uid = redis_db.get('hospital_Uid')
+        hospital_Uid = redis_db.hget(id, 'hospital_Uid')
         ticketList = client("schedule").service.getScheduleInfo(hospitalUid=hospital_Uid, doctorUid=vremya)
     except:
         ticketList = []
@@ -33,7 +34,7 @@ def index(request, template_name, vremya='0'):
         if i.uid == vremya:
             docName = i.name
             docName = '%s %s %s' % (docName.lastName, docName.firstName, docName.patronymic)
-            redis_db.set('docName', docName)
+            redis_db.hset(id, 'docName', docName)
 
     times = [] # Список времен начала записи текущей недели
     dates = [] # Список дат текущей недели
@@ -63,13 +64,13 @@ def index(request, template_name, vremya='0'):
                     tmpList[dates.index(ticket.start.date())] = ticket
             ticketTable.append(tmpList)
 
-    redis_db.set('vremya', vremya)
-    redis_db.set('firstweekday', firstweekday)
-    redis_db.set('step', 6)
-    return render_to_response(template_name, {'current_podrazd': redis_db.get('current_podrazd'),
-                                              'prof': redis_db.get('prof'),
+    redis_db.hset(id, 'vremya', vremya)
+    redis_db.hset(id, 'firstweekday', firstweekday)
+    redis_db.hset(id, 'step', 6)
+    return render_to_response(template_name, {'current_podrazd': redis_db.hget(id, 'current_podrazd'),
+                                              'prof': redis_db.hget(id, 'prof'),
                                               'docName': docName,
                                               'dates': dates,
                                               'times': times,
                                               'ticketTable': ticketTable,
-                                              'step': int(redis_db.get('step'))})
+                                              'step': int(redis_db.hget(id, 'step'))})
