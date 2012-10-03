@@ -9,15 +9,16 @@ def index(request, template_name):
     """
     Логика страницы Запись
     """
+    id = '%s' % request.session.session_key
+    current_podrazd = redis_db.hget(id, 'current_podrazd')
+    prof = redis_db.hget(id, 'prof')
+    docName = redis_db.hget(id, 'docName')
+    date = redis_db.hget(id, 'date')
+    start_time = redis_db.hget(id, 'start_time')
+    finish_time = redis_db.hget(id, 'finish_time')
+    ticketUid = redis_db.hget(id, 'ticketUid')
 
-    current_podrazd = redis_db.get('current_podrazd')
-    prof = redis_db.get('prof')
-    docName = redis_db.get('docName')
-    date = redis_db.get('date')
-    start_time = redis_db.get('start_time')
-    finish_time = redis_db.get('finish_time')
-
-    redis_db.set('step', 8)
+    redis_db.hset(id, 'step', 8)
     return render_to_response(template_name, {
                                               'current_podrazd': current_podrazd,
                                               'prof': prof,
@@ -25,4 +26,5 @@ def index(request, template_name):
                                               'date': date,
                                               'start_time': start_time,
                                               'finish_time': finish_time,
-                                              'step': int(redis_db.get('step'))})
+                                              'ticketUid': ticketUid,
+                                              'step': int(redis_db.hget(id, 'step'))})

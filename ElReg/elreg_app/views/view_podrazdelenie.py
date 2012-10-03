@@ -7,8 +7,9 @@ def index(request, template_name, podrazd=0):
     """
     Логика страницы Подразделение
     """
+    id = '%s' % request.session.session_key
     if not podrazd:
-        podrazd = redis_db.get('podrazd')
+        podrazd = redis_db.hget(id, 'podrazd')
     try:
         x = client("info").service.getHospitalInfo()
     except:
@@ -28,9 +29,9 @@ def index(request, template_name, podrazd=0):
             if v.uid.startswith('%s'%(podrazd)) and v.title == w:
                 new_list.append(v.uid.split('/')[1])
     podrazd_list = zip(podrazdelenie_list, new_list)
-    redis_db.set('podrazd', podrazd)
-    redis_db.set('current_lpu', current_lpu)
-    redis_db.set('step', 3)
+    redis_db.hset(id, 'podrazd', podrazd)
+    redis_db.hset(id, 'current_lpu', current_lpu)
+    redis_db.hset(id, 'step', 3)
     return render_to_response(template_name, {'current_lpu': current_lpu,
                                               'podrazd_list': podrazd_list,
-                                              'step': int(redis_db.get('step'))})
+                                              'step': int(redis_db.hget(id, 'step'))})
