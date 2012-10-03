@@ -9,7 +9,7 @@
     <ul>
         {% for podrazdelenie in podrazd_list %}
         <li>
-            <a href="/specializaciya/{{ podrazdelenie.1 }}">
+            <a href="{% url specializaciya %}{{ podrazdelenie.1 }}">
                 {{ podrazdelenie.0 }} ({{ podrazdelenie.0.address }})
             </a>
         </li>
