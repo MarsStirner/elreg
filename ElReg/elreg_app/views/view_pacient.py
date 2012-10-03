@@ -10,6 +10,7 @@ def index(request, template_name):
     """
     Логика страницы Пациент
     """
+    id = '%s' % request.session.session_key
     errors = []
     if request.method == 'POST':
         ticket = request.POST['ticket']
@@ -61,19 +62,34 @@ def index(request, template_name):
                 errors.append(u"Введите e-mail")
 
             if not errors:
-#                hospital_Uid = redis_db.get('hospital_Uid')
-#                vremya = redis_db.get('vremya')
-#                i = client("schedule").service.getScheduleInfo(hospitalUid=hospital_Uid, doctorUid=vremya, startDate=start_date, endDate=finish_date)
-                redis_db.set('date', date)
-                redis_db.set('start_time', start_time)
-                redis_db.set('finish_time', finish_time)
+                hospital_Uid = redis_db.hget(id, 'hospital_Uid')
+                vremya = redis_db.hget(id, 'vremya')
+
+                ticket = client("schedule").service.enqueue(
+                    person = {
+                        'lastName': unicode(lastName),
+                        'firstName': unicode(firstName),
+                        'patronymic': unicode(patronymic) },
+                    hospitalUid = hospital_Uid,
+                    doctorUid = vremya,
+                    timeslotStart = str(date) + 'T' + str(start_time),
+                    hospitalUidFrom = unicode("0"),
+                    birthday = unicode("%s-%s-%s"%(yy,mm,dd)),
+                )
+#                print ticket, "<<<<--ticket"
+                # !!!! Дописать обработку ошибок, если ticket['result'] == fault
+                redis_db.hset(id, 'ticketUid', ticket['ticketUid'])
+
+                redis_db.hset(id, 'date', date)
+                redis_db.hset(id, 'start_time', start_time)
+                redis_db.hset(id, 'finish_time', finish_time)
                 return HttpResponseRedirect('/zapis')
 
-            current_podrazd = redis_db.get('current_podrazd')
-            prof = redis_db.get('prof')
-            docName = redis_db.get('docName')
+            current_podrazd = redis_db.hget(id, 'current_podrazd')
+            prof = redis_db.hget(id, 'prof')
+            docName = redis_db.hget(id, 'docName')
 
-            redis_db.set('step', 7)
+            redis_db.hset(id, 'step', 7)
             return render_to_response(template_name, {'current_podrazd': current_podrazd,
                                                       'prof': prof,
                                                       'docName': docName,
@@ -91,13 +107,13 @@ def index(request, template_name):
                                                       'policy1': policy1,
                                                       'policy2': policy2,
                                                       'email': email,
-                                                      'step': int(redis_db.get('step'))})
+                                                      'step': int(redis_db.hget(id, 'step'))})
 
-        current_podrazd = redis_db.get('current_podrazd')
-        prof = redis_db.get('prof')
-        docName = redis_db.get('docName')
+        current_podrazd = redis_db.hget(id, 'current_podrazd')
+        prof = redis_db.hget(id, 'prof')
+        docName = redis_db.hget(id, 'docName')
 
-        redis_db.set('step', 7)
+        redis_db.hset(id, 'step', 7)
         return render_to_response(template_name, {'current_podrazd': current_podrazd,
                                                   'prof': prof,
                                                   'docName': docName,
@@ -106,6 +122,6 @@ def index(request, template_name):
                                                   'date': date,
                                                   'start_time': start_time,
                                                   'finish_time': finish_time,
-                                                  'step': int(redis_db.get('step'))})
+                                                  'step': int(redis_db.hget(id, 'step'))})
     else:
         return HttpResponseRedirect("/")
