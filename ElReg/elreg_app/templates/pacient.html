@@ -19,28 +19,33 @@
     {% endif %}
     </font>
 </p>
+
+{% if ticket_err %}
+    <font color="red"><p>{{ ticket_err }}</p></font>
+{% endif %}
+
 <form id="form" action="" method="post" name="frm">
     <fieldset>
         <div class="field">
             <label for="lastName">Фамилия:</label>
-            <input type="text" name="lastName" id="lastName" value="{{ lastName }}" maxlength="40" size="30" autocomplete="off" />
+            <input type="text" name="lastName" id="lastName" value="{{ lastName }}" maxlength="40" size="30" autocomplete="on" />
         </div>
 
         <div class="field">
             <label for="firstName">Имя:</label>
-            <input type="text" name="firstName" id="firstName" value="{{ firstName }}" maxlength="40" size="30" autocomplete="off" />
+            <input type="text" name="firstName" id="firstName" value="{{ firstName }}" maxlength="40" size="30" autocomplete="on" />
         </div>
 
         <div class="field">
             <label for="patronymic">Отчество:</label>
-            <input type="text" name="patronymic" id="patronymic" value="{{ patronymic }}" maxlength="40" size="30" autocomplete="off" />
+            <input type="text" name="patronymic" id="patronymic" value="{{ patronymic }}" maxlength="40" size="30" autocomplete="on" />
         </div>
 
         <div class="field">
             <label for="dd">Дата рождения:</label>
-            <input type="text" name="dd" id="dd" value="{{ dd }}" maxlength="2" size="2" autocomplete="off" />
-            <input type="text" name="mm" id="mm" value="{{ mm }}" maxlength="2" size="2" autocomplete="off" />
-            <input type="text" name="yy" id="yy" value="{{ yy }}" maxlength="4" size="4" autocomplete="off" />
+            <input type="text" name="dd" id="dd" value="{{ dd }}" maxlength="2" size="2" autocomplete="on" />
+            <input type="text" name="mm" id="mm" value="{{ mm }}" maxlength="2" size="2" autocomplete="on" />
+            <input type="text" name="yy" id="yy" value="{{ yy }}" maxlength="4" size="4" autocomplete="on" />
         </div>
 
         <div class="field">
@@ -51,13 +56,13 @@
 
         <div class="field">
             <label for="policy1">Серия и номер полиса:</label>
-            <input type="text" name="policy1" id="policy1" value="{{ policy1 }}" maxlength="10" size="2" autocomplete="off" />
-            <input type="text" name="policy2" id="policy2" value="{{ policy2 }}" maxlength="20" size="15" autocomplete="off" />
+            <input type="text" name="policy1" id="policy1" value="{{ policy1 }}" maxlength="10" size="2" autocomplete="on" />
+            <input type="text" name="policy2" id="policy2" value="{{ policy2 }}" maxlength="20" size="15" autocomplete="on" />
         </div>
 
         <div class="field">
             <label for="email">E-mail:</label>
-            <input type="text" name="email" id="email" value="{{ email }}" maxlength="30" size="30" autocomplete="off" />
+            <input type="text" name="email" id="email" value="{{ email }}" maxlength="30" size="30" autocomplete="on" />
         </div>
     </fieldset>
 
