@@ -3,20 +3,23 @@
 
 {% block content %}
 
-<p><b>{{ ticketUid }}</b></p>
-<p>{{ current_podrazd }}</p>
-<p>{{ prof }}</p>
-<p>{{ docName }}</p>
-<p><b>{{ date }} {{ start_time }} - {{ finish_time }}</b></p>
-
-
+<fieldset>
+<p>Номер талончика: <b>{{ ticketStatus.ticketUid }}</b></p>
+<p>Лечебное учреждение: {{ current_lpu_title }}</p>
+<p>Специализация: {{ prof }}</p>
+<p>Врач: {{ ticketStatus.doctor.lastName }} {{ ticketStatus.doctor.firstName }} {{ ticketStatus.doctor.patronymic }}</p>
+<p>Дата и время приёма: <b>{{ date }} {{ start_time }} - {{ finish_time }}</b></p>
+<p>Пациент: </p>
+</fieldset>
+<br />
+<div class="no_print">
 <form id="form" action="" method="post" name="frm">
 <fieldset>
-    <input type="checkbox" name="option1" value="mail"> - E-mail<br>
-    <input type="checkbox" name="option2" value="print" checked> - Печать<br>
+    <input type="checkbox" name="option1" value="mail"> - E-mail<br />
+    <input type="checkbox" name="option2" value="print" checked> - <a href="" onClick="window.print();">Печать</a>
+    <br />
 </fieldset>
     <input type="submit" id="button-ready" value="Готово" />
-
 </form>
-
+</div>
 {% endblock %}
