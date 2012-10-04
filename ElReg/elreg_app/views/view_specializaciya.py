@@ -1,7 +1,6 @@
 #coding: utf-8
 
 from django.shortcuts import render_to_response
-from django.http import Http404
 from ElReg.settings import redis_db, client
 
 def index(request, template_name, spec=0):
