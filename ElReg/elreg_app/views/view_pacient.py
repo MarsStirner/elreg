@@ -14,6 +14,8 @@ def index(request, template_name):
     errors = []
     if request.method == 'POST':
         ticket = request.POST['ticket']
+
+        # !!! есть ошибка: если ticket_err возвращает str, то переменная ticket содержит бред
         tmp_lst = ticket.split('-')
         b = tmp_lst[0].split(':')
         date = datetime.date(int(b[2]), int(b[1]), int(b[0])) # Дата выбранного приема
@@ -61,32 +63,39 @@ def index(request, template_name):
             if not email:
                 errors.append(u"Введите e-mail")
 
+            ticket_err = ''
+            prof = redis_db.hget(id, 'prof')
+            # если ошибок в форме нет
             if not errors:
                 hospital_Uid = redis_db.hget(id, 'hospital_Uid')
                 vremya = redis_db.hget(id, 'vremya')
+                omiPolicyNumber = "%s %s"%(policy1,policy2)
 
                 ticket = client("schedule").service.enqueue(
                     person = {
                         'lastName': unicode(lastName),
                         'firstName': unicode(firstName),
                         'patronymic': unicode(patronymic) },
+                    omiPolicyNumber = unicode(omiPolicyNumber),
                     hospitalUid = hospital_Uid,
+#                    speciality = unicode(prof),
                     doctorUid = vremya,
                     timeslotStart = str(date) + 'T' + str(start_time),
                     hospitalUidFrom = unicode("0"),
-                    birthday = unicode("%s-%s-%s"%(yy,mm,dd)),
+                    birthday = unicode("%s-%s-%sT0"%(yy,mm,dd)),
                 )
-#                print ticket, "<<<<--ticket"
-                # !!!! Дописать обработку ошибок, если ticket['result'] == fault
-                redis_db.hset(id, 'ticketUid', ticket['ticketUid'])
 
-                redis_db.hset(id, 'date', date)
-                redis_db.hset(id, 'start_time', start_time)
-                redis_db.hset(id, 'finish_time', finish_time)
-                return HttpResponseRedirect('/zapis')
+                if not ticket['result']: # запись прошла усешно
+                    redis_db.hset(id, 'ticketUid', ticket['ticketUid'])
+                    redis_db.hset(id, 'date', date)
+                    redis_db.hset(id, 'start_time', start_time)
+                    redis_db.hset(id, 'finish_time', finish_time)
+                    return HttpResponseRedirect('/zapis')
+                else: # ошибка записи
+                    ticket_err = ticket['result']
+
 
             current_podrazd = redis_db.hget(id, 'current_podrazd')
-            prof = redis_db.hget(id, 'prof')
             docName = redis_db.hget(id, 'docName')
 
             redis_db.hset(id, 'step', 7)
@@ -107,6 +116,7 @@ def index(request, template_name):
                                                       'policy1': policy1,
                                                       'policy2': policy2,
                                                       'email': email,
+                                                      'ticket_err': ticket_err,
                                                       'step': int(redis_db.hget(id, 'step'))})
 
         current_podrazd = redis_db.hget(id, 'current_podrazd')
