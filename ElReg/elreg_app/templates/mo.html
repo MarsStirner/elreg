@@ -2,15 +2,20 @@
 
 
 {% block content %}
-<p>
-    <ul>
-        {% for region in region_list %}
-        <li>
+<table>
+    {% for region in region_list %}
+    <tr>
+        <td>
             <a href ="{% url lpu %}{{ region.code }}/">
                 {{ region.region }}
             </a>
-        </li>
-        {% endfor %}
-    </ul>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+<p>
+    <a href="{% url lpu %}search/">
+        Поиск ЛПУ
+    </a>
 </p>
 {% endblock %}
