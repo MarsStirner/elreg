@@ -42,6 +42,8 @@ SITE_ID = 1
 
 APPEND_SLASH = True
 
+ROOT_URL = '/'
+
 # If you set this to False, Django will make some optimizations so as not
 # to load the internationalization machinery.
 USE_I18N = True
@@ -60,17 +62,19 @@ MEDIA_ROOT = ''
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash.
 # Examples: "http://media.lawrence.com/media/", "http://example.com/media/"
-MEDIA_URL = ''
+MEDIA_URL = ROOT_URL + 'media/'
 
 # Absolute path to the directory static files should be collected to.
 # Don't put anything in this directory yourself; store your static files
 # in apps' "static/" subdirectories and in STATICFILES_DIRS.
 # Example: "/home/media/media.lawrence.com/static/"
-STATIC_ROOT = ''
+STATIC_ROOT = 'E:/elreg/ElReg/elreg_app/static'
 
 # URL prefix for static files.
 # Example: "http://media.lawrence.com/static/"
 STATIC_URL = '/static/'
+
+ADMIN_MEDIA_PREFIX = MEDIA_URL + 'admin/'
 
 # Additional locations of static files
 STATICFILES_DIRS = (
@@ -184,3 +188,18 @@ def client(wsdl):
     """
     IS = "http://10.1.2.107/int-server/index.php?wsdl="
     return Client(IS + wsdl)
+
+
+AUTH_USER_EMAIL_UNIQUE = True
+
+EMAIL_HOST = 'localhost'
+
+EMAIL_PORT = 1025
+
+EMAIL_HOST_USER = ''
+
+EMAIL_HOST_PASSWORD = ''
+
+EMAIL_USE_TLS = False
+
+DEFAULT_FROM_EMAIL = 'test@elreg.ru'
