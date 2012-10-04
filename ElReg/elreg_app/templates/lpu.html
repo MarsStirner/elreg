@@ -2,9 +2,11 @@
 
 
 {% block content %}
+{% if hospitals_list %}
 <p>
     {{ current_region }}
 </p>
+
 <p>
     <ul>
         {% for hospital in hospitals_list %}
@@ -16,6 +18,19 @@
         {% endfor %}
     </ul>
 </p>
+{% else %}
+<form id="form" action="" method="post" name="frm">
+    <fieldset>
+        <div class="field">
+            <input type="text" name="lpu" id="lastName" value="Название" maxlength="50" size="30" autocomplete="on" />
+
+            <input type="text" name="city" id="firstName" value="Город" maxlength="50" size="30" autocomplete="on" />
+
+            <input type="text" name="region" id="patronymic" value="Район" maxlength="50" size="30" autocomplete="on" />
+        </div>
+    </fieldset>
+</form>
+{% endif %}
 <p>
     <a href="{% url mo %}">
         Назад
