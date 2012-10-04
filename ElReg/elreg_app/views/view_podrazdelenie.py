@@ -30,7 +30,8 @@ def index(request, template_name, podrazd=0):
                 new_list.append(v.uid.split('/')[1])
     podrazd_list = zip(podrazdelenie_list, new_list)
     redis_db.hset(id, 'podrazd', podrazd)
-    redis_db.hset(id, 'current_lpu', current_lpu)
+    redis_db.hset(id, 'current_lpu_title', current_lpu[1])
+    redis_db.hset(id, 'current_lpu_email', current_lpu[4])
     redis_db.hset(id, 'step', 3)
     return render_to_response(template_name, {'current_lpu': current_lpu,
                                               'podrazd_list': podrazd_list,
