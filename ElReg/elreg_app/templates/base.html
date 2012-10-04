@@ -1,5 +1,27 @@
-<html xmlns="http://www.w3.org/1999/html">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//RU" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html lang="en-RU" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>
+        {% block title %}
+            Электронная регистратура
+        {% endblock %}
+    </title>
 
+    <meta content="ru-ru" http-equiv="Content-Language" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+    <link href="../static/css/web.css" rel="stylesheet" type="text/css" />
+
+    <style type="text/css" media="print">
+        div.no_print {display: none; }
+    </style>
+
+</head>
+
+<body>
+
+
+<div class="no_print">
 <p>{% if step > 1 %}<a href="{% url mo %}">{% elif step == 1 %}<b>{% endif %}1.МО{% if step > 1 %}</a>{% elif step == 1 %}</b>{% endif %} -
     {% if step > 2 %}<a href="{% url lpu %}">{% elif step == 2 %}<b>{% endif %}2.ЛПУ{% if step > 2 %}</a>{% elif step == 2 %}</b>{% endif %} -
     {% if step > 3 %}<a href="{% url podrazdelenie %}">{% elif step == 3 %}<b>{% endif %}3.Подразделение{% if step > 3 %}</a>{% elif step == 3 %}</b>{% endif %} -
@@ -8,9 +30,11 @@
     {% if step > 6 %}<a href="{% url vremya %}">{% elif step == 6 %}<b>{% endif %}6.Время{% if step > 6 %}</a>{% elif step == 6 %}</b>{% endif %} -
     {% if step > 7 %}<a href="">{% elif step == 7 %}<b>{% endif %}7.Пациент{% if step > 7 %}</a>{% elif step == 7 %}</b>{% endif %} -
     {% if step > 8 %}<a href="">{% elif step == 8 %}<b>{% endif %}8.Запись{% if step > 8 %}</a>{% elif step == 8 %}</b>{% endif %}</p>
-
+</div>
 
 {% block content %}
 {% endblock %}
 
+
+</body>
 </html>
