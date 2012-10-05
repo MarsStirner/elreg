@@ -1,5 +1,6 @@
 #coding: utf-8
 
+from django.core.mail import send_mail
 from django.http import HttpResponseRedirect
 from django.shortcuts import render_to_response
 from ElReg.settings import redis_db, client
@@ -14,8 +15,6 @@ def index(request, template_name):
     errors = []
     if request.method == 'POST':
         ticket = request.POST['ticket']
-
-        # !!! есть ошибка: если ticket_err возвращает str, то переменная ticket содержит бред
         tmp_lst = ticket.split('-')
         b = tmp_lst[0].split(':')
         date = datetime.date(int(b[2]), int(b[1]), int(b[0])) # Дата выбранного приема
@@ -23,30 +22,27 @@ def index(request, template_name):
         start_time = datetime.time(int(b[0]), int(b[1]), int(b[2])) # Время начала выбранного приема
         b = tmp_lst[2].split(':')
         finish_time = datetime.time(int(b[0]), int(b[1]), int(b[2])) # Время окончания выбранного приема
-        start_date = datetime.datetime.combine(date, start_time) # Дата и время начала выбранного приема
-        finish_date = datetime.datetime.combine(date, finish_time) # Дата и время окончания выбранного приема
+#        start_date = datetime.datetime.combine(date, start_time) # Дата и время начала выбранного приема
+#        finish_date = datetime.datetime.combine(date, finish_time) # Дата и время окончания выбранного приема
         if request.POST.get('flag', ''):
             # Проверка на заполненность формы пользователем и ее корректность
             lastName = request.POST.get('lastName', '')
             if not lastName:
                 errors.append(u"Введите фамилию")
-            else:
-                if not stringcorrect(lastName):
-                    errors.append(u'Введите корректно фамилию')
+            elif not stringValidation(lastName):
+                errors.append(u'Введите корректно фамилию')
 
             firstName = request.POST.get('firstName', '')
             if not firstName:
                 errors.append(u"Введите имя")
-            else:
-                if not stringcorrect(firstName):
-                    errors.append(u'Введите корректно имя')
+            elif not stringValidation(firstName):
+                errors.append(u'Введите корректно имя')
 
             patronymic = request.POST.get('patronymic', '')
             if not patronymic:
                 errors.append(u"Введите отчество")
-            else:
-                if not stringcorrect(patronymic):
-                    errors.append(u'Введите корректно отчество')
+            elif not stringValidation(patronymic):
+                errors.append(u'Введите корректно отчество')
 
             dd = request.POST.get('dd', '')
             mm = request.POST.get('mm', '')
@@ -60,18 +56,19 @@ def index(request, template_name):
                 errors.append(u"Введите серию и номер полиса")
 
             email = request.POST.get('email', '')
-            if not email:
-                errors.append(u"Введите e-mail")
+            if email and not emailValidation(email):
+                errors.append(u'Введите корректно адрес электронной почты')
 
-            ticket_err = ''
+            ticketPatient_err = ''
             prof = redis_db.hget(id, 'prof')
             # если ошибок в форме нет
             if not errors:
                 hospital_Uid = redis_db.hget(id, 'hospital_Uid')
                 vremya = redis_db.hget(id, 'vremya')
                 omiPolicyNumber = "%s %s"%(policy1,policy2)
+                pacientName = "%s %s %s"%(lastName,firstName,patronymic)
 
-                ticket = client("schedule").service.enqueue(
+                ticketPatient = client("schedule").service.enqueue(
                     person = {
                         'lastName': unicode(lastName),
                         'firstName': unicode(firstName),
@@ -82,17 +79,26 @@ def index(request, template_name):
                     doctorUid = vremya,
                     timeslotStart = str(date) + 'T' + str(start_time),
                     hospitalUidFrom = unicode("0"),
-                    birthday = unicode("%s-%s-%sT0"%(yy,mm,dd)),
+                    birthday = unicode("%s-%s-%s"%(yy,mm,dd)),
                 )
 
-                if not ticket['result']: # запись прошла усешно
-                    redis_db.hset(id, 'ticketUid', ticket['ticketUid'])
+                if not ticketPatient['result']: # запись прошла усешно
+                    redis_db.hset(id, 'ticketUid', ticketPatient['ticketUid'])
                     redis_db.hset(id, 'date', date)
                     redis_db.hset(id, 'start_time', start_time)
                     redis_db.hset(id, 'finish_time', finish_time)
+                    redis_db.hset(id, 'finish_time', finish_time)
+                    redis_db.hset(id, 'omiPolicyNumber', omiPolicyNumber)
+                    redis_db.hset(id, 'pacientName', pacientName)
+                    redis_db.hset(id, 'birthday', "%s.%s.%s"%(dd,mm,yy))
+                    # отправка письма:
+                    if email:
+                        emailLPU = redis_db.hget(id, 'current_lpu_email')
+                        send_mail('-->>>test Subject<<<--', '-->>>test Here is the MESSAGE!<<<--', emailLPU,
+                                [email], fail_silently=False)
                     return HttpResponseRedirect('/zapis')
                 else: # ошибка записи
-                    ticket_err = ticket['result']
+                    ticketPatient_err = ticketPatient['result']
 
 
             current_podrazd = redis_db.hget(id, 'current_podrazd')
@@ -116,7 +122,7 @@ def index(request, template_name):
                                                       'policy1': policy1,
                                                       'policy2': policy2,
                                                       'email': email,
-                                                      'ticket_err': ticket_err,
+                                                      'ticketPatient_err': ticketPatient_err,
                                                       'step': int(redis_db.hget(id, 'step'))})
 
         current_podrazd = redis_db.hget(id, 'current_podrazd')
