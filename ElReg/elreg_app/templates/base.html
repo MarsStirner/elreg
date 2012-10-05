@@ -1,40 +1,93 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//RU" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html lang="en-RU" xmlns="http://www.w3.org/1999/xhtml">
-<head>
-    <title>
-        {% block title %}
-            Электронная регистратура
-        {% endblock %}
-    </title>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-gb" lang="en-gb" dir="ltr" >
+	<head>
 
-    <meta content="ru-ru" http-equiv="Content-Language" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <meta content="ru-ru" http-equiv="Content-Language" />
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 
-    <link href="../static/css/web.css" rel="stylesheet" type="text/css" />
+        <title>
+            {% block title %}
+                Электронная регистратура
+            {% endblock %}
+        </title>
 
-    <style type="text/css" media="print">
-        div.no_print {display: none; }
-    </style>
+		<script src="{{ STATIC_URL }}/static/js/jquery-1.8.2.min.js" type="text/javascript"></script>
 
-</head>
+        <style type="text/css" media="print">
+            div.no_print {display: none; }
+        </style>
 
-<body>
+		<link rel="stylesheet" href="{{ STATIC_URL }}/static/css/template.css" type="text/css" />
+	</head>
+	
+	<body id="body">
+    <div class="main"> 
+		<!--header-->
+        <div class="no_print">
+		<div class="header">
+            <form action="" method="post">
+				<div class="search">
+					<div class="search-input">
+						<input name="searchword" id="mod_search_searchword" maxlength="20" alt="Search" class="inputbox" type="text" size="20" />
+					</div>
+					<div class="search-button">
+						<input type="image" value="Search" class="button" src="{{ STATIC_URL }}/static/images/searchButton.gif" onclick="this.form.searchword.focus();"/>
+					</div>
+				</div>
+			</form>
+			<ul class="menu-nav">
+				<li id="current" class="top active item53">
+                    <a href="{% url mo %}"><strong>МО</strong></a>
+				</li>
+				<li class="top item54">
+                    <a href="{% url lpu %}"><strong>ЛПУ</strong></a>
+				</li>
+				<li class="top item55">
+					<a href="{% url podrazdelenie %}"><strong>Подразделение</strong></a>
+				</li>
+				<li class="top item56">
+					<a href="{% url specializaciya %}"><strong>Специализация</strong></a>
+				</li>
+				<li class="top item57">
+					<a href="{% url vrach %}"><strong>Врач</strong></a>
+				</li>
+				<li class="top item58">
+					<a href="{% url vremya %}"><strong>Время</strong></a>
+				</li>
+                <li class="top item59">
+                    <a href=""><strong>Пациент</strong></a>
+                </li>
+                <li class="top item60">
+                    <a href=""><strong>Запись</strong></a>
+                </li>
+			</ul>	    
+		</div>
+        </div>
+
+	
+		<!--slider-->
+		<div class="wrapper-content content-top">
+			<div class="clear">
+				<a href="#" class="link1"> </a>
+				<a href="#" class="link2"> </a>
+				<a href="#" class="link3"> </a>
+			</div>
+		</div>
+	</div>
 
 
-<div class="no_print">
-<p>{% if step > 1 %}<a href="{% url mo %}">{% elif step == 1 %}<b>{% endif %}1.МО{% if step > 1 %}</a>{% elif step == 1 %}</b>{% endif %} -
-    {% if step > 2 %}<a href="{% url lpu %}">{% elif step == 2 %}<b>{% endif %}2.ЛПУ{% if step > 2 %}</a>{% elif step == 2 %}</b>{% endif %} -
-    {% if step > 3 %}<a href="{% url podrazdelenie %}">{% elif step == 3 %}<b>{% endif %}3.Подразделение{% if step > 3 %}</a>{% elif step == 3 %}</b>{% endif %} -
-    {% if step > 4 %}<a href="{% url specializaciya %}">{% elif step == 4 %}<b>{% endif %}4.Специализация{% if step > 4 %}</a>{% elif step == 4 %}</b>{% endif %} -
-    {% if step > 5 %}<a href="{% url vrach %}">{% elif step == 5 %}<b>{% endif %}5.Врач{% if step > 5 %}</a>{% elif step == 5 %}</b>{% endif %} -
-    {% if step > 6 %}<a href="{% url vremya %}">{% elif step == 6 %}<b>{% endif %}6.Время{% if step > 6 %}</a>{% elif step == 6 %}</b>{% endif %} -
-    {% if step > 7 %}<a href="">{% elif step == 7 %}<b>{% endif %}7.Пациент{% if step > 7 %}</a>{% elif step == 7 %}</b>{% endif %} -
-    {% if step > 8 %}<a href="">{% elif step == 8 %}<b>{% endif %}8.Запись{% if step > 8 %}</a>{% elif step == 8 %}</b>{% endif %}</p>
-</div>
+        <p>{% if step > 1 %}<a href="{% url mo %}">{% elif step == 1 %}<b>{% endif %}1.МО{% if step > 1 %}</a>{% elif step == 1 %}</b>{% endif %} -
+            {% if step > 2 %}<a href="{% url lpu %}">{% elif step == 2 %}<b>{% endif %}2.ЛПУ{% if step > 2 %}</a>{% elif step == 2 %}</b>{% endif %} -
+            {% if step > 3 %}<a href="{% url podrazdelenie %}">{% elif step == 3 %}<b>{% endif %}3.Подразделение{% if step > 3 %}</a>{% elif step == 3 %}</b>{% endif %} -
+            {% if step > 4 %}<a href="{% url specializaciya %}">{% elif step == 4 %}<b>{% endif %}4.Специализация{% if step > 4 %}</a>{% elif step == 4 %}</b>{% endif %} -
+            {% if step > 5 %}<a href="{% url vrach %}">{% elif step == 5 %}<b>{% endif %}5.Врач{% if step > 5 %}</a>{% elif step == 5 %}</b>{% endif %} -
+            {% if step > 6 %}<a href="{% url vremya %}">{% elif step == 6 %}<b>{% endif %}6.Время{% if step > 6 %}</a>{% elif step == 6 %}</b>{% endif %} -
+            {% if step > 7 %}<a href="">{% elif step == 7 %}<b>{% endif %}7.Пациент{% if step > 7 %}</a>{% elif step == 7 %}</b>{% endif %} -
+            {% if step > 8 %}<a href="">{% elif step == 8 %}<b>{% endif %}8.Запись{% if step > 8 %}</a>{% elif step == 8 %}</b>{% endif %}</p>
 
-{% block content %}
-{% endblock %}
+    {% block content %}
+    {% endblock %}
 
 
-</body>
+	</body>
 </html>
