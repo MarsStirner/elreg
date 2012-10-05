@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
+from django.core.validators import validate_email
+from django.core.exceptions import ValidationError
 
-def floatcorrect(s):
+def floatValidation(s):
   where = s.find(',')
   if where != -1:
     s = s[:where] + '.' + s[(where+1):]
@@ -15,7 +17,7 @@ def floatcorrect(s):
     return 0
 
 
-def integercorrect(s):
+def integerValidation(s):
   try:
     if s.startswith('-'):
       raise SyntaxError
@@ -25,7 +27,7 @@ def integercorrect(s):
     return 0
   
 
-def stringcorrect(s):
+def stringValidation(s):
   w = []
   s = r'%s' % s
   w.append(s.find('<'))
@@ -45,3 +47,10 @@ def stringcorrect(s):
     return s
   except (ValueError, SyntaxError, TypeError):
     return 0
+
+def emailValidation(value):
+    try:
+        validate_email(value)
+        return True
+    except ValidationError:
+        return False
