@@ -12,7 +12,7 @@
 {% if ticketTable %}
 
 <form action="{% url pacient %}" method="post">
-<table border="1">
+<table id="trtr" border="1">
 
     <tr>
         {% for date in dates %}
@@ -25,13 +25,13 @@
     {% for row in ticketTable %}
     <tr>
         {% for cell in row %}
-        <td align="center">
+        <td align="center" class="{{ cell.status }}">
             {% if cell.status == 'free' %}
                 <button type=submit name=ticket value="{{ cell.start.date|date:"d:m:Y" }}-{{ cell.start.time }}-{{ cell.finish.time }}">
                     {{ cell.start.time|time:"H:i" }}
                 </button>
             {% elif cell.status == 'locked'%}
-                Забронировано
+                    {{ cell.start.time|time:"H:i" }}
             {% endif %}
         </td>
         {% endfor %}
@@ -47,7 +47,6 @@
     </tr>
 
 </table>
-    <input type=hidden name=doc_name value="123456789">
 </form>
 {% else %}
 <p>Расписания на текущую неделю нет.</p>
