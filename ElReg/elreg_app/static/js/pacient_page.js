@@ -28,11 +28,15 @@ $(document).ready(function () {
     var $lastName = $('#lastName');
     var $firstName = $('#firstName');
     var $patromymic = $('#patronymic');
+    var $dd = $('#dd');
+    var $mm = $('#mm');
+    var $yy = $('#yy');
+    var $policy2 = $('#policy2');
     var $email = $('#email');
 
       if (!$lastName.val()) {
           $('#note1').hide();
-          $('<ol id="note1">Введите фамилию</ol>').fadeIn('slow').insertAfter($lastName);
+          $('<span id="note1"><strong> Введите фамилию</strong></span>').fadeIn('slow').insertAfter($lastName);
           $lastName.focus();
           return false;
       }
@@ -42,7 +46,7 @@ $(document).ready(function () {
 
       if (!$firstName.val()) {
           $('#note2').hide();
-          $('<ol id="note2">Введите имя</ol>').fadeIn('slow').insertAfter($firstName);
+          $('<span id="note2"><strong> Введите имя</strong></span>').fadeIn('slow').insertAfter($firstName);
           $firstName.focus();
           return false;
       }
@@ -52,7 +56,7 @@ $(document).ready(function () {
 
       if (!$patromymic.val()) {
           $('#note3').hide();
-          $('<ol id="note3">Введите отчество</ol>').fadeIn('slow').insertAfter($patromymic);
+          $('<span id="note3"><strong> Введите отчество</strong></span>').fadeIn('slow').insertAfter($patromymic);
           $patromymic.focus();
           return false;
       }
@@ -60,6 +64,38 @@ $(document).ready(function () {
           $('#note3').hide();
       }
 
+      if (!$dd.val() || !$mm.val() || !$yy.val()) {
+          $('#note4').hide();
+          $('<span id="note4"><strong> Введите полностью дату рождения</strong></span>').fadeIn('slow').insertAfter($yy);
+          $patromymic.focus();
+          return false;
+      }
+      else {
+          $('#note4').hide();
+      }
+
+      if (!$policy2.val()) {
+          $('#note5').hide();
+          $('<span id="note5"><strong> Введите номер полиса</strong></span>').fadeIn('slow').insertAfter($policy2);
+          $policy2.focus();
+          return false;
+      }
+      else {
+          $('#note5').hide();
+      }
+
+      if ($email.val()) {
+          $('#note6').hide();
+          var regex = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
+          if(!regex.test($email.val())){
+          $('<span id="note6"><strong> Введите корректно email</strong></span>').fadeIn('slow').insertAfter($email);
+          $email.focus();
+              return false;
+          }
+      }
+      else {
+          $('#note6').hide();
+      }
     return true;
   })
 
