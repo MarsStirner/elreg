@@ -1,11 +1,14 @@
 #coding: utf-8
 
-from django.core.mail import send_mail
+from django.core.mail import EmailMultiAlternatives
 from django.http import HttpResponseRedirect
 from django.shortcuts import render_to_response
+from django.template.loader import get_template
+from django.template import Context
 from ElReg.settings import redis_db, client
 from elreg_app.functions import *
 import datetime
+
 
 def index(request, template_name):
     """
@@ -55,8 +58,8 @@ def index(request, template_name):
             if not policy2:
                 errors.append(u"Введите серию и номер полиса")
 
-            email = request.POST.get('email', '')
-            if email and not emailValidation(email):
+            userEmail = request.POST.get('email', '')
+            if userEmail and not emailValidation(userEmail):
                 errors.append(u'Введите корректно адрес электронной почты')
 
             ticketPatient_err = ''
@@ -92,11 +95,36 @@ def index(request, template_name):
                     redis_db.hset(id, 'pacientName', pacientName)
                     redis_db.hset(id, 'birthday', "%s.%s.%s"%(dd,mm,yy))
                     # отправка письма:
-                    if email:
+                    if userEmail:
                         emailLPU = redis_db.hget(id, 'current_lpu_email')
-                        send_mail('-->>>test Subject<<<--', '-->>>test Here is the MESSAGE!<<<--', emailLPU,
-                                [email], fail_silently=False)
-                    return HttpResponseRedirect('/zapis')
+
+                        plaintext = get_template('email.txt')
+                        htmly     = get_template('email.html')
+
+                        d = Context({ 'pacientName': redis_db.hget(id, 'pacientName'),
+                                      'birthday': redis_db.hget(id, 'birthday'),
+                                      'omiPolicyNumber': redis_db.hget(id, 'omiPolicyNumber'),
+                                      'current_podrazd': redis_db.hget(id, 'current_podrazd'),
+                                      'docName': redis_db.hget(id, 'docName'),
+                                      'prof': redis_db.hget(id, 'prof'),
+                                      'date': date,
+                                      'start_time': start_time,
+                                      'finish_time': finish_time })
+
+                        subject, from_email, to = u'Уведомление о записи на приём', emailLPU, userEmail
+                        text_content = plaintext.render(d)
+                        html_content = htmly.render(d)
+                        msg = EmailMultiAlternatives(subject, text_content, from_email, [to])
+                        msg.attach_alternative(html_content, "text/html")
+                        msg.send()
+
+                        return HttpResponseRedirect('/zapis')
+
+
+
+
+
+
                 else: # ошибка записи
                     ticketPatient_err = ticketPatient['result']
 
@@ -121,7 +149,7 @@ def index(request, template_name):
                                                       'yy': yy,
                                                       'policy1': policy1,
                                                       'policy2': policy2,
-                                                      'email': email,
+                                                      'userEmail': userEmail,
                                                       'ticketPatient_err': ticketPatient_err,
                                                       'step': int(redis_db.hget(id, 'step'))})
 
