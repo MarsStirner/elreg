@@ -1,11 +1,12 @@
 from django.conf.urls import patterns, include, url
 from django.contrib import admin
-from elreg_app.views import view_mo, view_lpu, view_podrazdelenie, view_specializaciya, view_vrach, view_vremya, view_pacient, view_zapis
+from elreg_app.views import view_mo, view_lpu, view_podrazdelenie, view_specializaciya, view_vrach, view_vremya, view_pacient, view_zapis, view_updates
 admin.autodiscover()
 
 urlpatterns = patterns('',
     url(r'^admin/', include(admin.site.urls)),
     url(r'^$', view_mo.index, {'template_name': 'mo.html'}, name="mo"),
+    url(r'^updates/$', view_updates.index),
     url(r'^lpu/$', view_lpu.index, {'template_name': 'lpu.html'}, name="lpu"),
     url(r'^lpu/(?P<okato>\d{11}|search)/$', view_lpu.index, {'template_name': 'lpu.html'}),
     url(r'^podrazdelenie/$', view_podrazdelenie.index, {'template_name': 'podrazdelenie.html'}, name="podrazdelenie"),
