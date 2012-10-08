@@ -5,13 +5,16 @@
 
 <script type="text/javascript" language="javascript"
         src="{{ STATIC_URL }}/static/js/pacient_page.js"></script>
+<div id="info">
+<p align="center"><strong>Информация о записи:</strong></p>
+<fieldset>
+<p>Лечебное учреждение: {{ current_podrazd }}</p>
+<p>Специализация: {{ prof }}</p>
+<p>Врач: {{ docName }}</p>
 
-<p>{{ current_podrazd }}</p>
-<p>{{ prof }}</p>
-<p>{{ docName }}</p>
-
-<p><b>{{ date }} {{ start_time }} - {{ finish_time }}</b></p>
-
+<p>Дата и время приёма: {{ date }} {{ start_time }} - {{ finish_time }}</p>
+</fieldset>
+</div>
 <p>
     <font color="red">
     {% if errors %}
@@ -27,6 +30,7 @@
     <font color="red"><p>{{ ticketPatient_err }}</p></font>
 {% endif %}
 
+<p align="center"><strong>Данные посетителя:</strong></p>
 <form id="pacient_form" action="" method="post" name="frm">
     <fieldset>
         <div class="field">
@@ -60,7 +64,7 @@
         <div class="field">
             <label for="policy1">Серия и номер полиса:</label>
             <input type="text" name="policy1" id="policy1" value="{{ policy1 }}" maxlength="10" size="2" autocomplete="on" />
-            <input type="text" name="policy2" id="policy2" value="{{ policy2 }}" maxlength="16" size="16" autocomplete="on" />
+            <input type="text" name="policy2" id="policy2" value="{{ policy2 }}" maxlength="16" size="20" autocomplete="on" />
         </div>
 
         <div class="field">
@@ -69,7 +73,7 @@
 
         <div class="field">
             <label for="email">E-mail:</label>
-            <input type="text" name="email" id="email" value="{{ email }}" maxlength="50" size="35" disabled="disabled" autocomplete="on" />
+            <input type="text" name="email" id="email" value="{{ userEmail }}" maxlength="50" size="35" disabled="disabled" autocomplete="on" />
         </div>
         * - поля, обязательные для заполнения
     </fieldset>
