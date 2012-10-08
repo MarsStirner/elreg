@@ -1,0 +1,14 @@
+<table align="center">
+    <tr><th colspan="3">УВЕДОМЛЕНИЕ О ЗАПИСИ НА ПРИЕМ</th></tr>
+    <tr><td>ФИО (Пациент):</td><td colspan="2">{{ pacientName }}</td></tr>
+    <tr><td>Дата рождения:</td><td colspan="2">{{ birthday }}</td></tr>
+    <tr><td>Полис ОМС:</td><td colspan="2">{{ omiPolicyNumber }}</td></tr>
+    <tr><th colspan="3">ВЫ ЗАПИСАНЫ НА ПРИЕМ:</th></tr>
+    <tr><td>Лечебное учреждение:</td><td colspan="2">{{ current_lpu_title }}</td></tr>
+    <tr><td>Врач:</td><td colspan="2">{{ ticketStatus.doctor.lastName }} {{ ticketStatus.doctor.firstName }} {{ ticketStatus.doctor.patronymic }} ({{ prof }})</td></tr>
+    <tr><td>Дата и время приёма:</td><td colspan="2">{{ date }} {{ start_time }} - {{ finish_time }}</td></tr>
+    <tr><th colspan="3">ВНИМАНИЕ:</th></tr>
+    <tr><td colspan="3">Заметка 1</td></tr>
+    <tr><td colspan="3">Заметка 2</td></tr>
+    <tr><td colspan="3">Заметка 3</td></tr>
+</table>
