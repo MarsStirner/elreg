@@ -1,0 +1,12 @@
+УВЕДОМЛЕНИЕ О ЗАПИСИ НА ПРИЕМ
+ФИО (Пациент): {{ pacientName }}
+Дата рождения: {{ birthday }}
+Полис ОМС: {{ omiPolicyNumber }}
+ВЫ ЗАПИСАНЫ НА ПРИЕМ:
+Лечебное учреждение: {{ current_lpu_title }}
+Врач: {{ ticketStatus.doctor.lastName }} {{ ticketStatus.doctor.firstName }} {{ ticketStatus.doctor.patronymic }} ({{ prof }})
+Дата и время приёма: {{ date }} {{ start_time }} - {{ finish_time }}
+ВНИМАНИЕ:
+Заметка 1
+Заметка 2
+Заметка 3
