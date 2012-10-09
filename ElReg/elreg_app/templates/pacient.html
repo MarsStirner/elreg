@@ -6,8 +6,8 @@
 <script type="text/javascript" language="javascript"
         src="{{ STATIC_URL }}/static/js/pacient_page.js"></script>
 <div id="info">
-<p align="center"><strong>Информация о записи:</strong></p>
 <fieldset>
+<legend><strong>Информация о записи:</strong></legend>
 <p>Лечебное учреждение: {{ current_podrazd }}</p>
 <p>Специализация: {{ prof }}</p>
 <p>Врач: {{ docName }}</p>
@@ -30,9 +30,9 @@
     <font color="red"><p>{{ ticketPatient_err }}</p></font>
 {% endif %}
 
-<p align="center"><strong>Данные посетителя:</strong></p>
 <form id="pacient_form" action="" method="post" name="frm">
     <fieldset>
+    <legend><strong>Данные посетителя:</strong></legend>
         <div class="field">
             <label for="lastName">Фамилия:</label>
             <input type="text" name="lastName" id="lastName" value="{{ lastName }}" maxlength="40" size="30" autocomplete="on" />
@@ -72,7 +72,7 @@
         </div>
 
         <div class="field">
-            <label for="email">E-mail:</label>
+            <label for="email">Адрес электронной почты:</label>
             <input type="text" name="email" id="email" value="{{ userEmail }}" maxlength="50" size="35" disabled="disabled" autocomplete="on" />
         </div>
         * - поля, обязательные для заполнения
