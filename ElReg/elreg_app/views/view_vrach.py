@@ -4,8 +4,8 @@ from django.shortcuts import render_to_response
 from ElReg.settings import redis_db, client
 
 def index(request, template_name):
-    """
-    Логика страницы Врач
+    """Логика страницы Врач
+    ДОБАВИТЬ описание
     """
     id = '%s' % request.session.session_key
     try:
@@ -13,7 +13,7 @@ def index(request, template_name):
     except:
         y = ''
     current_podrazd = redis_db.hget(id, 'current_podrazd')
-    prof = request.GET['prof'] if 'prof' in request.GET else redis_db.hget(id, 'prof').decode('utf-8') # в случае  else получаем str, что не допустимо
+    prof = request.GET['prof'] if 'prof' in request.GET else redis_db.hget(id, 'prof').decode('utf-8') # decode для случая если получаем str, что не допустимо
     doc = []
     hospital_Uid = "%s/%s"%(redis_db.hget(id, 'podrazd'), redis_db.hget(id, 'spec'))
     for i in y.doctors:
