@@ -194,13 +194,18 @@ def client(wsdl):
 AUTH_USER_EMAIL_UNIQUE = True
 
 EMAIL_HOST = 'localhost'
+#EMAIL_HOST = 'mail.rambler.ru'
 
 EMAIL_PORT = 1025
+#EMAIL_PORT = '587'
 
 EMAIL_HOST_USER = ''
+#EMAIL_HOST_USER = 'okulichev@rambler.ru'
 
 EMAIL_HOST_PASSWORD = ''
+#EMAIL_HOST_PASSWORD = 'vintorez'
 
 EMAIL_USE_TLS = False
 
 DEFAULT_FROM_EMAIL = 'test@elreg.ru'
+#DEFAULT_FROM_EMAIL = 'okulichev@rambler.ru'
