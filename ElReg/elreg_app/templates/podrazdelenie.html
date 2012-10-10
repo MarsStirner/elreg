@@ -8,22 +8,41 @@
 <p>Телефон: {{ current_lpu.phone }}</p>
 <p>E-Mail: {{ current_lpu.email }}</p>
 <p>
-    <ul>
-        {% for podrazdelenie in podrazd_list %}
-        <li>
-            <a id="{{ podrazdelenie.1 }}" class="spec" href="{% url specializaciya %}{{ podrazdelenie.1 }}">
-                {{ podrazdelenie.0 }} ({{ podrazdelenie.0.address }})
-            </a>
-        </li>
-        {% endfor %}
-    </ul>
+<table>
+    <tr>
+        <td>
+            <table class="firstTable">
+                {% for podrazdelenie in podrazd_list %}
+                <tr>
+                    <td>
+                        {# <a id="{{ podrazdelenie.1 }}" class="spec" href="{% url specializaciya %}{{ podrazdelenie.1 }}"> #}
+                        <a id="{{ podrazdelenie.1 }}" class="spec">
+                            {{ podrazdelenie.0 }} ({{ podrazdelenie.0.address }})
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <table class="secondTable">
+
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <table class="thirdTable">
+
+            </table>
+        </td>
+    </tr>
+</table>
 </p>
 <div id="ttt">
     <p><a href="{% url lpu %}">Назад</a></p>
-</div>
-
-<div class="r">
-    <a id="rrr">R</a>
 </div>
 
 {% endblock %}
