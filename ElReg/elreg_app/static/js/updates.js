@@ -1,19 +1,26 @@
 $(document).ready(function () {
-    $('#rrr').click(function() {
-        $.getJSON("/updates/", function(data) {
-            $.each(data, function(entryIndex, entry) {
-                var html = '<div class="ht"';
-                html += '<h3>' + entry['pk'] + '</h3>';
-                if (entry['fields']) {
-                    $.each(entry['fields'], function(lineIndex, line) {
-//                        if (lineIndex == "1") {
-                            html += '<p><a>' + line + '</a></p>'
-//                        }
-                    });
-                }
-                html += '</div>';
-                $('#ttt').append(html);
-            })
+    $('a.spec').live("click", function() {
+        var $clickSpec = this.id;
+        $.getJSON("/updates/", {clickSpec: $clickSpec}, function(data) {
+            var $items = [];
+            $.each(data, function(key, val) {
+                $items.push('<a class="prof">' + val + '</a>');
+            });
+//            $('#ttt').append(data);
+            $('table.secondTable').hide();
+            $('<tr><td>' + $items.join('') + '</td></tr>').fadeIn('slow').appendTo('table.secondTable');
+        });
+    });
+
+    $('a.prof').live("click", function() {
+        var $clickProf = $(this).text();
+        $.getJSON("/updates/", {clickProf: $clickProf}, function(data) {
+            var $items = [];
+            $.each(data, function(key, val) {
+                $items.push('<a href="vremya/' + key + '"/">' + val + '</a>');
+            }); // проверить адрес ссылки!!!
+            $('table.thirdTable').hide();
+            $('<tr><td>' + $items.join('') + '</td></tr>').fadeIn('slow').appendTo('table.thirdTable');
         });
     });
 });
