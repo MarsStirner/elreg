@@ -2,7 +2,7 @@
 /*--------------------------------------body---*/
 body, td, th, div, p, label, input {
 	color:#45494a;
-	font:normal 12px/17px Arial, Helvetica, sans-serif;
+	font:normal 14px/17px Verdana, Arial, Helvetica, sans-serif;
 }
 input, select, #contact_text {
 	color:#777777;
@@ -456,7 +456,8 @@ dl.contentpane .button-field {
 /*-------------------------------------search---*/
 .search{position:absolute; width:245px;  padding:0 0 17px 9px; top:99px; right:10px; z-index:20}
 .search .search-input{ width:171px; float:left; background:url(../images/search_bg.png) 0 0px no-repeat; height:31px;}
-.search .search-button{ width:73px; float:right; }
+.search .search-button{ width:73px; float:right; background:url(../images/btn_search_2.gif) 0 0 no-repeat; }
+.search .search-button:hover{ background:url(../images/btn_search_1.gif) 0 0 no-repeat; }
 .search .inputbox	{
 	border:none;
 color:#434d53;
@@ -537,14 +538,21 @@ zoom:0;
 position:absolute;
 z-index:1;
 top:91px;
-left:0px;
-background:url(../images/menu_bg.gif) no-repeat 0% 0%;
+left:0;
+background:url(../images/menu_bg.gif) no-repeat 0 0;
+-moz-border-radius: 20px; /* закругление для старых Mozilla Firefox */
+-webkit-border-radius: 20px; /* закругление для старых Chrome и Safari */
+-khtml-border-radius:20px; /* закругл. для браузера Konquerer системы Linux */
+border-radius: 20px; /* закругление углов для всех, кто понимает */
+-moz-box-shadow: 0 7px 10px rgba(0, 0, 0, 0.2);
+-webkit-box-shadow: 0 7px 10px rgba(0, 0, 0, 0.2);
+box-shadow: 0 7px 10px rgba(0, 0, 0, 0.2);
 width:100%;
 height:43px
 }
 
 ul.menu-nav li	{
-	display:block; 
+	display:inline;
 	padding:0 0 0 0;
 	float:left;
 	margin:0 -197px 0 0;
@@ -554,41 +562,172 @@ ul.menu-nav li	{
 }
 ul.menu-nav li a  {
 	border:none;
-	text-decoration:none !important;
-	float:left;
-	margin:0 0 0 0;
-	padding:0 0 0 0;
-	display:block;
-	background:url(../images/menu_spacer.gif) no-repeat 100% 0;
-	width:102px;
-	text-align:center
-}
-ul.menu-nav li a:hover, ul.menu-nav li.active a {
-	color:#fff;
-}
-ul.menu-nav li a strong	{
-	display:block; 
-	color:#45494a;
-	font-size:10px;
 	text-decoration:none;
 	float:left;
-	padding:12px 0 11px 0px;
-	position:relative;
-	font-weight:bold;
-	width:102px;
+	margin:0 0 0 0;
+	padding:12px 27px 12px 27px;
+	display:inline;
+    font-size:14px;
+    font-weight:bold;
+	background:url(../images/menu_spacer.gif) no-repeat 100% 0;
+	/*width:102px;*/
 	text-align:center;
-	height:30px;
-	text-transform:uppercase;
+    text-transform:uppercase;
 }
-ul.menu-nav li a:hover strong,  ul.menu-nav li.active a  strong {
-	color: #64d7ec;
+ul.menu-nav li a.current  {
+    color: #64d7ec;
+    text-shadow: -2px 0 white, 0 2px white, 2px 0 white, 0 -2px white;
 }
+ul.menu-nav li a:hover {
+	color:#64d7ec;
+    font-weight:bold;
+}
+ul.menu-nav li.active a {
+    color:#fff;
+    font-weight:bold;
+}
+
+/*#btn_search {*/
+    /*background-image:url(../images/btn_search_black.gif);*/
+/*}*/
+
+/*#btn_search:hover {*/
+    /*background-image:url(../images/btn_search_blue.gif);*/
+/*}*/
+
+
+
+
+
 /* ul.menu-nav li a:hover span, ul.menu-nav li a:hover span, ul.menu-nav li.active a,  ul.menu-nav li.active a span, #current li a span{ color:#eb3f5b; text-decoration:none; font-weight:normal;}
 
 -------------------hover-active----*/
 
 
- 
+.tabb table {
+    background: rgb(255, 255, 255);
+    border: 1px solid #bcbcbc;
+    padding: 5px;
+    width: 100%; /* Ширина таблицы */
+    -moz-border-radius: 20px;
+    -webkit-border-radius: 20px;
+    -moz-box-shadow: 0 5px 7px rgba(0, 0, 0, 0.2);
+    -webkit-box-shadow: 0 5px 7px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 5px 7px rgba(0, 0, 0, 0.2);
+}
+.tabb table:hover {
+    background: rgba(255, 255, 255, 1);
+}
+.tabb table td {
+    /*background: #fc0; *//* Цвет фона */
+    /*border: 1px solid #333; *//* Граница вокруг ячеек */
+    height: 40px;
+    text-align: center;
+    vertical-align: middle;
+    /*empty-cells: hide;  *//*Прячем пустые ячейки*/
+    /*opacity: 0.4; *//* Полупрозрачность таблицы */
+    /*filter: alpha(Opacity=40); *//* Для IE */
+}
+.tabb table td a {
+    padding: 10px;
+    font-size:13px;
+    text-decoration:none;
+}
+
+.tabb table td.locked  {
+    background: rgba(255, 18, 8, 0.27);
+}
+
+.tabb table td.free {
+    background: rgba(19, 255, 6, 0.27);
+}
+.tabb table td.free  button {
+    background: rgba(255, 255, 255, 0);
+    display: block;
+    height: 100%;
+    width: 100%;
+    -moz-border-radius: 10px;
+    -webkit-border-radius: 10px;
+}
+.tabb table td:hover {
+    color: #000;
+    font-weight:bold;
+    background: rgba(56, 150, 236, 0.26);
+    opacity: 1; /* Полупрозрачность таблицы */
+    filter: alpha(Opacity=100); /* Для IE */
+    -moz-border-radius: 10px;
+    -webkit-border-radius: 10px;
+}
+
+#info fieldset {
+    -moz-border-radius: 10px;
+    -webkit-border-radius: 10px;
+}
+
+#pacient_form fieldset {
+    -moz-border-radius: 10px;
+    -webkit-border-radius: 10px;
+}
+
+#pacient_form fieldset div.field label {
+    float: left;
+    width: 200px;
+    margin-right: 10px;
+    text-align: right;
+    clear: left;
+}
+
+#pacient_form fieldset div.field input {
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+}
+
+
+table.commonTable {
+    background: rgb(255, 255, 255);
+    border: 1px solid #bcbcbc;
+    padding: 5px;
+    width: 100%; /* Ширина таблицы */
+    -moz-border-radius: 20px;
+    -webkit-border-radius: 20px;
+}
+
+table.commonTable tr td {
+    vertical-align: top;
+}
+
+table.commonTable tr td:hover {
+    background: rgb(255, 255, 255);
+    -moz-border-radius: 20px;
+    -webkit-border-radius: 20px;
+}
+
+table.firstTable, table.secondTable, table.thirdTable {
+    background: rgb(255, 255, 255);
+    border: 1px solid #bcbcbc;
+    padding: 5px;
+    width: 315px; /* Ширина таблицы */
+    /*height: inherit;*/
+    -moz-border-radius: 20px;
+    -webkit-border-radius: 20px;
+}
+
+table.firstTable tr td, table.secondTable tr td, table.thirdTable tr td {
+    vertical-align: middle;
+}
+
+table.firstTable tr td:hover, table.secondTable tr td:hover, table.thirdTable tr td:hover {
+    background: rgba(56, 150, 236, 0.26);
+    border: 1px solid #bcbcbc;
+    -moz-border-radius: 20px;
+    -webkit-border-radius: 20px;
+}
+
+
+
+
+
+
 
 
 
@@ -694,9 +833,12 @@ input.checkbox { /* checkbox */
 #inputs{ padding:3px 11px 6px 0;}
 .log{ width:100%; overflow:hidden; display:block;}			  
 /*---------------------------------------------------------structure---*/
-#body { background:#c6c6c6 url(../images/all_bg.gif) 50% 0 no-repeat;}
+/*#body { background:#c6c6c6 url(../images/all_bg.gif) 50% 0 no-repeat fixed;}*/
+#body { background:#c6c6c6 50% 0 no-repeat fixed; overflow: scroll;}
+#body { background-image: -webkit-linear-gradient(bottom, rgb(255,255,255) 50%, rgb(175, 175, 175) 100%); }
 .main 	{
 	width:973px;
+    height: 650px;
 	position:relative;
 	margin:0 auto;
 	padding:0 0 0 0;
