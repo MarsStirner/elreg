@@ -2,6 +2,41 @@
 
 
 {% block content %}
+<!--<script type="text/javascript" src="search.js"></script>-->
+<script src="jquery-ui-1.9.0.custom.min.js" type="text/javascript"></script>
+
+<!--<script>-->
+    <!--$(function() {-->
+        <!--function log( message ) {-->
+            <!--$( "<div/>" ).text( message ).prependTo( "#log" );-->
+            <!--$( "#log" ).scrollTop( 0 );-->
+        <!--}-->
+        <!--$( "#birds" ).autocomplete({-->
+            <!--source: "sug/suggest.php",-->
+            <!--minLength: 2,-->
+            <!--select: function( event, ui ) {-->
+                <!--log( ui.item ?-->
+                    <!--"Выбрано: " + ui.item.value + " aka " + ui.item.id :-->
+                    <!--"Нет ничего подходящего " + this.value );-->
+            <!--}-->
+        <!--});-->
+    <!--});-->
+<!--</script>-->
+
+
+
+<form id="form" action="" method="post" name="frm">
+    <fieldset>
+        <div class="field">
+            <input type="text" name="search" id="txtSearch" maxlength="50" size="30" onkeyup="searchOpen()" />
+
+            <input type="text" name="city" id="firstName" value="Город" maxlength="50" size="30" autocomplete="on" />
+
+            <input type="text" name="region" id="patronymic" value="Район" maxlength="50" size="30" autocomplete="on" />
+        </div>
+    </fieldset>
+</form>
+
 {% if hospitals_list %}
 <p>
     {{ current_region }}
@@ -18,22 +53,55 @@
         {% endfor %}
     </ul>
 </p>
-{% else %}
-<form id="form" action="" method="post" name="frm">
-    <fieldset>
-        <div class="field">
-            <input type="text" name="lpu" id="lastName" value="Название" maxlength="50" size="30" autocomplete="on" />
-
-            <input type="text" name="city" id="firstName" value="Город" maxlength="50" size="30" autocomplete="on" />
-
-            <input type="text" name="region" id="patronymic" value="Район" maxlength="50" size="30" autocomplete="on" />
-        </div>
-    </fieldset>
-</form>
 {% endif %}
+<br ><table class="new">
+</table>
+
 <p>
     <a href="{% url mo %}">
-        Назад
+        <img src="{{ STATIC_URL }}/static/images/btn_back_black.gif" alt="Назад">
     </a>
 </p>
+
+
+
+<script type="text/javascript">
+    function searchOpen() {
+        var search = $('#txtSearch').val();
+//        var data = {
+//            search: search
+//        };
+//        $.ajax({
+//            url: '/search/',
+//            data: data,
+//            dataType: 'jsonp',
+//            jsonp: 'callback',
+//            jsonpCallback: 'searchResult'
+//        });
+        $.getJSON("/search/", {search: search}, function(data) {
+            var $items = [];
+            $.each(data, function(key, val) {
+                $items.push('<tr><td><a id="' + key + '">' + val + '</a></td></tr>');
+            });
+            $('table.new tr').hide();
+            $($items.join('')).fadeIn('fast').appendTo('table.new');
+//            var $items = [];
+//            $('table.secondTable tr').hide();
+//            $('table.thirdTable tr').hide();
+//            $.each(data, function(key, val) {
+//                $items.push('<tr><td><a class="prof">' + val + '</a></td></tr>');
+//            });
+//            $('#ttt').append(data);
+//            $($items.join('')).fadeIn('slow').appendTo('table.secondTable');
+        });
+    }
+
+//    function searchResult(data) {
+//        alert(data);
+//        $( "#txtSearch" ).autocomplete ({
+//            source: data
+//        });
+//    }
+</script>
+
 {% endblock %}
