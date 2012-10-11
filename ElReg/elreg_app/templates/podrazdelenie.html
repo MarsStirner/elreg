@@ -4,18 +4,17 @@
 {% block content %}
 <script src="{{ STATIC_URL }}/static/js/updates.js" type="text/javascript"></script>
 
-<p><b>ЛПУ: {{ current_lpu.title }}</b></p>
+<p>ЛПУ: {{ current_lpu.title }}</p>
 <p>Телефон: {{ current_lpu.phone }}</p>
 <p>E-Mail: {{ current_lpu.email }}</p>
 <p>
-<table>
+<table class="commonTable">
     <tr>
         <td>
             <table class="firstTable">
                 {% for podrazdelenie in podrazd_list %}
                 <tr>
                     <td>
-                        {# <a id="{{ podrazdelenie.1 }}" class="spec" href="{% url specializaciya %}{{ podrazdelenie.1 }}"> #}
                         <a id="{{ podrazdelenie.1 }}" class="spec">
                             {{ podrazdelenie.0 }} ({{ podrazdelenie.0.address }})
                         </a>
@@ -24,15 +23,11 @@
                 {% endfor %}
             </table>
         </td>
-    </tr>
-    <tr>
         <td>
             <table class="secondTable">
 
             </table>
         </td>
-    </tr>
-    <tr>
         <td>
             <table class="thirdTable">
 
@@ -42,7 +37,11 @@
 </table>
 </p>
 <div id="ttt">
-    <p><a href="{% url lpu %}">Назад</a></p>
+    <p>
+        <a href="{% url lpu %}">
+            <img src="{{ STATIC_URL }}/static/images/btn_back_black.gif" alt="Назад">
+        </a>
+    </p>
 </div>
 
 {% endblock %}
