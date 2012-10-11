@@ -12,5 +12,9 @@
     {% endfor %}
 </ul>
 
-<p><a href="{% url specializaciya %}">Назад</a></p>
+<p>
+    <a href="{% url specializaciya %}">
+        <img src="{{ STATIC_URL }}/static/images/btn_back_black.gif" alt="Назад">
+    </a>
+</p>
 {% endblock %}

@@ -11,5 +11,9 @@
     {% endfor %}
 </ul>
 
-<p><a href="{% url podrazdelenie %}">Назад</a></p>
+<p>
+    <a href="{% url podrazdelenie %}">
+        <img src="{{ STATIC_URL }}/static/images/btn_back_black.gif" alt="Назад">
+    </a>
+</p>
 {% endblock %}
