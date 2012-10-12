@@ -1,31 +1,64 @@
 # -*- coding: utf-8 -*-
+
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
-
-def floatValidation(s):
-  where = s.find(',')
-  if where != -1:
-    s = s[:where] + '.' + s[(where+1):]
-  try:
-    if s.startswith('-'):
-      raise SyntaxError
-    s = float(s)
-    s = abs(s)
-    s = round(s, 2)
-    return s
-  except (ValueError, SyntaxError, TypeError):
-    return 0
+from ElReg.settings import IS
+from suds.client import Client
 
 
-def integerValidation(s):
-  try:
-    if s.startswith('-'):
-      raise SyntaxError
-    s = int(s)
-    return s
-  except (ValueError, SyntaxError, TypeError):
-    return 0
-  
+class ListWSDL():
+    wsdl = "list"
+    def listHospitals(self, okato=0):
+        try:
+            if okato:
+                hospitals = Client(IS + self.wsdl).service.listHospitals(ocatoCode=okato).hospitals
+            else:
+                hospitals = Client(IS + self.wsdl).service.listHospitals().hospitals
+        except:
+            hospitals = []
+        return hospitals
+
+    def listDoctors(self):
+        try:
+            doctors = Client(IS + self.wsdl).service.listDoctors().doctors
+        except:
+            doctors = []
+        return doctors
+
+
+class InfoWSDL():
+    wsdl = "info"
+    def getHospitalInfo(self):
+        try:
+            info_list = Client(IS + self.wsdl).service.getHospitalInfo()
+        except:
+            info_list = []
+        return info_list
+
+
+class ScheduleWSDL():
+    wsdl = "schedule"
+    def getScheduleInfo(self, hospitalUid=0, doctorUid=0):
+        try:
+            ticket = Client(IS + self.wsdl).service.getScheduleInfo(hospitalUid=hospitalUid, doctorUid=doctorUid)
+        except:
+            ticket = []
+        return ticket
+
+    def getTicketStatus(self, hospitalUid=0, ticketUid=0):
+        try:
+            ticket = Client(IS + self.wsdl).service.getTicketStatus(hospitalUid=hospitalUid, ticketUid=ticketUid)[0]
+        except:
+            ticket = []
+        return ticket
+
+    def enqueue(self, person=0, omiPolicyNumber=0, hospitalUid=0, doctorUid=0, timeslotStart=0, hospitalUidFrom=0, birthday=0):
+        try:
+            ticket = Client(IS + self.wsdl).service.enqueue(person, omiPolicyNumber, hospitalUid, doctorUid, timeslotStart, hospitalUidFrom, birthday)
+        except:
+            ticket = []
+        return ticket
+
 
 def stringValidation(s):
   w = []
