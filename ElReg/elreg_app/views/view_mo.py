@@ -11,6 +11,7 @@ def index(request, template_name):
     и создание сессии пользователя в случае отсутствия идентификатора. А также происходит получение
     списка доступных регионов, установленных в административном интерфейсе.
     """
+
     # проверка на наличие идентификатора сессии:
     id = request.session.session_key
     if not id:
@@ -18,6 +19,7 @@ def index(request, template_name):
         s.save()
         id = s.session_key
     redis_db.hset(id, 'step', 1)
+
     # получение списка регионов:
     region_list = Region.objects.filter(activation=True)
     return render_to_response(template_name, {'region_list': region_list,
