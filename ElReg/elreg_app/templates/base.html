@@ -17,7 +17,7 @@
             div.no_print {display: none; }
         </style>
 
-		<link rel="stylesheet" href="{{ STATIC_URL }}/static/css/template.css" type="text/css" />
+		<link rel="stylesheet" href="{{ STATIC_URL }}/static/css/style.css" type="text/css" />
 	</head>
 	
 	<body id="body">
@@ -34,30 +34,21 @@
 				</li>
 				<li class="top item55">
                     {% if step > 3 %}<a href="{% url podrazdelenie %}">{% elif step == 3 %}<a href="{% url podrazdelenie %}" class="current">{% else %}<a>{% endif %}Подразделение/Специализация/Врач</a>
-				{% comment %}
-                </li>
-				<li class="top item56">
-                    {% if step > 4 %}<a href="{% url specializaciya %}">{% elif step == 4 %}<a href="{% url specializaciya %}" class="current">{% else %}<a>{% endif %}Специализация</a>
-				</li>
-				<li class="top item57">
-                    {% if step > 5 %}<a href="{% url vrach %}">{% elif step == 5 %}<a href="{% url vrach %}" class="current">{% else %}<a>{% endif %}Врач</a>
-				</li>
-                {% endcomment %}
 				<li class="top item58">
-                    {% if step > 6 %}<a href="{% url vremya %}">{% elif step == 6 %}<a href="{% url vremya %}" class="current">{% else %}<a>{% endif %}Время</a>
+                    {% if step > 4 %}<a href="{% url vremya %}">{% elif step == 4 %}<a href="{% url vremya %}" class="current">{% else %}<a>{% endif %}Время</a>
 				</li>
                 <li class="top item59">
-                    {% if step > 7 %}<a href="">{% elif step == 7 %}<a href="" class="current">{% else %}<a>{% endif %}Пациент</a>
+                    {% if step > 5 %}<a href="">{% elif step == 5 %}<a href="" class="current">{% else %}<a>{% endif %}Пациент</a>
                 </li>
                 <li class="top item60">
-                    {% if step > 8 %}<a href="">{% elif step == 8 %}<a href="" class="current">{% else %}<a>{% endif %}Запись</a>
+                    {% if step > 6 %}<a href="">{% elif step == 6 %}<a href="" class="current">{% else %}<a>{% endif %}Запись</a>
                 </li>
 			</ul>	    
 		</div>
         </div>
         <br />
         <br />
-		<!--slider-->
+		<!--main-->
 		<div class="wrapper-content content-top">
 			<div class="clear">
                 <div class="tabb">
