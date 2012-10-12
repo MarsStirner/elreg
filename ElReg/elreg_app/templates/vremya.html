@@ -3,11 +3,11 @@
 
 {% block content %}
 
-<p>{{ current_podrazd }}</p>
-<p>{{ prof }}</p>
-<p>{{ docName }}</p>
+<p>Лечебное учреждение: {{ current_podrazd }}</p>
+<p>Специализация: {{ prof }}</p>
+<p>Врач: {{ docName }}</p>
 
-<p><a href="{% url vremya %}prev/">Предудущая</a> - <a href="{% url vremya %}next/">Следующая</a></p>
+<p><a href="{% url vremya %}prev/"><img src="{{ STATIC_URL }}/static/images/prev.gif" alt="Предыдущая"></a> <a href="{% url vremya %}next/"><img src="{{ STATIC_URL }}/static/images/next.gif" alt="Следующая"></a></p>
 
 {% if ticketTable %}
 
@@ -27,11 +27,15 @@
         {% for cell in row %}
         <td align="center" class="{{ cell.status }}">
             {% if cell.status == 'free' %}
-                <button type=submit name=ticket value="{{ cell.start.date|date:"d:m:Y" }}-{{ cell.start.time }}-{{ cell.finish.time }}">
-                    {{ cell.start.time|time:"H:i" }}
-                </button>
+                {% if cell.start > now %}
+                    <button type=submit name=ticket value="{{ cell.start.date|date:"d:m:Y" }}-{{ cell.start.time }}-{{ cell.finish.time }}">
+                        {{ cell.start.time|time:"H:i" }}
+                    </button>
+                {% endif %}
             {% elif cell.status == 'locked'%}
+                {% if cell.start > now %}
                     {{ cell.start.time|time:"H:i" }}
+                {% endif %}
             {% endif %}
         </td>
         {% endfor %}
