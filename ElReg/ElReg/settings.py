@@ -1,7 +1,9 @@
 #coding: utf-8
 import os.path
 import redis
-from suds.client import Client
+
+# адрес интеграционного сервера
+IS = "http://10.1.2.107/int-server/index.php?wsdl="
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
@@ -181,14 +183,6 @@ LOGGING = {
 
 # конфигурация redis
 redis_db = redis.StrictRedis(host='localhost', port=6379, db=0)
-
-def client(wsdl):
-    """
-    Функция для получения SOAP Client с помощью библиотеки suds.
-    К адресу интеграционного сервера (IS) добавляется имя wsdl-файла.
-    """
-    IS = "http://10.1.2.107/int-server/index.php?wsdl="
-    return Client(IS + wsdl)
 
 
 AUTH_USER_EMAIL_UNIQUE = True
