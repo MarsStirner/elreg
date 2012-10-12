@@ -1,6 +1,4 @@
 $(document).ready(function () {
-//    $('table.secondTable').hide();
-//    $('table.thirdTable').hide();
     $('a.spec').live("click", function() {
         var $clickSpec = this.id;
         $('table.secondTable tr').hide();
@@ -10,7 +8,6 @@ $(document).ready(function () {
             $.each(data, function(key, val) {
                 $items.push('<tr><td><a class="prof">' + val + '</a></td></tr>');
             });
-//            $('#ttt').append(data);
             $($items.join('')).fadeIn('fast').appendTo('table.secondTable');
         });
     });
