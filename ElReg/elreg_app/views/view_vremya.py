@@ -1,14 +1,16 @@
 #coding: utf-8
 
 from django.shortcuts import render_to_response
-from ElReg.settings import redis_db, client
+from ElReg.settings import redis_db
+from elreg_app.functions import ListWSDL, ScheduleWSDL
 import datetime
 
 def index(request, template_name, vremya=0):
-    """
+    """Логика страницы Время
     Логика страницы Время
     """
-    id = '%s' % request.session.session_key
+
+    id = request.session.session_key
     if not vremya or vremya in ['next','prev']:
         if not vremya:
             now = datetime.date.today()
@@ -23,14 +25,11 @@ def index(request, template_name, vremya=0):
     else:
         now = datetime.date.today()
         firstweekday = now - datetime.timedelta(days=datetime.date.isoweekday(now)-1)
-    try:
-        hospital_Uid = redis_db.hget(id, 'hospital_Uid')
-        ticketList = client("schedule").service.getScheduleInfo(hospitalUid=hospital_Uid, doctorUid=vremya)
-    except:
-        ticketList = []
+    hospital_Uid = redis_db.hget(id, 'hospital_Uid')
+    ticketList = ScheduleWSDL().getScheduleInfo(hospitalUid=hospital_Uid, doctorUid=vremya)
 
     docName = '' # ФИО врача
-    for i in client("list").service.listDoctors().doctors:
+    for i in ListWSDL().listDoctors():
         if i.uid == vremya:
             docName = i.name
             docName = '%s %s %s' % (docName.lastName, docName.firstName, docName.patronymic)
@@ -66,11 +65,12 @@ def index(request, template_name, vremya=0):
 
     redis_db.hset(id, 'vremya', vremya)
     redis_db.hset(id, 'firstweekday', firstweekday)
-    redis_db.hset(id, 'step', 6)
+    redis_db.hset(id, 'step', 4)
     return render_to_response(template_name, {'current_podrazd': redis_db.hget(id, 'current_podrazd'),
                                               'prof': redis_db.hget(id, 'prof'),
                                               'docName': docName,
                                               'dates': dates,
                                               'times': times,
                                               'ticketTable': ticketTable,
+                                              'now': datetime.datetime.now(),
                                               'step': int(redis_db.hget(id, 'step'))})

@@ -2,20 +2,18 @@
 
 from django.http import HttpResponseRedirect
 from django.shortcuts import render_to_response
-from ElReg.settings import redis_db, client
+from ElReg.settings import redis_db
+from elreg_app.functions import ScheduleWSDL
 
 def index(request, template_name):
-    """
+    """Логика страницы Запись
     Логика страницы Запись
     """
-    id = '%s' % request.session.session_key
+    id = request.session.session_key
     hospital_Uid = redis_db.hget(id, 'hospital_Uid')
     ticket_Uid = redis_db.hget(id, 'ticketUid')
 
-    try:
-        ticketStatus = client("schedule").service.getTicketStatus(hospitalUid=hospital_Uid, ticketUid=ticket_Uid)[0]
-    except:
-        ticketStatus = []
+    ticketStatus = ScheduleWSDL().getTicketStatus(hospitalUid=hospital_Uid, ticketUid=ticket_Uid)
 
     prof = redis_db.hget(id, 'prof')
     date = redis_db.hget(id, 'date')
@@ -25,7 +23,7 @@ def index(request, template_name):
     pacientName = redis_db.hget(id, 'pacientName')
     birthday = redis_db.hget(id, 'birthday')
 
-    redis_db.hset(id, 'step', 8)
+    redis_db.hset(id, 'step', 6)
     return render_to_response(template_name, {'ticketStatus': ticketStatus,
                                               'prof': prof,
                                               'date': date,

@@ -5,7 +5,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render_to_response
 from django.template.loader import get_template
 from django.template import Context
-from ElReg.settings import redis_db, client
+from ElReg.settings import redis_db
 from elreg_app.functions import *
 import datetime
 
@@ -14,7 +14,7 @@ def index(request, template_name):
     """
     Логика страницы Пациент
     """
-    id = '%s' % request.session.session_key
+    id = request.session.session_key
     errors = []
     if request.method == 'POST':
         ticket = request.POST['ticket']
@@ -25,8 +25,6 @@ def index(request, template_name):
         start_time = datetime.time(int(b[0]), int(b[1]), int(b[2])) # Время начала выбранного приема
         b = tmp_lst[2].split(':')
         finish_time = datetime.time(int(b[0]), int(b[1]), int(b[2])) # Время окончания выбранного приема
-#        start_date = datetime.datetime.combine(date, start_time) # Дата и время начала выбранного приема
-#        finish_date = datetime.datetime.combine(date, finish_time) # Дата и время окончания выбранного приема
         if request.POST.get('flag', ''):
             # Проверка на заполненность формы пользователем и ее корректность
             lastName = request.POST.get('lastName', '')
@@ -71,14 +69,13 @@ def index(request, template_name):
                 omiPolicyNumber = "%s %s"%(policy1,policy2)
                 pacientName = "%s %s %s"%(lastName,firstName,patronymic)
 
-                ticketPatient = client("schedule").service.enqueue(
+                ticketPatient = ScheduleWSDL().enqueue(
                     person = {
                         'lastName': unicode(lastName),
                         'firstName': unicode(firstName),
                         'patronymic': unicode(patronymic) },
                     omiPolicyNumber = unicode(omiPolicyNumber),
                     hospitalUid = hospital_Uid,
-#                    speciality = unicode(prof),
                     doctorUid = vremya,
                     timeslotStart = str(date) + 'T' + str(start_time),
                     hospitalUidFrom = unicode("0"),
@@ -132,7 +129,7 @@ def index(request, template_name):
             current_podrazd = redis_db.hget(id, 'current_podrazd')
             docName = redis_db.hget(id, 'docName')
 
-            redis_db.hset(id, 'step', 7)
+            redis_db.hset(id, 'step', 5)
             return render_to_response(template_name, {'current_podrazd': current_podrazd,
                                                       'prof': prof,
                                                       'docName': docName,
@@ -157,7 +154,7 @@ def index(request, template_name):
         prof = redis_db.hget(id, 'prof')
         docName = redis_db.hget(id, 'docName')
 
-        redis_db.hset(id, 'step', 7)
+        redis_db.hset(id, 'step', 5)
         return render_to_response(template_name, {'current_podrazd': current_podrazd,
                                                   'prof': prof,
                                                   'docName': docName,

@@ -1,34 +1,33 @@
 #coding: utf-8
 
 from django.shortcuts import render_to_response
-from ElReg.settings import redis_db, client
+from ElReg.settings import redis_db
+from elreg_app.functions import InfoWSDL, ListWSDL
 
 def index(request, template_name, podrazd=0):
-    """
+    """Логика страницы Подразделение/Специализация/Врач
     Логика страницы Подразделение
     """
+
     id = '%s' % request.session.session_key
     if not podrazd:
         podrazd = redis_db.hget(id, 'podrazd')
-    try:
-        x = client("info").service.getHospitalInfo()
-    except:
-        x = []
+    info_list = InfoWSDL().getHospitalInfo()
     podrazdelenie_list = []
     current_lpu = ''
-    for c in x:
+    for c in info_list:
         if c.uid.startswith('%s'%(podrazd)):
             current_lpu = c
             for b in c.buildings:
                 podrazdelenie_list.append(b.title)
 
-    new_list = []
-    y = client("list").service.listHospitals().hospitals
-    for v in y:
+    tmp_list = []
+    list_list = ListWSDL().listHospitals()
+    for v in list_list:
         for w in podrazdelenie_list:
             if v.uid.startswith('%s'%(podrazd)) and v.title == w:
-                new_list.append(v.uid.split('/')[1])
-    podrazd_list = zip(podrazdelenie_list, new_list)
+                tmp_list.append(v.uid.split('/')[1])
+    podrazd_list = zip(podrazdelenie_list, tmp_list)
     redis_db.hset(id, 'podrazd', podrazd)
     redis_db.hset(id, 'current_lpu_title', current_lpu[1])
     redis_db.hset(id, 'current_lpu_email', current_lpu[4])
