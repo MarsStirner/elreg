@@ -1,11 +1,17 @@
 #coding: utf-8
+
 import os.path
 import redis
+import socket
 
 # адрес интеграционного сервера
 IS = "http://10.1.2.107/int-server/index.php?wsdl="
 
-DEBUG = True
+if socket.gethostname() == 'vokupichev-nb2':
+    DEBUG = True
+else:
+    DEBUG = False
+
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
@@ -108,11 +114,11 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.core.context_processors.debug',
     'django.core.context_processors.i18n',
     'django.core.context_processors.media',
-    'django.core.context_processors.static',
+#    'django.core.context_processors.static',
     'django.core.context_processors.request',
     'django.contrib.messages.context_processors.messages',
     'django.core.context_processors.csrf',
-    'elreg_app.context_processors.customProc',
+#    'elreg_app.context_processors.customProc',
     )
 
 MIDDLEWARE_CLASSES = (
@@ -185,8 +191,7 @@ LOGGING = {
 redis_db = redis.StrictRedis(host='localhost', port=6379, db=0)
 
 
-AUTH_USER_EMAIL_UNIQUE = True
-
+# конфигурация электронной почты
 EMAIL_HOST = 'localhost'
 #EMAIL_HOST = 'mail.rambler.ru'
 
