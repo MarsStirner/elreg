@@ -6,10 +6,10 @@
 <form id="form" action="" method="post" name="frm">
     <fieldset>
         <div align="center">
-            <input type="text" name="search" id="txtSearch" maxlength="100" size="100" value="Наименование ЛПУ" onfocus="if(this.value=='Наименование ЛПУ') this.value='';" onBlur="if(this.value=='') this.value='Наименование ЛПУ';" onkeyup="searchOpen()" />
+            <input type="text" name="search" id="search_lpu" maxlength="100" size="100" value="Наименование ЛПУ" onfocus="if(this.value=='Наименование ЛПУ') this.value='';" onBlur="if(this.value=='') this.value='Наименование ЛПУ';" onkeyup="searchLpu()" />
         </div>
         <br />
-        <table class="new">
+        <table id="search_table" class="no_search">
         </table>
     </fieldset>
 </form>
@@ -34,25 +34,57 @@
 {% endif %}
 
 <p>
-    <a href="{% url mo %}">
-        <img src="{{ STATIC_URL }}/static/images/btn_back_black.gif" alt="Назад">
+    <a href="{% url mo %}" class="container">
+        <img src="{{ STATIC_URL }}/static/images/back_btn.gif" alt="Назад">
     </a>
 </p>
 
 
 
 <script type="text/javascript">
-    function searchOpen() {
-        var search = $('#txtSearch').val();
-        $.getJSON("/search/", {search: search}, function(data) {
+    function searchLpu() {
+        var search = $('#search_lpu').val();
+        $.getJSON("/search_lpu/", {search: search}, function(data) {
             var $items = [];
             $.each(data, function(key, val) {
                 $items.push('<tr><td><a href="/podrazdelenie/' + key + '/">' + val + '</a></td></tr>');
             });
-            $('table.new tr').hide();
-            $($items.join('')).fadeIn('fast').appendTo('table.new');
+            $('table.search tr').hide();
+            $("#search_table").attr("class", "search");
+            $($items.join('')).fadeIn('fast').appendTo('table.search');
         });
     }
 </script>
+
+
+
+
+<form id="form1" action="" method="post" name="frm">
+    <fieldset>
+        <div align="center">
+            <input type="text" name="search" id="search_gorod" maxlength="100" size="100" value="Город" onfocus="if(this.value=='Город') this.value='';" onBlur="if(this.value=='') this.value='Город';" onkeyup="searchGorod()" />
+        </div>
+        <br />
+        <table id="search_table1" class="no_search">
+        </table>
+    </fieldset>
+</form>
+
+
+<script type="text/javascript">
+    function searchGorod() {
+        var search = $('#search_gorod').val();
+        $.getJSON("/search_gorod/", {search: search}, function(data) {
+            var $items = [];
+            $.each(data, function(key, val) {
+                $items.push('<tr><td><a href="/podrazdelenie/' + key + '/">' + val + '</a></td></tr>');
+            });
+            $('table.search tr').hide();
+            $("#search_table1").attr("class", "search");
+            $($items.join('')).fadeIn('fast').appendTo('table.search');
+        });
+    }
+</script>
+
 
 {% endblock %}
