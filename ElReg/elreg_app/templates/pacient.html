@@ -78,6 +78,10 @@
         * - поля, обязательные для заполнения
     </fieldset>
 
+    <input type="checkbox" id="confirm" name="confirm" value="confirm">
+    Я даю своё согласие на автоматизированную обработку указанной информации, распространяющейся на осуществление всех действий с ней, включая сбор, передачу по сетям связи общего назначения, накопление, хранение, обновление, изменение, использование, обезличивание, блокирование, уничтожение и обработку посредством внесения в электронную базу данных, систематизации, включения в списки и отчетные формы.
+    <br />
+
     <input type="submit" id="button-submit" value="Подтвердить" />
     <input type=hidden name=ticket value="{{ ticket }}">
     <input type=hidden name=flag value=True>
@@ -86,8 +90,8 @@
 
 
 <p>
-    <a href="{% url vremya %}">
-        <img src="{{ STATIC_URL }}/static/images/btn_back_black.gif" alt="Назад">
+    <a href="{% url vremya %}" class="container">
+        <img src="{{ STATIC_URL }}/static/images/back_btn.gif" alt="Назад">
     </a>
 </p>
 {% endblock %}
