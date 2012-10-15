@@ -7,7 +7,9 @@
 <p>Специализация: {{ prof }}</p>
 <p>Врач: {{ docName }}</p>
 
-<p><a href="{% url vremya %}prev/"><img src="{{ STATIC_URL }}/static/images/prev.gif" alt="Предыдущая"></a> <a href="{% url vremya %}next/"><img src="{{ STATIC_URL }}/static/images/next.gif" alt="Следующая"></a></p>
+<p><a href="{% url vremya %}prev/" class="container"><img src="{{ STATIC_URL }}/static/images/prev_btn.gif" alt="Предыдущая" title="Предыдущая неделя"></a>
+   <a href="{% url vremya %}next/" class="container"><img src="{{ STATIC_URL }}/static/images/next_btn.gif" alt="Следующая" title="Следующая неделя"></a>
+</p>
 
 {% if ticketTable %}
 
@@ -28,9 +30,9 @@
         <td align="center" class="{{ cell.status }}">
             {% if cell.status == 'free' %}
                 {% if cell.start > now %}
-                    <button type=submit name=ticket value="{{ cell.start.date|date:"d:m:Y" }}-{{ cell.start.time }}-{{ cell.finish.time }}">
+                    <div><button type=submit class="cell_btn" name=ticket value="{{ cell.start.date|date:"d:m:Y" }}-{{ cell.start.time }}-{{ cell.finish.time }}">
                         {{ cell.start.time|time:"H:i" }}
-                    </button>
+                    </button></div>
                 {% endif %}
             {% elif cell.status == 'locked'%}
                 {% if cell.start > now %}
@@ -58,8 +60,8 @@
 
 
 <p>
-    <a href="{% url podrazdelenie %}">
-        <img src="{{ STATIC_URL }}/static/images/btn_back_black.gif" alt="Назад">
+    <a href="{% url podrazdelenie %}" class="container">
+        <img src="{{ STATIC_URL }}/static/images/back_btn.gif" alt="Назад">
     </a>
 </p>
 {% endblock %}
