@@ -7,81 +7,114 @@ from suds.client import Client
 
 
 class ListWSDL():
-    wsdl = "list"
+    """ Класс для обращения к файлу list.wsdl.
+    Класс содержит методы listHospitals и listDoctors, обращающиеся к одноименным методам web-сервиса.
+
+    """
+    client = Client(IS + "list")
     def listHospitals(self, okato=0):
+        """
+        Метод принимает код ОКАТО и возвращает ЛПУ, удовлетворяющее требованию, или список ЛПУ,
+        в случае, если код ОКАТО указан не был.
+
+        """
         try:
             if okato:
-                hospitals = Client(IS + self.wsdl).service.listHospitals(ocatoCode=okato).hospitals
+                hospitals = self.client.service.listHospitals(ocatoCode=okato).hospitals
             else:
-                hospitals = Client(IS + self.wsdl).service.listHospitals().hospitals
+                hospitals = self.client.service.listHospitals().hospitals
         except:
             hospitals = []
         return hospitals
 
     def listDoctors(self):
+        """
+        Метод возвращает список врачей.
+
+        """
         try:
-            doctors = Client(IS + self.wsdl).service.listDoctors().doctors
+            doctors = self.client.service.listDoctors().doctors
         except:
             doctors = []
         return doctors
 
 
 class InfoWSDL():
-    wsdl = "info"
+    """ Класс для обращения к файлу info.wsdl.
+    Класс содержит метод getHospitalInfo, обращающийся к одноименному методу web-сервиса.
+
+    """
+    client = Client(IS + "info")
     def getHospitalInfo(self):
+        """
+        Метод возвращает инвормацию об ЛПУ.
+
+        """
         try:
-            info_list = Client(IS + self.wsdl).service.getHospitalInfo()
+            info_list = self.client.service.getHospitalInfo()
         except:
             info_list = []
         return info_list
 
 
 class ScheduleWSDL():
-    wsdl = "schedule"
+    """ Класс для обращения к файлу schedule.wsdl.
+    Класс содержит методы getScheduleInfo, getTicketStatus и enqueue, обращающиеся к одноименным методам web-сервиса.
+
+    """
+    client = Client(IS + "schedule")
     def getScheduleInfo(self, hospitalUid=0, doctorUid=0):
+        """
+        Метод возвращает расписания врачей.
+
+        """
         try:
-            ticket = Client(IS + self.wsdl).service.getScheduleInfo(hospitalUid=hospitalUid, doctorUid=doctorUid)
+            ticket = self.client.service.getScheduleInfo(hospitalUid=hospitalUid, doctorUid=doctorUid)
         except:
             ticket = []
         return ticket
 
     def getTicketStatus(self, hospitalUid=0, ticketUid=0):
+        """
+        Метод возвращает информацию о записи на приём.
+
+        """
         try:
-            ticket = Client(IS + self.wsdl).service.getTicketStatus(hospitalUid=hospitalUid, ticketUid=ticketUid)[0]
+            ticket = self.client.service.getTicketStatus(hospitalUid=hospitalUid, ticketUid=ticketUid)[0]
         except:
             ticket = []
         return ticket
 
-    def enqueue(self, person=0, omiPolicyNumber=0, hospitalUid=0, doctorUid=0, timeslotStart=0, hospitalUidFrom=0, birthday=0):
+    def enqueue(self, person, omiPolicyNumber, hospitalUid, doctorUid, timeslotStart, hospitalUidFrom, birthday):
+        """
+        Метод принимает данные о пациенте и возвращает номер талона и результат записи на приём.
+
+        """
         try:
-            ticket = Client(IS + self.wsdl).service.enqueue(person, omiPolicyNumber, hospitalUid, doctorUid, timeslotStart, hospitalUidFrom, birthday)
+            ticket = self.client.service.enqueue(person=person, omiPolicyNumber=omiPolicyNumber, hospitalUid=hospitalUid, doctorUid=doctorUid, timeslotStart=timeslotStart, hospitalUidFrom=hospitalUidFrom, birthday=birthday)
         except:
             ticket = []
         return ticket
 
 
-def stringValidation(s):
-  w = []
-  s = r'%s' % s
-  w.append(s.find('<'))
-  w.append(s.find('>'))
-  w.append(s.find('\\'))
-  w.append(s.find('script'))
-  w.append(s.find('SELECT'))
-  w.append(s.find('UPDATE'))
-  w.append(s.find('ALTER'))
-  w.append(s.find('DROP'))
-  try:
-    for i in list(xrange(6)):
-      if w[i] == -1:
-        continue
-      else:
-        raise SyntaxError
-    return s
-  except (ValueError, SyntaxError, TypeError):
-    return 0
+def stringValidation(string):
+    """
+    Простой валидатор переменных типа str, который проверяет наличие в строке SQL-команд.
+
+    """
+
+    string = r'%s' % string
+    for i in ['<', '>', '\\', 'script', 'SELECT', 'UPDATE', 'ALTER', 'DROP']:
+        if string.find(i) != -1:
+            return False
+    return True
+
 
 def emailValidation(value):
+    """
+    Простой валидатор адреса электронной почты, который сопоставляет введенный адрес с регулярным выражением.
+
+    """
     try:
         validate_email(value)
         return True
