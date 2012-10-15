@@ -2,8 +2,10 @@
 from django.db import models
 
 class Region (models.Model):
-    """
-    Модель для хранения данных в БД о названии МО и его коде ОКАТО
+    """Модель БД с названиями МО и их кодах ОКАТО
+    Модель, описывающая поля в БД с названиями МО (region) и их кодах ОКАТО (code). Чтобы не удалять МО из
+    таблицы введено поле activation, указывающее на доступность/недоступность данного МО шаблону сайта.
+
     """
     region = models.CharField(max_length=100,)
     code = models.PositiveIntegerField(default=0)
