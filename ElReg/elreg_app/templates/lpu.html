@@ -2,11 +2,14 @@
 
 
 {% block content %}
+<script type="text/javascript" src="{{ STATIC_URL }}/static/js/jquery.placeholder.min.js"></script>
+<script type="text/javascript">jQuery('input[placeholder]').placeholder();</script>
 
 <form id="form" action="" method="post" name="frm">
     <fieldset>
-        <div align="center">
-            <input type="text" name="search" id="search_lpu" maxlength="100" size="100" value="Наименование ЛПУ" onfocus="if(this.value=='Наименование ЛПУ') this.value='';" onBlur="if(this.value=='') this.value='Наименование ЛПУ';" onkeyup="searchLpu()" />
+        <div class="searchField">
+            <input type="text" name="search" id="search_lpu" maxlength="100" size="100" placeholder="Наименование ЛПУ" onkeyup="searchLpu()" />
+            <input type="text" name="search" id="search_gorod" maxlength="100" size="100" placeholder="Город" onkeyup="searchGorod()" />
         </div>
         <br />
         <table id="search_table" class="no_search">
@@ -44,7 +47,7 @@
 <script type="text/javascript">
     function searchLpu() {
         var search = $('#search_lpu').val();
-        $.getJSON("/search_lpu/", {search: search}, function(data) {
+        $.getJSON("/search/", {search: search, flag: "lpu"}, function(data) {
             var $items = [];
             $.each(data, function(key, val) {
                 $items.push('<tr><td><a href="/podrazdelenie/' + key + '/">' + val + '</a></td></tr>');
@@ -56,31 +59,16 @@
     }
 </script>
 
-
-
-
-<form id="form1" action="" method="post" name="frm">
-    <fieldset>
-        <div align="center">
-            <input type="text" name="search" id="search_gorod" maxlength="100" size="100" value="Город" onfocus="if(this.value=='Город') this.value='';" onBlur="if(this.value=='') this.value='Город';" onkeyup="searchGorod()" />
-        </div>
-        <br />
-        <table id="search_table1" class="no_search">
-        </table>
-    </fieldset>
-</form>
-
-
 <script type="text/javascript">
     function searchGorod() {
         var search = $('#search_gorod').val();
-        $.getJSON("/search_gorod/", {search: search}, function(data) {
+        $.getJSON("/search/", {search: search, flag: "gorod"}, function(data) {
             var $items = [];
             $.each(data, function(key, val) {
                 $items.push('<tr><td><a href="/podrazdelenie/' + key + '/">' + val + '</a></td></tr>');
             });
             $('table.search tr').hide();
-            $("#search_table1").attr("class", "search");
+            $("#search_table").attr("class", "search");
             $($items.join('')).fadeIn('fast').appendTo('table.search');
         });
     }
