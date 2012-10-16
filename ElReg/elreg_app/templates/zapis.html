@@ -3,10 +3,8 @@
 
 {% block content %}
 
-{% comment %}<p>Номер талончика: {{ ticketStatus.ticketUid }}</p>{% endcomment %}
-
-<table align="center">
-    <tr><th colspan="3">УВЕДОМЛЕНИЕ О ЗАПИСИ НА ПРИЕМ</th></tr>
+<table class="no_shadow_print">
+    <tr><th colspan="3">УВЕДОМЛЕНИЕ О ЗАПИСИ НА ПРИЕМ №{{ ticketStatus.ticketUid }}</th></tr>
     <tr><td>ФИО (Пациент):</td><td colspan="2">{{ pacientName }}</td></tr>
     <tr><td>Дата рождения:</td><td colspan="2">{{ birthday }}</td></tr>
     <tr><td>Полис ОМС:</td><td colspan="2">{{ omiPolicyNumber }}</td></tr>
@@ -15,9 +13,8 @@
     <tr><td>Врач:</td><td colspan="2">{{ ticketStatus.doctor.lastName }} {{ ticketStatus.doctor.firstName }} {{ ticketStatus.doctor.patronymic }} ({{ prof }})</td></tr>
     <tr><td>Дата и время приёма:</td><td colspan="2">{{ date }} {{ start_time }} - {{ finish_time }}</td></tr>
     <tr><th colspan="3">ВНИМАНИЕ:</th></tr>
-    <tr><td colspan="3">Заметка 1</td></tr>
-    <tr><td colspan="3">Заметка 2</td></tr>
-    <tr><td colspan="3">Заметка 3</td></tr>
+    <tr><td colspan="3">В случае невозможности посещения врача в указанное время, пожалуйста, сообщите об этом лечебному учреждению по контактным данным, указанным в настоящем уведомлении.</td></tr>
+    <tr><td colspan="3">С настоящим уведомлением необходимо обратиться в регистратуру лечебного учреждения не менее чем за 15 минут до указанного времени приёма.</td></tr>
 </table>
 <br />
 <div class="no_print" align="center">
@@ -26,4 +23,5 @@
     <input type="submit" id="button-ready" value="Готово" />
 </form>
 </div>
+<script type="text/javascript">$('div.tabb').attr('class', 'zapis');</script>
 {% endblock %}
