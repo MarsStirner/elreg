@@ -7,7 +7,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.template.loader import get_template
 from django.shortcuts import render_to_response
 from django.template import Context, RequestContext
-from elreg_app.functions import ListWSDL, InfoWSDL, ScheduleWSDL, stringValidation, emailValidation
+from elreg_app.functions import *
 from elreg_app.models import Region
 from ElReg.settings import redis_db
 import datetime
@@ -248,7 +248,8 @@ def pacientPage(request, template_name):
                         plaintext = get_template('email.txt')
                         htmly     = get_template('email.html')
 
-                        context = Context({ 'pacientName': redis_db.hget(id, 'pacientName'),
+                        context = Context({ 'ticketUid': ticketPatient['ticketUid'],
+                                            'pacientName': redis_db.hget(id, 'pacientName'),
                                             'birthday': redis_db.hget(id, 'birthday'),
                                             'omiPolicyNumber': redis_db.hget(id, 'omiPolicyNumber'),
                                             'current_podrazd': redis_db.hget(id, 'current_podrazd'),
@@ -325,6 +326,8 @@ def zapisPage(request, template_name):
 
     prof = redis_db.hget(id, 'prof')
     date = redis_db.hget(id, 'date')
+    d = date.split('-')
+    dd = datetime.date(int(d[0]),int(d[1]),int(d[2]))
     start_time = redis_db.hget(id, 'start_time')
     finish_time = redis_db.hget(id, 'finish_time')
     omiPolicyNumber = redis_db.hget(id, 'omiPolicyNumber')
@@ -334,7 +337,7 @@ def zapisPage(request, template_name):
     redis_db.hset(id, 'step', 6)
     return render_to_response(template_name, {'ticketStatus': ticketStatus,
                                               'prof': prof,
-                                              'date': date,
+                                              'date': dd,
                                               'start_time': start_time,
                                               'finish_time': finish_time,
                                               'omiPolicyNumber': omiPolicyNumber,
@@ -344,11 +347,12 @@ def zapisPage(request, template_name):
                                               'step': int(redis_db.hget(id, 'step'))})
 
 
+##### Представления, используемые AJAX'ом: #####
+
 def updatesPage(request):
     """ Логика страницы updates
-    Страница создана только для динамической подгрузки данных при помощи AJAX'а.
-    Вызывается на вкладке "Подразделение/Специализация/Врач".
-    Запуск через адресную строку приведет к редиректу на главную страницу.
+    Страница создана только для динамической подгрузки данных при помощи AJAX'а. Вызывается на вкладке
+    "Подразделение/Специализация/Врач". Запуск через адресную строку приведет к редиректу на главную страницу.
 
     """
     id = request.session.session_key
@@ -384,88 +388,65 @@ def updatesPage(request):
     response['Content_Type'] = "text/javascript"
     response.write(json.dumps(new))
     return response
+#    response = HttpResponse(json.dumps(new), mimetype='application/json') проверить!!!
 
 
-def searchLpuPage(request):
-    """ Логика страницы search_lpu
+def searchPage(request):
+    """ Логика страницы search
     Страница создана только для динамической подгрузки данных при помощи AJAX'а. Вызывается на вкладке "ЛПУ".
-    Предназначена для поиска ЛПУ по его названию или части названия. Запуск через адресную строку приведет к
-    редиректу на главную страницу.
+    Предназначена для поиска ЛПУ по его названию или части названия. А также для поиска ЛПУ по названию или
+    части названия города в котором оно находится. Запуск через адресную строку приведет к редиректу на
+    главную страницу.
 
     """
     if request.method == 'GET':
         if request.GET.has_key('search'):
-            hospitals_list = InfoWSDL().getHospitalInfo()
-
-            # получение спика введенных пользователем слов
-            search_list = request.GET.get( 'search' ).lower().split(' ')
-
-            # формирование временного списка кортежей [(uid ЛПУ, наименование ЛПУ), ...]
             tmp_list = []
-            for i in hospitals_list:
-                tmp_list.append((i.uid.split('/')[0], i.title.lower()))
-
-            # формирование словаря со значениями, удовлетворяющими поиску,
-            # где ключ - uid ЛПУ, а значение - наименование ЛПУ
-            lpu_dict ={}
-            for (uid,title) in tmp_list:
-                flag = True
-                for i in search_list:
-                    if title.find(i) == -1:
-                        flag = False
-                if flag:
-                    lpu_dict[uid] = title
-
-            # создание ответа в формате json:
-            response = HttpResponse()
-            response['Content_Type'] = "text/javascript"
-            response.write(json.dumps(lpu_dict))
-            return response
-
-    # при обращении к странице через адресную строку:
-    else:
-        return HttpResponseRedirect(reverse('mo'))
-
-
-def searchGorodPage(request):
-    """ Логика страницы search_gorod
-    Страница создана только для динамической подгрузки данных при помощи AJAX'а. Вызывается на вкладке "ЛПУ".
-    Предназначена для поиска ЛПУ по названию или части названия города в котором оно находится. Запуск через
-    адресную строку приведет к редиректу на главную страницу.
-
-    """
-    if request.method == 'GET':
-        if request.GET.has_key('search'):
-
-            # получение спика введенных пользователем слов
-            search_list = request.GET.get( 'search' ).lower().split(' ')
-
-            # формирование временного списка кортежей [(регион, код ОКАТО), ...]
-            tmp_list = []
-            for i in Region.objects.filter(activation=True):
-                tmp_list.append((i.region.lower(), i.code))
-
-            # формирование словаря со значениями, удовлетворяющими поиску,
-            # где ключ - uid ЛПУ, а значение - наименование ЛПУ
-            tmp_dict ={}
-            for (region,code) in tmp_list:
-                flag = True
-                for i in search_list:
-                    if region.find(i) == -1:
-                        flag = False
-                if flag:
-                    tmp_dict[code] = region
             lpu_dict = {}
-            for i in tmp_dict.keys():
-                hospitals_list = ListWSDL().listHospitals(i)
-                for j in hospitals_list:
-                    lpu_dict[j.uid] = j.title
+            # получение списка введенных пользователем слов
+            search_list = request.GET.get('search').lower().split(' ')
+
+            # поиск по названию ЛПУ:
+            if request.GET.get('flag') == 'lpu':
+                # формирование временного списка кортежей [(uid ЛПУ, наименование ЛПУ), ...]
+                for i in InfoWSDL().getHospitalInfo():
+                    tmp_list.append((i.uid.split('/')[0], i.title.lower()))
+                # формирование словаря со значениями, удовлетворяющими поиску,
+                # где ключ - uid ЛПУ, а значение - наименование ЛПУ
+                for (uid,title) in tmp_list:
+                    flag = True
+                    for i in search_list:
+                        if title.find(i) == -1:
+                            flag = False
+                    if flag:
+                        lpu_dict[uid] = title
+
+            # поиск по названию города:
+            elif request.GET.get('flag') == 'gorod':
+                # формирование временного списка кортежей [(регион, код ОКАТО), ...]
+                for i in Region.objects.filter(activation=True):
+                    tmp_list.append((i.region.lower(), i.code))
+                # формирование словаря со значениями, удовлетворяющими поиску,
+                # где ключ - uid ЛПУ, а значение - наименование ЛПУ
+                tmp_dict ={}
+                for (region,code) in tmp_list:
+                    flag = True
+                    for i in search_list:
+                        if region.find(i) == -1:
+                            flag = False
+                    if flag:
+                        tmp_dict[code] = region
+                for i in tmp_dict.keys():
+                    hospitals_list = ListWSDL().listHospitals(i)
+                    for j in hospitals_list:
+                        lpu_dict[j.uid.split('/')[0]] = j.title
 
             # создание ответа в формате json:
             response = HttpResponse()
             response['Content_Type'] = "text/javascript"
             response.write(json.dumps(lpu_dict))
             return response
+#            response = HttpResponse(json.dumps(lpu_dict), mimetype='application/json') проверить!!!
 
     # при обращении к странице через адресную строку:
     else:
