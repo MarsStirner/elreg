@@ -1,12 +1,16 @@
 $(document).ready(function () {
 
-    function no_checked() {
-        if($('#confirm').is(':checked')==false){
-            window.alert("checkbox не отмечен!");
+//    Проверка чекбокса "Согласие..."
+    $ ('#confirm').click(function() {
+        if($('#confirm').is(':checked')==true){
+            $('#button-submit').prop('disabled', false);
         }
-    }
+        else{
+            $('#button-submit').prop('disabled', true);
+        }
+    });
 
-
+//    Проверка данных в формах
     $('#dd').keypress(function(event) {
         if (event.which && (event.which < 48 || event.which > 57) && (event.which != 08)) {
             event.preventDefault();
