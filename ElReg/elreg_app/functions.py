@@ -2,8 +2,42 @@
 
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
-from ElReg.settings import IS
+from settings import IS
 from suds.client import Client
+
+
+import redis
+from django.contrib.sessions.backends.db import SessionStore
+#redis_db = redis.StrictRedis(host='localhost', port=6379, db=0)
+
+class RedisDB ():
+    redis_db = redis.StrictRedis(host='localhost', port=6379, db=0)
+    def __init__(self, request):
+        self.id = request.session.session_key
+        if not self.id:
+            s = SessionStore()
+            s.save()
+            self.id = s.session_key
+        print self.id, "<---ID"
+
+    def set(self, key, value):
+        self.redis_db.hset(self.id, key, value)
+        print type(value), value, "<<--value"
+
+    def get(self, key):
+        result = self.redis_db.hget(self.id, key)
+        if key == "step":
+            result = int(result)
+        print self.id, "<<<result-ID"
+        print type(result), result, "<<<result"
+        return result
+
+
+
+
+
+
+
 
 
 class ListWSDL():
