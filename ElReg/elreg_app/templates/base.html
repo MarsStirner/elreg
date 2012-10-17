@@ -11,12 +11,14 @@
             {% endblock %}
         </title>
 
-		<script src="{{ STATIC_URL }}/static/js/jquery-1.8.2.min.js" type="text/javascript"></script>
+		<script type="text/javascript" src="{{ STATIC_URL }}/static/js/jquery-1.8.2.min.js"></script>
+        <script type="text/javascript" src="{{ STATIC_URL }}/static/js/jquery.placeholder.min.js"></script>
+        <script type="text/javascript" src="{{ STATIC_URL }}/static/js/updates.js"></script>
+        <script type="text/javascript" src="{{ STATIC_URL }}/static/js/pacient_page.js"></script>
+        <script type="text/javascript">jQuery('input[placeholder]').placeholder();</script>
 		<link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}/static/css/style.css" />
         <style type="text/css" media="print">
             div.no_print {display: none;}
-        </style>
-        <style type="text/css" media="print">
             table.no_shadow_print {box-shadow: none;}
             table.no_shadow_print tr td {font-size: 18px;}
         </style>
