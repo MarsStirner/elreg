@@ -3,13 +3,13 @@
 from django.contrib.sessions.backends.db import SessionStore
 from django.core.mail import EmailMultiAlternatives
 from django.core.urlresolvers import reverse
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.template.loader import get_template
 from django.shortcuts import render_to_response
 from django.template import Context, RequestContext
 from elreg_app.functions import *
 from elreg_app.models import Region
-from ElReg.settings import redis_db
+from settings import redis_db
 import datetime
 import json
 
@@ -21,17 +21,20 @@ def moPage(request, template_name):
     списка доступных регионов, установленных в административном интерфейсе.
 
     """
-    id = request.session.session_key
-    if not id:
-        s = SessionStore()
-        s.save()
-        id = s.session_key
-    redis_db.hset(id, 'step', 1)
+#    id = request.session.session_key
+#    if not id:
+#        s = SessionStore()
+#        s.save()
+#        id = s.session_key
+#    redis_db.hset(id, 'step', 1)
+
+    r = RedisDB(request)
+    r.set('step', 1)
 
     # получение списка регионов:
     region_list = Region.objects.filter(activation=True)
     return render_to_response(template_name, {'region_list': region_list,
-                                              'step': int(redis_db.hget(id, 'step'))})
+                                              'step': r.get('step')})
 
 
 def lpuPage(request, template_name, okato=0):
@@ -40,14 +43,18 @@ def lpuPage(request, template_name, okato=0):
     кнопку "Поиск ЛПУ", тогда  в okato передается строка search и список ЛПУ не выводится.
 
     """
-    id = request.session.session_key
+#    id = request.session.session_key
+    r = RedisDB(request)
     if not okato:
-        okato = redis_db.hget(id, 'okato')
+#        okato = redis_db.hget(id, 'okato')
+        okato = r.get('okato')
     if okato != "search":
-        redis_db.hset(id, 'okato', okato)
+#        redis_db.hset(id, 'okato', okato)
+        r.set('okato', okato)
         hospitals_list = ListWSDL().listHospitals(okato)
         current_region = Region.objects.get(code=okato)
-    redis_db.hset(id, 'step', 2)
+#    redis_db.hset(id, 'step', 2)
+    r.set('step', 2)
     step = 2
     return render_to_response(template_name, locals())
 
@@ -64,11 +71,14 @@ def podrazdeleniePage(request, template_name, podrazd=0):
     info_list = InfoWSDL().getHospitalInfo()
     podrazdelenie_list = []
     current_lpu = ''
-    for info in info_list:
-        if info.uid.startswith(podrazd):
-            current_lpu = info
-            for b in info.buildings:
-                podrazdelenie_list.append(b.title)
+    try:
+        for info in info_list:
+            if info.uid.startswith(podrazd):
+                current_lpu = info
+                for b in info.buildings:
+                    podrazdelenie_list.append(b.title)
+    except AttributeError:
+        return Http404
 
     tmp_list = []
     list_list = ListWSDL().listHospitals()
@@ -351,8 +361,8 @@ def zapisPage(request, template_name):
 
 def updatesPage(request):
     """ Логика страницы updates
-    Страница создана только для динамической подгрузки данных при помощи AJAX'а. Вызывается на вкладке
-    "Подразделение/Специализация/Врач". Запуск через адресную строку приведет к редиректу на главную страницу.
+    Представление создано только для динамической подгрузки данных при помощи AJAX'а. Вызывается на вкладке
+    "Подразделение/Специализация/Врач". Возвращает ответ в формате JSON. Запуск через адресную строку приведет к редиректу на главную страницу.
 
     """
     id = request.session.session_key
@@ -384,19 +394,15 @@ def updatesPage(request):
         return HttpResponseRedirect(reverse('mo'))
 
     # создание ответа в формате json:
-    response = HttpResponse()
-    response['Content_Type'] = "text/javascript"
-    response.write(json.dumps(new))
-    return response
-#    response = HttpResponse(json.dumps(new), mimetype='application/json') проверить!!!
+    return HttpResponse(json.dumps(new), mimetype='application/json')
 
 
 def searchPage(request):
     """ Логика страницы search
-    Страница создана только для динамической подгрузки данных при помощи AJAX'а. Вызывается на вкладке "ЛПУ".
+    Представление создано только для динамической подгрузки данных при помощи AJAX'а. Вызывается на вкладке "ЛПУ".
     Предназначена для поиска ЛПУ по его названию или части названия. А также для поиска ЛПУ по названию или
-    части названия города в котором оно находится. Запуск через адресную строку приведет к редиректу на
-    главную страницу.
+    части названия города в котором оно находится. Возвращает ответ в формате JSON. Запуск через адресную строку
+    приведет к редиректу на главную страницу.
 
     """
     if request.method == 'GET':
@@ -422,10 +428,17 @@ def searchPage(request):
                         lpu_dict[uid] = title
 
             # поиск по названию города:
-            elif request.GET.get('flag') == 'gorod':
+            else:
+                if request.GET.get('flag') == 'gorod':
+                    # формирование списка доступных городов:
+                    region_list = Region.objects.filter(activation=True).exclude(region__iendswith=u'район')
+                else:
+                    # формирование списка доступных районов:
+                    region_list = Region.objects.filter(activation=True, region__iendswith=u'район')
                 # формирование временного списка кортежей [(регион, код ОКАТО), ...]
-                for i in Region.objects.filter(activation=True):
+                for i in region_list:
                     tmp_list.append((i.region.lower(), i.code))
+
                 # формирование словаря со значениями, удовлетворяющими поиску,
                 # где ключ - uid ЛПУ, а значение - наименование ЛПУ
                 tmp_dict ={}
@@ -442,11 +455,7 @@ def searchPage(request):
                         lpu_dict[j.uid.split('/')[0]] = j.title
 
             # создание ответа в формате json:
-            response = HttpResponse()
-            response['Content_Type'] = "text/javascript"
-            response.write(json.dumps(lpu_dict))
-            return response
-#            response = HttpResponse(json.dumps(lpu_dict), mimetype='application/json') проверить!!!
+            return HttpResponse(json.dumps(lpu_dict), mimetype='application/json')
 
     # при обращении к странице через адресную строку:
     else:
