@@ -1,0 +1,2 @@
+django==1.4.1
+git+https://github.com/django-debug-toolbar/django-debug-toolbar.git
