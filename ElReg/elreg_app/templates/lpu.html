@@ -2,14 +2,13 @@
 
 
 {% block content %}
-<script type="text/javascript" src="{{ STATIC_URL }}/static/js/jquery.placeholder.min.js"></script>
-<script type="text/javascript">jQuery('input[placeholder]').placeholder();</script>
 
 <form id="form" action="" method="post" name="frm">
     <fieldset>
         <div class="searchField">
             <input type="text" name="search" id="search_lpu" maxlength="100" size="100" placeholder="Наименование ЛПУ" onkeyup="searchLpu()" />
             <input type="text" name="search" id="search_gorod" maxlength="100" size="100" placeholder="Город" onkeyup="searchGorod()" />
+            <input type="text" name="search" id="search_rayon" maxlength="100" size="100" placeholder="Район" onkeyup="searchRayon()" />
         </div>
         <br />
         <table id="search_table" class="no_search">
@@ -24,15 +23,15 @@
 </p>
 
 <table>
+    {% for hospital in hospitals_list %}
     <tr>
         <td>
-        {% for hospital in hospitals_list %}
             <a href="{% url podrazdelenie %}{{ hospital.uid|slice:":2"|cut:"/" }}/">
                 {{ hospital.title }}
             </a>
-        {% endfor %}
         </td>
     </tr>
+    {% endfor %}
 </table>
 {% endif %}
 
@@ -57,9 +56,7 @@
             $($items.join('')).fadeIn('fast').appendTo('table.search');
         });
     }
-</script>
 
-<script type="text/javascript">
     function searchGorod() {
         var search = $('#search_gorod').val();
         $.getJSON("/search/", {search: search, flag: "gorod"}, function(data) {
@@ -72,7 +69,19 @@
             $($items.join('')).fadeIn('fast').appendTo('table.search');
         });
     }
-</script>
 
+    function searchRayon() {
+        var search = $('#search_rayon').val();
+        $.getJSON("/search/", {search: search, flag: "rayon"}, function(data) {
+            var $items = [];
+            $.each(data, function(key, val) {
+                $items.push('<tr><td><a href="/podrazdelenie/' + key + '/">' + val + '</a></td></tr>');
+            });
+            $('table.search tr').hide();
+            $("#search_table").attr("class", "search");
+            $($items.join('')).fadeIn('fast').appendTo('table.search');
+        });
+    }
+</script>
 
 {% endblock %}
