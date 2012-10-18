@@ -18,18 +18,14 @@ class RedisDB ():
             s = SessionStore()
             s.save()
             self.id = s.session_key
-        print self.id, "<---ID"
 
     def set(self, key, value):
         self.redis_db.hset(self.id, key, value)
-        print type(value), value, "<<--value"
 
     def get(self, key):
         result = self.redis_db.hget(self.id, key)
         if key == "step":
             result = int(result)
-        print self.id, "<<<result-ID"
-        print type(result), result, "<<<result"
         return result
 
 
