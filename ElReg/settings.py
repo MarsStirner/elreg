@@ -12,6 +12,8 @@ DEBUG_SECURE = DEBUG
 
 TEMPLATE_DEBUG = DEBUG
 
+DjDT = False
+
 ADMINS = (
     # ('Your Name', 'your_email@example.com'),
 )
@@ -210,3 +212,34 @@ EMAIL_HOST_PASSWORD = ''
 EMAIL_USE_TLS = False
 
 DEFAULT_FROM_EMAIL = 'test@elreg.ru'
+
+# Конфигурация Django-debug-toolbar
+if DjDT:
+    MIDDLEWARE_CLASSES += ('debug_toolbar.middleware.DebugToolbarMiddleware',)
+    INSTALLED_APPS += ('debug_toolbar',)
+    DEBUG_TOOLBAR_PANELS = (
+        #        'debug_toolbar.panels.version.VersionDebugPanel', # версия Django. убрал. только место занимает.
+        'debug_toolbar.panels.timer.TimerDebugPanel', # время загрузки страницы
+        'debug_toolbar.panels.settings_vars.SettingsVarsDebugPanel', # settings.py
+        'debug_toolbar.panels.headers.HeaderDebugPanel', # HTTP хедер
+        'debug_toolbar.panels.request_vars.RequestVarsDebugPanel', # переменные в запросе
+        'debug_toolbar.panels.template.TemplateDebugPanel', # список шаблонов
+        'debug_toolbar.panels.sql.SQLDebugPanel', # SQL-запросы
+        'debug_toolbar.panels.cache.CacheDebugPanel', # кэш
+        'debug_toolbar.panels.signals.SignalDebugPanel', # сигналы
+        'debug_toolbar.panels.logger.LoggingPanel', # лог
+        )
+    DEBUG_TOOLBAR_CONFIG = {
+        'EXCLUDE_URLS': ('/admin',), # не работает, но будет когда-нибудь отключать отладчик для указанных директорий
+        'INTERCEPT_REDIRECTS': False, # отключает перехват перенаправлений
+    }
+    INTERNAL_IPS = ('127.0.0.1',)
+
+# Конфигурация Sentry (логирование)
+if not DEBUG:
+    INSTALLED_APPS += (
+                        'sentry',
+                        'raven.contrib.django',
+                        'raven.contrib.django',
+                      )
+    SENTRY_DSN = '://361224ad52be4f169e2158838e29b8e6:61f9bd2aa4a743429629e7493c45dffd@/2'
