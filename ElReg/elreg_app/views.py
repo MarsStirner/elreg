@@ -400,20 +400,25 @@ def updatesPage(request):
 def searchPage(request):
     """ Логика страницы search
     Представление создано только для динамической подгрузки данных при помощи AJAX'а. Вызывается на вкладке "ЛПУ".
-    Предназначена для поиска ЛПУ по его названию или части названия. А также для поиска ЛПУ по названию или
-    части названия города в котором оно находится. Возвращает ответ в формате JSON. Запуск через адресную строку
-    приведет к редиректу на главную страницу.
+    Предназначена для поиска ЛПУ по его названию или части названия, по названию или части названия города в котором
+    оно находится, по названию или части названия района в котором оно находится. Возвращает ответ в формате JSON.
+    Запуск через адресную строку приведет к редиректу на главную страницу.
 
     """
     if request.method == 'GET':
-        if request.GET.has_key('search'):
-            tmp_list = []
-            lpu_dict = {}
-            # получение списка введенных пользователем слов
-            search_list = request.GET.get('search').lower().split(' ')
+        search_lpu = request.GET.get('search_lpu', '')
+        search_gorod = request.GET.get('search_gorod', '')
+        search_rayon = request.GET.get('search_rayon', '')
+        # если содержимое полей поиска не пустое:
+        if search_lpu or search_gorod or search_rayon:
+            result = {}
 
-            # поиск по названию ЛПУ:
-            if request.GET.get('flag') == 'lpu':
+            ### поиск ЛПУ по названию: ###
+            if search_lpu:
+                tmp_list = []
+                # получение списка введенных пользователем слов
+                search_list = search_lpu.lower().split(' ')
+
                 # формирование временного списка кортежей [(uid ЛПУ, наименование ЛПУ), ...]
                 for i in InfoWSDL().getHospitalInfo():
                     tmp_list.append((i.uid.split('/')[0], i.title.lower()))
@@ -425,16 +430,58 @@ def searchPage(request):
                         if title.find(i) == -1:
                             flag = False
                     if flag:
-                        lpu_dict[uid] = title
+                        result[uid] = title
 
-            # поиск по названию города:
-            else:
-                if request.GET.get('flag') == 'gorod':
-                    # формирование списка доступных городов:
-                    region_list = Region.objects.filter(activation=True).exclude(region__iendswith=u'район')
+            ### поиск ЛПУ по названию города: ###
+            if search_gorod:
+                tmp_list = []
+                tmp_dict ={}
+                lpu_dict = {}
+                # формирование списка доступных городов:
+                region_list = Region.objects.filter(activation=True).exclude(region__iendswith=u'район')
+
+                # получение списка введенных пользователем слов
+                search_list = search_gorod.lower().split(' ')
+
+                # формирование временного списка кортежей [(регион, код ОКАТО), ...]
+                for i in region_list:
+                    tmp_list.append((i.region.lower(), i.code))
+
+                # формирование словаря со значениями, удовлетворяющими поиску,
+                # где ключ - uid ЛПУ, а значение - наименование ЛПУ
+                for (region,code) in tmp_list:
+                    flag = True
+                    for i in search_list:
+                        if region.find(i) == -1:
+                            flag = False
+                    if flag:
+                        tmp_dict[code] = region
+                for i in tmp_dict.keys():
+                    hospitals_list = ListWSDL().listHospitals(i)
+                    for j in hospitals_list:
+                        lpu_dict[j.uid.split('/')[0]] = j.title
+
+                if not result:
+                    result = lpu_dict
+
                 else:
-                    # формирование списка доступных районов:
-                    region_list = Region.objects.filter(activation=True, region__iendswith=u'район')
+                    adict = {}
+                    for i in result.items():
+                        for j in lpu_dict.keys():
+                            if i[0] == j:
+                                adict[i[0]] = i[1]
+                    result = adict
+
+            ### поиск ЛПУ по названию района: ###
+            if search_rayon:
+                tmp_list = []
+                lpu_dict = {}
+                # формирование списка доступных районов:
+                region_list = Region.objects.filter(activation=True, region__iendswith=u'район')
+
+                # получение списка введенных пользователем слов
+                search_list = search_rayon.lower().split(' ')
+
                 # формирование временного списка кортежей [(регион, код ОКАТО), ...]
                 for i in region_list:
                     tmp_list.append((i.region.lower(), i.code))
@@ -453,9 +500,18 @@ def searchPage(request):
                     hospitals_list = ListWSDL().listHospitals(i)
                     for j in hospitals_list:
                         lpu_dict[j.uid.split('/')[0]] = j.title
+                if not result:
+                    result = lpu_dict
+                else:
+                    adict = {}
+                    for i in result.items():
+                        for j in lpu_dict.keys():
+                            if i[0] == j:
+                                adict[i[0]] = i[1]
+                    result = adict
 
-            # создание ответа в формате json:
-            return HttpResponse(json.dumps(lpu_dict), mimetype='application/json')
+            # создание ответа в формате json из содержимого словаря result:
+            return HttpResponse(json.dumps(result), mimetype='application/json')
 
     # при обращении к странице через адресную строку:
     else:
