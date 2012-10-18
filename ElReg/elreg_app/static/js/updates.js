@@ -18,7 +18,7 @@ $(document).ready(function () {
         $.getJSON("/updates/", {clickProf: $clickProf}, function(data) {
             var $items = [];
             $.each(data, function(key, val) {
-                $items.push('<tr><td><a href="/vremya/' + key + '"/">' + val + '</a></td></tr>');
+                $items.push('<tr><td><a href="/time/' + key + '"/">' + val + '</a></td></tr>');
             });
             $($items.join('')).fadeIn('fast').appendTo('table.thirdTable');
         });
