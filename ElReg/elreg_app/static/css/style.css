@@ -9,6 +9,9 @@ body, td, th, div, p, label, input {
 body {
     background:#c6c6c6 50% 0 no-repeat fixed;
     background-image: -webkit-linear-gradient(bottom, rgb(255,255,255) 50%, rgb(175, 175, 175) 100%);
+    background-image: -moz-linear-gradient(bottom, rgb(255,255,255) 50%, rgb(175, 175, 175) 100%);
+    background-image: -khtml-linear-gradient(bottom, rgb(255,255,255) 50%, rgb(175, 175, 175) 100%);
+    background-image: linear-gradient(bottom, rgb(255,255,255) 50%, rgb(175, 175, 175) 100%);
     overflow: scroll;
 }
 
@@ -50,6 +53,7 @@ ul.menu-nav {
     border-radius: 20px; /* закругление углов для всех, кто понимает */
     -moz-box-shadow: 0 7px 10px rgba(0, 0, 0, 0.2);
     -webkit-box-shadow: 0 7px 10px rgba(0, 0, 0, 0.2);
+    -khtml-box-shadow: 0 7px 10px rgba(0, 0, 0, 0.2);
     box-shadow: 0 7px 10px rgba(0, 0, 0, 0.2);
     width:100%;
     height:43px
@@ -88,7 +92,6 @@ ul.menu-nav li a.current  {
 
 ul.menu-nav li a:hover {
 	color:#64d7ec;
-    font-weight:bold;
 }
 
 ul.menu-nav li a.current:hover  {
@@ -100,8 +103,10 @@ ul.menu-nav li a.current:hover  {
 /*общее для всех филдсетов*/
 
 fieldset {
-    -moz-border-radius: 20px;
-    -webkit-border-radius: 20px;
+    -moz-border-radius: 20px; /* закругление для старых Mozilla Firefox */
+    -webkit-border-radius: 20px; /* закругление для старых Chrome и Safari */
+    -khtml-border-radius:20px; /* закругл. для браузера Konquerer системы Linux */
+    border-radius: 20px; /* закругление углов для всех, кто понимает */
 }
 
 /*на странице ЛПУ выравнивание формы*/
@@ -113,8 +118,10 @@ fieldset div.searchField {
 /*на странице Пациент с формой*/
 
 #info fieldset {
-    -moz-border-radius: 10px;
-    -webkit-border-radius: 10px;
+    -moz-border-radius: 20px; /* закругление для старых Mozilla Firefox */
+    -webkit-border-radius: 20px; /* закругление для старых Chrome и Safari */
+    -khtml-border-radius:20px; /* закругл. для браузера Konquerer системы Linux */
+    border-radius: 20px; /* закругление углов для всех, кто понимает */
 }
 
 /*---------------------------------------------------------Таблицы---*/
@@ -126,11 +133,19 @@ fieldset div.searchField {
     border: 1px solid #bcbcbc;
     padding: 5px;
     width: 100%; /* Ширина таблицы */
-    -moz-border-radius: 20px;
-    -webkit-border-radius: 20px;
+    -moz-border-radius: 20px; /* закругление для старых Mozilla Firefox */
+    -webkit-border-radius: 20px; /* закругление для старых Chrome и Safari */
+    -khtml-border-radius:20px; /* закругл. для браузера Konquerer системы Linux */
+    border-radius: 20px; /* закругление углов для всех, кто понимает */
     -moz-box-shadow: 0 5px 7px rgba(0, 0, 0, 0.2);
     -webkit-box-shadow: 0 5px 7px rgba(0, 0, 0, 0.2);
+    -khtml-box-shadow: 0 5px 7px rgba(0, 0, 0, 0.2);
     box-shadow: 0 5px 7px rgba(0, 0, 0, 0.2);
+}
+
+.tabb table th {
+    text-align: center;
+    vertical-align: middle;
 }
 
 .tabb table td {
@@ -167,11 +182,15 @@ fieldset div.searchField {
 
 .tabb table td:hover {
     color: #000;
-    font-weight:bold;
     opacity: 1; /* Полупрозрачность таблицы */
     filter: alpha(Opacity=100); /* Для IE */
-    -moz-border-radius: 10px;
-    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px; /* закругление для старых Mozilla Firefox */
+    -webkit-border-radius: 10px; /* закругление для старых Chrome и Safari */
+    -khtml-border-radius:10px; /* закругл. для браузера Konquerer системы Linux */
+    border-radius: 10px; /* закругление углов для всех, кто понимает */
+    -moz-box-shadow: inset 0 0 30px 4px rgba(56, 140, 227, 0.28);
+    -webkit-box-shadow: inset 0 0 30px 4px rgba(56, 140, 227, 0.28);
+    -khtml-box-shadow: inset 0 0 30px 4px rgba(56, 140, 227, 0.28);
     box-shadow: inset 0 0 30px 4px rgba(56, 140, 227, 0.28);
 }
 
@@ -179,6 +198,9 @@ fieldset div.searchField {
 
 table.no_search {
     border: none;
+    -moz-box-shadow: none;
+    -webkit-box-shadow: none;
+    -khtml-box-shadow: none;
     box-shadow: none;
     background-color: rgba(0, 0, 0, 0);
 }
@@ -192,8 +214,10 @@ table.commonTable {
     border: 1px solid #bcbcbc;
     padding: 5px;
     width: 100%; /* Ширина таблицы */
-    -moz-border-radius: 20px;
-    -webkit-border-radius: 20px;
+    -moz-border-radius: 20px; /* закругление для старых Mozilla Firefox */
+    -webkit-border-radius: 20px; /* закругление для старых Chrome и Safari */
+    -khtml-border-radius:20px; /* закругл. для браузера Konquerer системы Linux */
+    border-radius: 20px; /* закругление углов для всех, кто понимает */
 }
 
 table.commonTable tr td {
@@ -202,8 +226,13 @@ table.commonTable tr td {
 
 table.commonTable tr td:hover {
     background: rgb(255, 255, 255);
-    -moz-border-radius: 20px;
-    -webkit-border-radius: 20px;
+    -moz-border-radius: 20px; /* закругление для старых Mozilla Firefox */
+    -webkit-border-radius: 20px; /* закругление для старых Chrome и Safari */
+    -khtml-border-radius:20px; /* закругл. для браузера Konquerer системы Linux */
+    border-radius: 20px; /* закругление углов для всех, кто понимает */
+    -moz-box-shadow: none;
+    -webkit-box-shadow: none;
+    -khtml-box-shadow: none;
     box-shadow: none;
 }
 
@@ -214,26 +243,38 @@ table.firstTable, table.secondTable, table.thirdTable {
     border: none;
     padding: 5px;
     width: 315px; /* Ширина таблицы */
-    -moz-border-radius: 20px;
-    -webkit-border-radius: 20px;
+    -moz-border-radius: 20px; /* закругление для старых Mozilla Firefox */
+    -webkit-border-radius: 20px; /* закругление для старых Chrome и Safari */
+    -khtml-border-radius:20px; /* закругл. для браузера Konquerer системы Linux */
+    border-radius: 20px; /* закругление углов для всех, кто понимает */
+    -moz-box-shadow: none;
+    -webkit-box-shadow: none;
+    -khtml-box-shadow: none;
     box-shadow: none;
 }
 
 table.firstTable:hover, table.secondTable:hover, table.thirdTable:hover {
     -moz-box-shadow: 0 7px 10px rgba(0, 0, 0, 0.2);
     -webkit-box-shadow: 0 7px 10px rgba(0, 0, 0, 0.2);
+    -khtml-box-shadow: 0 7px 10px rgba(0, 0, 0, 0.2);
     box-shadow: 0 7px 10px rgba(0, 0, 0, 0.2);
 }
 
 table.firstTable tr td, table.secondTable tr td, table.thirdTable tr td {
+    padding: 5px;
     vertical-align: middle;
     cursor: pointer;
 }
 
 table.firstTable tr td:hover, table.secondTable tr td:hover, table.thirdTable tr td:hover {
     border: none;
-    -moz-border-radius: 20px;
-    -webkit-border-radius: 20px;
+    -moz-border-radius: 20px; /* закругление для старых Mozilla Firefox */
+    -webkit-border-radius: 20px; /* закругление для старых Chrome и Safari */
+    -khtml-border-radius:20px; /* закругл. для браузера Konquerer системы Linux */
+    border-radius: 20px; /* закругление углов для всех, кто понимает */
+    -moz-box-shadow: inset 0 0 30px 4px rgba(56, 140, 227, 0.28);
+    -webkit-box-shadow: inset 0 0 30px 4px rgba(56, 140, 227, 0.28);
+    -khtml-box-shadow: inset 0 0 30px 4px rgba(56, 140, 227, 0.28);
     box-shadow: inset 0 0 30px 4px rgba(56, 140, 227, 0.28);
 }
 
@@ -246,10 +287,13 @@ table.firstTable tr td:hover, table.secondTable tr td:hover, table.thirdTable tr
     border: 1px solid #bcbcbc;
     padding: 10px;
     width: 100%; /* Ширина таблицы */
-    -moz-border-radius: 20px;
-    -webkit-border-radius: 20px;
+    -moz-border-radius: 20px; /* закругление для старых Mozilla Firefox */
+    -webkit-border-radius: 20px; /* закругление для старых Chrome и Safari */
+    -khtml-border-radius:20px; /* закругл. для браузера Konquerer системы Linux */
+    border-radius: 20px; /* закругление углов для всех, кто понимает */
     -moz-box-shadow: 0 5px 7px rgba(0, 0, 0, 0.2);
     -webkit-box-shadow: 0 5px 7px rgba(0, 0, 0, 0.2);
+    -khtml-box-shadow: 0 5px 7px rgba(0, 0, 0, 0.2);
     box-shadow: 0 5px 7px rgba(0, 0, 0, 0.2);
 }
 
@@ -280,8 +324,10 @@ table.firstTable tr td:hover, table.secondTable tr td:hover, table.thirdTable tr
 /*---------------------------------------------------------Формы---*/
 
 #pacient_form fieldset {
-    -moz-border-radius: 10px;
-    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px; /* закругление для старых Mozilla Firefox */
+    -webkit-border-radius: 10px; /* закругление для старых Chrome и Safari */
+    -khtml-border-radius:10px; /* закругл. для браузера Konquerer системы Linux */
+    border-radius: 10px; /* закругление углов для всех, кто понимает */
 }
 
 #pacient_form fieldset div.field label {
@@ -293,8 +339,10 @@ table.firstTable tr td:hover, table.secondTable tr td:hover, table.thirdTable tr
 }
 
 #pacient_form fieldset div.field input {
-    -moz-border-radius: 5px;
-    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px; /* закругление для старых Mozilla Firefox */
+    -webkit-border-radius: 5px; /* закругление для старых Chrome и Safari */
+    -khtml-border-radius:5px; /* закругл. для браузера Konquerer системы Linux */
+    border-radius: 5px; /* закругление углов для всех, кто понимает */
 }
 
 /*---------------------------------------------------------Кнопки---*/
@@ -317,4 +365,38 @@ table.firstTable tr td:hover, table.secondTable tr td:hover, table.thirdTable tr
     border: none;
     width: 100%;
     padding: 10px;
+}
+
+/*кнопка "Отправить" на странице Пациент*/
+
+.sendsubmit {
+    border: 0;
+    background: transparent url(../images/submit_btn.gif) no-repeat left center;
+    text-indent: -1000em;
+}
+
+.sendsubmityes {
+    border: 0;
+    background: transparent url(../images/submit_btn.gif) no-repeat right center;
+    text-indent: -1000em;
+    cursor: pointer;
+    cursor: hand;
+}
+
+ .sub table {
+     border: none;
+     box-shadow: none;
+ }
+.sub table tr td {
+    border: none;
+    box-shadow: none;
+}
+.sub table tr td a {
+    border: none;
+    box-shadow: none;
+    /*width: 102px;*/
+}
+.sub table tr td:hover {
+    border: none;
+    box-shadow: none;
 }
