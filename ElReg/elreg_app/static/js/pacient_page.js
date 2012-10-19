@@ -3,31 +3,31 @@ $(document).ready(function () {
 //    Проверка чекбокса "Согласие..."
     $ ('#confirm').click(function() {
         if($('#confirm').is(':checked')==true){
-            $('#button-submit').prop('disabled', false);
+            $('#button-submit').prop('disabled', false).attr('class', 'sendsubmityes');
         }
         else{
-            $('#button-submit').prop('disabled', true);
+            $('#button-submit').prop('disabled', true).attr('class', 'sendsubmit');
         }
     });
 
 //    Проверка данных в формах
     $('#dd').keypress(function(event) {
-        if (event.which && (event.which < 48 || event.which > 57) && (event.which != 08)) {
+        if (event.which && (event.which < 48 || event.which > 57) && (event.which != 8)) {
             event.preventDefault();
         }
     });
     $('#mm').keypress(function(event) {
-        if (event.which && (event.which < 48 || event.which > 57) && (event.which != 08)) {
+        if (event.which && (event.which < 48 || event.which > 57) && (event.which != 8)) {
             event.preventDefault();
         }
     });
     $('#yy').keypress(function(event) {
-        if (event.which && (event.which < 48 || event.which > 57) && (event.which != 08)) {
+        if (event.which && (event.which < 48 || event.which > 57) && (event.which != 8)) {
             event.preventDefault();
         }
     });
     $('#chb').click(function() {
-        document.getElementById('email').disabled=(this.checked==true)?false:true;
+        document.getElementById('email').disabled=(this.checked!=true);
         document.getElementById('email').value='';
         document.getElementById('email').focus();
         });
