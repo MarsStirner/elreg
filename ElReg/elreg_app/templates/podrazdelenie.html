@@ -3,6 +3,7 @@
 
 {% block content %}
 
+<a name="top"></a>
 <p>ЛПУ: {{ current_lpu.title }}</p>
 <p>Телефон: {{ current_lpu.phone }}</p>
 <p>E-Mail: {{ current_lpu.email }}</p>
@@ -14,8 +15,8 @@
                 {% for podrazdelenie in podrazd_list %}
                 <tr>
                     <td>
-                        <a id="{{ podrazdelenie.1 }}" class="spec">
-                            {{ podrazdelenie.0 }} ({{ podrazdelenie.0.address }})
+                        <a id="{{ podrazdelenie.1.0 }}" class="spec">
+                            {{ podrazdelenie.0 }} ({{ podrazdelenie.1.1 }})
                         </a>
                     </td>
                 </tr>
