@@ -51,7 +51,7 @@
         $.getJSON("/search/", {search_lpu: search_lpu, search_gorod: search_gorod, search_rayon: search_rayon}, function(data) {
             var $items = [];
             $.each(data, function(key, val) {
-                $items.push('<tr><td><a href="/subdivision/' + key + '/">' + val + '</a></td></tr>');
+                $items.push('<tr><td><a href="{% url podrazdelenie %}' + key + '/">' + val + '</a></td></tr>');
             });
             $('table.search tr').hide();
             $("#search_table").attr("class", "search");
@@ -66,7 +66,7 @@
         $.getJSON("/search/", {search_lpu: search_lpu, search_gorod: search_gorod, search_rayon: search_rayon}, function(data) {
             var $items = [];
             $.each(data, function(key, val) {
-                $items.push('<tr><td><a href="/subdivision/' + key + '/">' + val + '</a></td></tr>');
+                $items.push('<tr><td><a href="{% url podrazdelenie %}' + key + '/">' + val + '</a></td></tr>');
             });
             $('table.search tr').hide();
             $("#search_table").attr("class", "search");
@@ -81,7 +81,7 @@
         $.getJSON("/search/", {search_lpu: search_lpu, search_gorod: search_gorod, search_rayon: search_rayon}, function(data) {
             var $items = [];
             $.each(data, function(key, val) {
-                $items.push('<tr><td><a href="/subdivision/' + key + '/">' + val + '</a></td></tr>');
+                $items.push('<tr><td><a href="{% url podrazdelenie %}' + key + '/">' + val + '</a></td></tr>');
             });
             $('table.search tr').hide();
             $("#search_table").attr("class", "search");
