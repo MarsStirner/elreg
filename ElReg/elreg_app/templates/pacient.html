@@ -6,7 +6,7 @@
 <div id="info">
 <fieldset>
 <legend><strong>Информация о записи:</strong></legend>
-<p>Лечебное учреждение: {{ current_podrazd }}</p>
+<p>Лечебное учреждение: {{ current_lpu_title }} {{ current_podrazd }}</p>
 <p>Специализация: {{ prof }}</p>
 <p>Врач: {{ docName }}</p>
 
@@ -80,16 +80,50 @@
     Я даю своё согласие на автоматизированную обработку указанной информации, распространяющейся на осуществление всех действий с ней, включая сбор, передачу по сетям связи общего назначения, накопление, хранение, обновление, изменение, использование, обезличивание, блокирование, уничтожение и обработку посредством внесения в электронную базу данных, систематизации, включения в списки и отчетные формы.
     <br />
 
-    <input type="submit" id="button-submit" class="sendsubmit" value="Подтвердить" disabled />
-    <input type=hidden name=ticket value="{{ ticket }}" />
-    <input type=hidden name=flag value=True />
+    <div class="sub">
+        <table>
+            <tr>
+                <td>
+                    <a href="{% url vremya %}" class="container">
+                        <img src="{{ STATIC_URL }}/static/images/back_btn.gif" alt="Назад">
+                    </a>
+                </td>
+                <td>
+                    <input type="submit" id="button-submit" style="width:102px;height:40px" class="sendsubmit" name="send" value="Подтвердить" disabled />
+                    <input type=hidden name=ticket value="{{ ticket }}" />
+                    <input type=hidden name=flag value=True />
+                </td>
+            </tr>
+        </table>
+
+{#        <ul>#}
+{#            <li>#}
+{#                <a href="{% url vremya %}" class="container">#}
+{#                    <img src="{{ STATIC_URL }}/static/images/back_btn.gif" alt="Назад">#}
+{#                </a>#}
+{#            </li>#}
+{#            <li>#}
+{#                <input type="submit" id="button-submit" style="width:102px;height:40px" class="sendsubmit" name="send" value="Подтвердить" disabled />#}
+{#                <input type=hidden name=ticket value="{{ ticket }}" />#}
+{#                <input type=hidden name=flag value=True />#}
+{#            </li>#}
+{#        </ul>#}
+
+
+{#        <a href="{% url vremya %}" class="container">#}
+{#            <img src="{{ STATIC_URL }}/static/images/back_btn.gif" alt="Назад">#}
+{#        </a>#}
+{#    <input type="submit" id="button-submit" style="width:102px;height:40px" class="sendsubmit" name="send" value="Подтвердить" disabled />#}
+{#    <input type=hidden name=ticket value="{{ ticket }}" />#}
+{#    <input type=hidden name=flag value=True />#}
+    </div>
 
 </form>
 
 
-<p>
-    <a href="{% url vremya %}" class="container">
-        <img src="{{ STATIC_URL }}/static/images/back_btn.gif" alt="Назад">
-    </a>
-</p>
+{#<p>#}
+{#    <a href="{% url vremya %}" class="container">#}
+{#        <img src="{{ STATIC_URL }}/static/images/back_btn.gif" alt="Назад">#}
+{#    </a>#}
+{#</p>#}
 {% endblock %}
