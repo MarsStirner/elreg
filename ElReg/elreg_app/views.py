@@ -21,20 +21,22 @@ def moPage(request, template_name):
     списка доступных регионов, установленных в административном интерфейсе.
 
     """
-#    id = request.session.session_key
-#    if not id:
-#        s = SessionStore()
-#        s.save()
-#        id = s.session_key
-#    redis_db.hset(id, 'step', 1)
+    id = request.session.session_key
+    if not id:
+        s = SessionStore()
+        s.save()
+        id = s.session_key
+    redis_db.hset(id, 'step', 1)
 
-    r = RedisDB(request)
-    r.set('step', 1)
+#    r = RedisDB(request)
+#    r.set('step', 1)
 
     # получение списка регионов:
     region_list = Region.objects.filter(activation=True)
+    print id, "<---ID-mo"
     return render_to_response(template_name, {'region_list': region_list,
-                                              'step': r.get('step')})
+#                                              'step': r.get('step')})
+                                              'step': int(redis_db.hget(id, 'step'))})
 
 
 def lpuPage(request, template_name, okato=0):
@@ -43,19 +45,20 @@ def lpuPage(request, template_name, okato=0):
     кнопку "Поиск ЛПУ", тогда  в okato передается строка search и список ЛПУ не выводится.
 
     """
-#    id = request.session.session_key
+    id = request.session.session_key
     r = RedisDB(request)
     if not okato:
-#        okato = redis_db.hget(id, 'okato')
-        okato = r.get('okato')
+        okato = redis_db.hget(id, 'okato')
+#        okato = r.get('okato')
     if okato != "search":
-#        redis_db.hset(id, 'okato', okato)
-        r.set('okato', okato)
+        redis_db.hset(id, 'okato', okato)
+#        r.set('okato', okato)
         hospitals_list = ListWSDL().listHospitals(okato)
         current_region = Region.objects.get(code=okato)
-#    redis_db.hset(id, 'step', 2)
-    r.set('step', 2)
+    redis_db.hset(id, 'step', 2)
+#    r.set('step', 2)
     step = 2
+    print id, "<---ID-lpu"
     return render_to_response(template_name, locals())
 
 
@@ -85,12 +88,13 @@ def podrazdeleniePage(request, template_name, podrazd=0):
     for list in list_list:
         for w in podrazdelenie_list:
             if list.uid.startswith(podrazd) and list.title == w:
-                tmp_list.append(list.uid.split('/')[1])
+                tmp_list.append((list.uid.split('/')[1], list.address))
     podrazd_list = zip(podrazdelenie_list, tmp_list)
     redis_db.hset(id, 'podrazd', podrazd)
     redis_db.hset(id, 'current_lpu_title', current_lpu[1])
     redis_db.hset(id, 'current_lpu_email', current_lpu[4])
     redis_db.hset(id, 'step', 3)
+    print id, "<---ID-podrazd"
     return render_to_response(template_name, {'current_lpu': current_lpu,
                                               'podrazd_list': podrazd_list,
                                               'step': int(redis_db.hget(id, 'step'))})
@@ -154,7 +158,7 @@ def vremyaPage(request, template_name, vremya=0):
     redis_db.hset(id, 'vremya', vremya)
     redis_db.hset(id, 'firstweekday', firstweekday)
     redis_db.hset(id, 'step', 4)
-    return render_to_response(template_name, {'current_podrazd': redis_db.hget(id, 'current_podrazd'),
+    return render_to_response(template_name, {'current_lpu_title': redis_db.hget(id, 'current_lpu_title'),
                                               'prof': redis_db.hget(id, 'prof'),
                                               'docName': docName,
                                               'dates': dates,
@@ -263,6 +267,7 @@ def pacientPage(request, template_name):
                                             'birthday': redis_db.hget(id, 'birthday'),
                                             'omiPolicyNumber': redis_db.hget(id, 'omiPolicyNumber'),
                                             'current_podrazd': redis_db.hget(id, 'current_podrazd'),
+                                            'current_lpu_title': redis_db.hget(id, 'current_lpu_title'),
                                             'docName': redis_db.hget(id, 'docName'),
                                             'prof': redis_db.hget(id, 'prof'),
                                             'date': date,
@@ -285,6 +290,7 @@ def pacientPage(request, template_name):
 
             redis_db.hset(id, 'step', 5)
             return render_to_response(template_name, {'current_podrazd': current_podrazd,
+                                                      'current_lpu_title': redis_db.hget(id, 'current_lpu_title'),
                                                       'prof': prof,
                                                       'docName': docName,
                                                       'errors': errors,
@@ -310,6 +316,7 @@ def pacientPage(request, template_name):
 
         redis_db.hset(id, 'step', 5)
         return render_to_response(template_name, {'current_podrazd': current_podrazd,
+                                                  'current_lpu_title': redis_db.hget(id, 'current_lpu_title'),
                                                   'prof': prof,
                                                   'docName': docName,
                                                   'errors': errors,
@@ -353,6 +360,7 @@ def zapisPage(request, template_name):
                                               'omiPolicyNumber': omiPolicyNumber,
                                               'pacientName': pacientName,
                                               'birthday': birthday,
+                                              'current_podrazd': redis_db.hget(id, 'current_podrazd'),
                                               'current_lpu_title': redis_db.hget(id, 'current_lpu_title'),
                                               'step': int(redis_db.hget(id, 'step'))})
 
@@ -378,10 +386,15 @@ def updatesPage(request):
                 tmp.append(i.speciality)
                 tmp = list(set(tmp))
         new = dict(zip(xrange(len(tmp)), tmp))
+        hospitals_list = ListWSDL().listHospitals()
+        for i in hospitals_list:
+            if i.uid.startswith('/'.join([redis_db.hget(id, 'podrazd'), spec])):
+                redis_db.hset(id, 'current_podrazd', i.title)
 
     # при щелчке на элементе из таблицы со списком специализаций:
     elif 'clickProf' in request.GET:
         prof = request.GET['clickProf']
+        redis_db.hset(id, 'prof', prof)
         hospital_Uid = '/'.join([redis_db.hget(id, 'podrazd'), redis_db.hget(id, 'spec')])
         for i in doctors_list:
             if i.hospitalUid == hospital_Uid and i.speciality == prof:
