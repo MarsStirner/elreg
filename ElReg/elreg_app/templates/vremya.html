@@ -3,7 +3,7 @@
 
 {% block content %}
 
-<p>Лечебное учреждение: {{ current_podrazd }}</p>
+<p>Лечебное учреждение: {{ current_lpu_title }}</p>
 <p>Специализация: {{ prof }}</p>
 <p>Врач: {{ docName }}</p>
 
@@ -12,14 +12,28 @@
 </p>
 
 {% if ticketTable %}
+<fieldset>
+    <legend><strong>Легенда таблицы:</strong></legend>
+<ul>
+    <li>
+        Свободно
+    </li>
+    <li>
+        Занято
+    </li>
+    <li>
+        Приёма нет
+    </li>
+</ul>
+</fieldset>
 
 <form action="{% url pacient %}" method="post">
 <table id="trtr" border="1">
 
-    <tr>
+    <tr align="center">
         {% for date in dates %}
         <th>
-            {{ date|date:"d.n, D" }}
+            {{ date|date:"d.n.Y, D" }}
         </th>
         {% endfor %}
     </tr>
@@ -47,7 +61,7 @@
     <tr>
         {% for date in dates %}
         <th>
-            {{ date|date:"d.n, D" }}
+            {{ date|date:"d.n.Y, D" }}
         </th>
         {% endfor %}
     </tr>
