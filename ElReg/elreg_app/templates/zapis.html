@@ -10,7 +10,7 @@
     <tr><td>Полис ОМС:</td><td colspan="2">{{ omiPolicyNumber }}</td></tr>
     <tr><th colspan="3">ВЫ ЗАПИСАНЫ НА ПРИЕМ:</th></tr>
     <tr><td>Лечебное учреждение:</td><td colspan="2">{{ current_lpu_title }}. {{  current_podrazd }}</td></tr>
-    <tr><td>Врач:</td><td colspan="2">{{ ticketStatus.doctor.lastName }} {{ ticketStatus.doctor.firstName }} {{ ticketStatus.doctor.patronymic }} ({{ prof }})</td></tr>
+    <tr><td>Врач:</td><td colspan="2">{{ docName }} ({{ prof }})</td></tr>
     <tr><td>Дата и время приёма:</td><td colspan="2">{{ date }} {{ start_time }} - {{ finish_time }}</td></tr>
     <tr><th colspan="3">ВНИМАНИЕ:</th></tr>
     <tr><td colspan="3">В случае невозможности посещения врача в указанное время, пожалуйста, сообщите об этом лечебному учреждению по контактным данным, указанным в настоящем уведомлении.</td></tr>

@@ -4,7 +4,7 @@
 Полис ОМС: {{ omiPolicyNumber }}
 ВЫ ЗАПИСАНЫ НА ПРИЕМ:
 Лечебное учреждение: {{ current_lpu_title }} {{ current_podrazd }}
-Врач: {{ ticketStatus.doctor.lastName }} {{ ticketStatus.doctor.firstName }} {{ ticketStatus.doctor.patronymic }} ({{ prof }})
+Врач: {{ docName }} ({{ prof }})
 Дата и время приёма: {{ date }} {{ start_time }} - {{ finish_time }}
 ВНИМАНИЕ:
 В случае невозможности посещения врача в указанное время, пожалуйста, сообщите об этом лечебному учреждению по контактным данным, указанным в настоящем уведомлении.
