@@ -1,6 +1,5 @@
 #coding: utf-8
 
-from django.contrib.sessions.backends.db import SessionStore
 from django.core.mail import EmailMultiAlternatives
 from django.core.urlresolvers import reverse
 from django.http import HttpResponse, HttpResponseRedirect, Http404
@@ -21,11 +20,7 @@ def moPage(request, template_name):
     списка доступных регионов, установленных в административном интерфейсе.
 
     """
-    id = request.session.session_key
-    if not id:
-        s = SessionStore()
-        s.save()
-        id = s.session_key
+    id = sessionId(request)
     redis_db.hset(id, 'step', 1)
 
 #    r = RedisDB(request)
@@ -45,7 +40,7 @@ def lpuPage(request, template_name, okato=0):
     кнопку "Поиск ЛПУ", тогда  в okato передается строка search и список ЛПУ не выводится.
 
     """
-    id = request.session.session_key
+    id = sessionId(request)
     r = RedisDB(request)
     if not okato:
         okato = redis_db.hget(id, 'okato')
@@ -65,10 +60,10 @@ def lpuPage(request, template_name, okato=0):
 def podrazdeleniePage(request, template_name, podrazd=0):
     """Логика страницы Подразделение/Специализация/Врач
     Выводится список подразделений для выбранного ЛПУ. Остальная логика страницы осуществляется средствами jQuery с
-    использованием AJAX'а и определена в представлении view_updates.py и скрипте updates.js.
+    использованием AJAX'а и определена в скрипте updates.js.
 
     """
-    id = request.session.session_key
+    id = sessionId(request)
     if not podrazd:
         podrazd = redis_db.hget(id, 'podrazd')
     info_list = InfoWSDL().getHospitalInfo()
@@ -92,6 +87,7 @@ def podrazdeleniePage(request, template_name, podrazd=0):
     podrazd_list = zip(podrazdelenie_list, tmp_list)
     redis_db.hset(id, 'podrazd', podrazd)
     redis_db.hset(id, 'current_lpu_title', current_lpu[1])
+    redis_db.hset(id, 'current_lpu_phone', current_lpu[3])
     redis_db.hset(id, 'current_lpu_email', current_lpu[4])
     redis_db.hset(id, 'step', 3)
     print id, "<---ID-podrazd"
@@ -102,13 +98,14 @@ def podrazdeleniePage(request, template_name, podrazd=0):
 
 def vremyaPage(request, template_name, vremya=0):
     """Логика страницы Время
-    Логика страницы Время
+    Выводится таблица с расписанием выбранного врача на текущую неделю.
 
     """
-    id = request.session.session_key
+    id = sessionId(request)
+    now = datetime.date.today()
+    # если попадаем на страницу нажимая кнопку "Назад", "Предыдущая" или "Следующая":
     if not vremya or vremya in ['next','prev']:
         if not vremya:
-            now = datetime.date.today()
             firstweekday = now - datetime.timedelta(days=datetime.date.isoweekday(now)-1)
         elif vremya == 'next':
             a = redis_db.hget(id, 'firstweekday').split('-')
@@ -117,8 +114,8 @@ def vremyaPage(request, template_name, vremya=0):
             a = redis_db.hget(id, 'firstweekday').split('-')
             firstweekday = datetime.date(int(a[0]), int(a[1]), int(a[2])) - datetime.timedelta(days=7)
         vremya = redis_db.hget(id, 'vremya')
+    # если попадаем на страницу после выбора врача на вкладке "Подраздеелние/Специализация/Врач":
     else:
-        now = datetime.date.today()
         firstweekday = now - datetime.timedelta(days=datetime.date.isoweekday(now)-1)
     hospital_Uid = redis_db.hget(id, 'hospital_Uid')
     ticketList = ScheduleWSDL().getScheduleInfo(hospitalUid=hospital_Uid, doctorUid=vremya)
@@ -158,7 +155,10 @@ def vremyaPage(request, template_name, vremya=0):
     redis_db.hset(id, 'vremya', vremya)
     redis_db.hset(id, 'firstweekday', firstweekday)
     redis_db.hset(id, 'step', 4)
+    print id, "<---ID-vremya"
     return render_to_response(template_name, {'current_lpu_title': redis_db.hget(id, 'current_lpu_title'),
+                                              'current_lpu_phone': redis_db.hget(id, 'current_lpu_phone'),
+                                              'adress': redis_db.hget(id, 'adress'),
                                               'prof': redis_db.hget(id, 'prof'),
                                               'docName': docName,
                                               'dates': dates,
@@ -180,7 +180,7 @@ def pacientPage(request, template_name):
     url-адреса в адресную строку, будет осуществлен редирект на главную страницу.
 
     """
-    id = request.session.session_key
+    id = sessionId(request)
     errors = []
     if request.method == 'POST':
         ticket = request.POST['ticket']
@@ -191,6 +191,7 @@ def pacientPage(request, template_name):
         start_time = datetime.time(int(b[0]), int(b[1]), int(b[2])) # Время начала выбранного приема
         b = tmp_list[2].split(':')
         finish_time = datetime.time(int(b[0]), int(b[1]), int(b[2])) # Время окончания выбранного приема
+        # если представление было вызвано при нажатии кнопки submit на странице Пациент:
         if request.POST.get('flag', ''):
             # Проверка на заполненность формы пользователем и ее корректность:
             # фамилия
@@ -199,36 +200,35 @@ def pacientPage(request, template_name):
                 errors.append(u"Введите фамилию")
             elif not stringValidation(lastName):
                 errors.append(u'Введите корректно фамилию')
-                # имя
+            # имя
             firstName = request.POST.get('firstName', '')
             if not firstName:
                 errors.append(u"Введите имя")
             elif not stringValidation(firstName):
                 errors.append(u'Введите корректно имя')
-                # отчество
+            # отчество
             patronymic = request.POST.get('patronymic', '')
             if not patronymic:
                 errors.append(u"Введите отчество")
             elif not stringValidation(patronymic):
                 errors.append(u'Введите корректно отчество')
-                # день рождения
+            # день рождения
             dd = request.POST.get('dd', '')
             mm = request.POST.get('mm', '')
             yy = request.POST.get('yy', '')
             if not dd or not mm or not yy:
                 errors.append(u'Введите дату рождения')
-                # полис
+            # полис
             policy1 = request.POST.get('policy1', '')
             policy2 = request.POST.get('policy2', '')
             if not policy2:
                 errors.append(u"Введите серию и номер полиса")
-                # электронная почта
+            # электронная почта
             userEmail = request.POST.get('email', '')
             if userEmail and not emailValidation(userEmail):
                 errors.append(u'Введите корректно адрес электронной почты')
 
             ticketPatient_err = ''
-            prof = redis_db.hget(id, 'prof')
             # если ошибок в форме нет
             if not errors:
                 hospital_Uid = redis_db.hget(id, 'hospital_Uid')
@@ -247,7 +247,7 @@ def pacientPage(request, template_name):
                     birthday = unicode('-'.join([yy,mm,dd]))
                 )
                 # запись на приём произошла успешно:
-                if not ticketPatient['result']:
+                if ticketPatient['result'] == 'true':
                     redis_db.hset(id, 'ticketUid', ticketPatient['ticketUid'])
                     redis_db.hset(id, 'date', date)
                     redis_db.hset(id, 'start_time', start_time)
@@ -280,19 +280,18 @@ def pacientPage(request, template_name):
                         msg = EmailMultiAlternatives(subject, text_content, from_email, [to])
                         msg.attach_alternative(html_content, "text/html")
                         msg.send()
+                    print id, "<---ID-pacient"
                     return HttpResponseRedirect(reverse('zapis'))
                 # ошибка записи на приём:
                 else:
                     ticketPatient_err = ticketPatient['result']
-
-            current_podrazd = redis_db.hget(id, 'current_podrazd')
-            docName = redis_db.hget(id, 'docName')
-
+            # ошибка при записи на приём или ошибки в заполненной форме:
             redis_db.hset(id, 'step', 5)
-            return render_to_response(template_name, {'current_podrazd': current_podrazd,
+            print id, "<---ID-pacient"
+            return render_to_response(template_name, {'current_podrazd': redis_db.hget(id, 'current_podrazd'),
                                                       'current_lpu_title': redis_db.hget(id, 'current_lpu_title'),
-                                                      'prof': prof,
-                                                      'docName': docName,
+                                                      'prof': redis_db.hget(id, 'prof'),
+                                                      'docName': redis_db.hget(id, 'docName'),
                                                       'errors': errors,
                                                       'ticket': ticket,
                                                       'date': date,
@@ -309,22 +308,21 @@ def pacientPage(request, template_name):
                                                       'userEmail': userEmail,
                                                       'ticketPatient_err': ticketPatient_err,
                                                       'step': int(redis_db.hget(id, 'step'))})
-
-        current_podrazd = redis_db.hget(id, 'current_podrazd')
-        prof = redis_db.hget(id, 'prof')
-        docName = redis_db.hget(id, 'docName')
-
+        # если представление было вызвано нажатием на ячейку таблицы на странице Время:
         redis_db.hset(id, 'step', 5)
-        return render_to_response(template_name, {'current_podrazd': current_podrazd,
-                                                  'current_lpu_title': redis_db.hget(id, 'current_lpu_title'),
-                                                  'prof': prof,
-                                                  'docName': docName,
+        print id, "<---ID-pacient"
+        return render_to_response(template_name, {'current_lpu_title': redis_db.hget(id, 'current_lpu_title'),
+                                                  'current_lpu_phone': redis_db.hget(id, 'current_lpu_phone'),
+                                                  'adress': redis_db.hget(id, 'adress'),
+                                                  'prof': redis_db.hget(id, 'prof'),
+                                                  'docName': redis_db.hget(id, 'docName'),
                                                   'errors': errors,
                                                   'ticket': ticket,
                                                   'date': date,
                                                   'start_time': start_time,
                                                   'finish_time': finish_time,
                                                   'step': int(redis_db.hget(id, 'step'))})
+    # обращение к форме через адресную строку:
     else:
         return HttpResponseRedirect(reverse('mo'))
 
@@ -335,7 +333,7 @@ def zapisPage(request, template_name):
     название ЛПУ и т.д.). Далее эти данные передаются в шаблон для вывода на экран и на печать, при необходимости.
 
     """
-    id = request.session.session_key
+    id = sessionId(request)
     hospital_Uid = redis_db.hget(id, 'hospital_Uid')
     ticket_Uid = redis_db.hget(id, 'ticketUid')
 
@@ -350,8 +348,10 @@ def zapisPage(request, template_name):
     omiPolicyNumber = redis_db.hget(id, 'omiPolicyNumber')
     pacientName = redis_db.hget(id, 'pacientName')
     birthday = redis_db.hget(id, 'birthday')
+    docName = redis_db.hget(id, 'docName')
 
     redis_db.hset(id, 'step', 6)
+    print id, "<---ID-zapis"
     return render_to_response(template_name, {'ticketStatus': ticketStatus,
                                               'prof': prof,
                                               'date': dd,
@@ -360,6 +360,7 @@ def zapisPage(request, template_name):
                                               'omiPolicyNumber': omiPolicyNumber,
                                               'pacientName': pacientName,
                                               'birthday': birthday,
+                                              'docName': docName,
                                               'current_podrazd': redis_db.hget(id, 'current_podrazd'),
                                               'current_lpu_title': redis_db.hget(id, 'current_lpu_title'),
                                               'step': int(redis_db.hget(id, 'step'))})
@@ -370,16 +371,19 @@ def zapisPage(request, template_name):
 def updatesPage(request):
     """ Логика страницы updates
     Представление создано только для динамической подгрузки данных при помощи AJAX'а. Вызывается на вкладке
-    "Подразделение/Специализация/Врач". Возвращает ответ в формате JSON. Запуск через адресную строку приведет к редиректу на главную страницу.
+    "Подразделение/Специализация/Врач". Возвращает ответ в формате JSON. Запуск через адресную строку приведет к
+    редиректу на главную страницу.
 
     """
-    id = request.session.session_key
+    id = sessionId(request)
     doctors_list = ListWSDL().listDoctors()
     tmp, new = [], {}
 
     # при щелчке на элементе из таблицы со списком подразделений:
     if 'clickSpec' in request.GET:
         spec = request.GET['clickSpec']
+        adress = request.GET['value']
+        redis_db.hset(id, 'adress', adress)
         redis_db.hset(id, 'spec', spec)
         for i in doctors_list:
             if i.hospitalUid == '/'.join([redis_db.hget(id, 'podrazd'), spec]):
@@ -396,6 +400,7 @@ def updatesPage(request):
         prof = request.GET['clickProf']
         redis_db.hset(id, 'prof', prof)
         hospital_Uid = '/'.join([redis_db.hget(id, 'podrazd'), redis_db.hget(id, 'spec')])
+        redis_db.hset(id, 'hospital_Uid', hospital_Uid)
         for i in doctors_list:
             if i.hospitalUid == hospital_Uid and i.speciality == prof:
                 tmp.append(i)
@@ -407,6 +412,7 @@ def updatesPage(request):
         return HttpResponseRedirect(reverse('mo'))
 
     # создание ответа в формате json:
+    print id, "<---ID-update"
     return HttpResponse(json.dumps(new), mimetype='application/json')
 
 
