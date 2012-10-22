@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from django.contrib.sessions.backends.db import SessionStore
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
 from settings import IS
@@ -7,17 +8,30 @@ from suds.client import Client
 
 
 import redis
-from django.contrib.sessions.backends.db import SessionStore
 #redis_db = redis.StrictRedis(host='localhost', port=6379, db=0)
+
+
+def sessionId(request):
+    """
+    Получение идентификатора сессии или, в случае его отсутствия, создание идентификатора сессии.
+    """
+    id = request.session.get('session_id', False)
+    if not id:
+        s = SessionStore()
+        s.save()
+        id = s.session_key
+    request.session['session_id'] = id
+    return id
+
+
+
+
+
 
 class RedisDB ():
     redis_db = redis.StrictRedis(host='localhost', port=6379, db=0)
     def __init__(self, request):
-        self.id = request.session.session_key
-        if not self.id:
-            s = SessionStore()
-            s.save()
-            self.id = s.session_key
+        self.id = sessionId(request)
 
     def set(self, key, value):
         self.redis_db.hset(self.id, key, value)
