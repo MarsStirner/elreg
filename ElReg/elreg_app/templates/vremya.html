@@ -3,7 +3,7 @@
 
 {% block content %}
 
-<p>Лечебное учреждение: {{ current_lpu_title }}</p>
+<p>Лечебное учреждение: {{ current_lpu_title }}, {{ adress }}, телефон: {{ current_lpu_phone }}</p>
 <p>Специализация: {{ prof }}</p>
 <p>Врач: {{ docName }}</p>
 
@@ -13,19 +13,19 @@
 
 {% if ticketTable %}
 <fieldset>
-    <legend><strong>Легенда таблицы:</strong></legend>
-<ul>
-    <li>
+    <legend><strong>Расписание врача:</strong></legend>
+<ul class="legend">
+    <li class="free">
         Свободно
     </li>
-    <li>
+    <li class="locked">
         Занято
     </li>
-    <li>
+    <li class="not">
         Приёма нет
     </li>
 </ul>
-</fieldset>
+<br />
 
 <form action="{% url pacient %}" method="post">
 <table id="trtr" border="1">
@@ -68,6 +68,7 @@
 
 </table>
 </form>
+</fieldset>
 {% else %}
 <p>Расписания на текущую неделю нет.</p>
 {% endif %}
