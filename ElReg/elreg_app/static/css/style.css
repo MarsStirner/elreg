@@ -1,4 +1,6 @@
-/*---------------------------------------------------------Тело---*/
+/*---------------------------------------------------------Тело-------------------------------------------------------*/
+
+/*общие настройки для всех шаблонов*/
 
 body, td, th, div, p, label, input {
 	color:#45494a;
@@ -37,7 +39,21 @@ a {
     text-transform:uppercase
 }
 
-/*---------------------------------------------------------Меню---*/
+input {
+    -moz-border-radius: 5px; /* закругление для старых Mozilla Firefox */
+    -webkit-border-radius: 5px; /* закругление для старых Chrome и Safari */
+    -khtml-border-radius:5px; /* закругл. для браузера Konquerer системы Linux */
+    border-radius: 5px; /* закругление углов для всех, кто понимает */
+}
+
+fieldset {
+    -moz-border-radius: 20px; /* закругление для старых Mozilla Firefox */
+    -webkit-border-radius: 20px; /* закругление для старых Chrome и Safari */
+    -khtml-border-radius:20px; /* закругл. для браузера Konquerer системы Linux */
+    border-radius: 20px; /* закругление углов для всех, кто понимает */
+}
+
+/*---------------------------------------------------------Меню-------------------------------------------------------*/
 
 ul.menu-nav {
     padding:0 0 0 0;
@@ -98,16 +114,7 @@ ul.menu-nav li a.current:hover  {
     color: rgba(255, 255, 255, 0.8);
 }
 
-/*---------------------------------------------------------Филдсеты---*/
-
-/*общее для всех филдсетов*/
-
-fieldset {
-    -moz-border-radius: 20px; /* закругление для старых Mozilla Firefox */
-    -webkit-border-radius: 20px; /* закругление для старых Chrome и Safari */
-    -khtml-border-radius:20px; /* закругл. для браузера Konquerer системы Linux */
-    border-radius: 20px; /* закругление углов для всех, кто понимает */
-}
+/*---------------------------------------------------------Филдсеты---------------------------------------------------*/
 
 /*на странице ЛПУ выравнивание формы*/
 
@@ -124,7 +131,35 @@ fieldset div.searchField {
     border-radius: 20px; /* закругление углов для всех, кто понимает */
 }
 
-/*---------------------------------------------------------Таблицы---*/
+/*на странице Время легенда таблицы с расписанием*/
+
+.legend {
+    float:right;
+}
+
+.legend li {
+    display:inline;
+    color: #696969;
+    font-weight: bold;
+    float:left;
+    margin:-7px 20px 0 20px;
+    padding:10px;
+    border: 1px solid #696969;
+}
+
+.legend li.free {
+    background-color: rgba(19, 255, 6, 0.27);
+}
+
+.legend li.locked {
+    background-color: rgba(255, 18, 8, 0.27);
+}
+
+.legend li.not {
+    background-color: rgb(255, 255, 255);
+}
+
+/*---------------------------------------------------------Таблицы----------------------------------------------------*/
 
 /*общее для всех таблиц*/
 
@@ -278,9 +313,30 @@ table.firstTable tr td:hover, table.secondTable tr td:hover, table.thirdTable tr
     box-shadow: inset 0 0 30px 4px rgba(56, 140, 227, 0.28);
 }
 
+/*таблица с кнопками "Отправить" и "Назад" на странице Пациент*/
 
+table.footer_btn {
+    border: none;
+    box-shadow: none;
+}
 
+.footer_btn tr td {
+    text-align: left;
+}
 
+.footer_btn tr td:last-child {
+    text-align: right;
+}
+
+.footer_btn tr td a {
+    padding: 0;
+}
+
+.footer_btn tr td:hover {
+    box-shadow: none;
+}
+
+/*таблица на странице Запись*/
 
 .zapis table {
     background: rgb(255, 255, 255);
@@ -317,20 +373,11 @@ table.firstTable tr td:hover, table.secondTable tr td:hover, table.thirdTable tr
     color: #000;
 }
 
+/*---------------------------------------------------------Формы------------------------------------------------------*/
 
+/*форма на странице Пациент*/
 
-
-
-/*---------------------------------------------------------Формы---*/
-
-#pacient_form fieldset {
-    -moz-border-radius: 10px; /* закругление для старых Mozilla Firefox */
-    -webkit-border-radius: 10px; /* закругление для старых Chrome и Safari */
-    -khtml-border-radius:10px; /* закругл. для браузера Konquerer системы Linux */
-    border-radius: 10px; /* закругление углов для всех, кто понимает */
-}
-
-#pacient_form fieldset div.field label {
+.field label {
     float: left;
     width: 200px;
     margin-right: 10px;
@@ -338,30 +385,23 @@ table.firstTable tr td:hover, table.secondTable tr td:hover, table.thirdTable tr
     clear: left;
 }
 
-#pacient_form fieldset div.field input {
-    -moz-border-radius: 5px; /* закругление для старых Mozilla Firefox */
-    -webkit-border-radius: 5px; /* закругление для старых Chrome и Safari */
-    -khtml-border-radius:5px; /* закругл. для браузера Konquerer системы Linux */
-    border-radius: 5px; /* закругление углов для всех, кто понимает */
-}
-
-/*---------------------------------------------------------Кнопки---*/
+/*---------------------------------------------------------Кнопки-----------------------------------------------------*/
 
 /*все кнопки-картинки*/
 
-.container{
+.container {
     width:102px;
     height:40px;
     display:inline-block;
     overflow:hidden;
 }
-.container:hover{
+.container:hover {
     text-indent:-102px;
 }
 
 /*кнопки-ячейки таблицы на странице Время*/
 
-.cell_btn{
+.cell_btn {
     border: none;
     width: 100%;
     padding: 10px;
@@ -383,20 +423,3 @@ table.firstTable tr td:hover, table.secondTable tr td:hover, table.thirdTable tr
     cursor: hand;
 }
 
- .sub table {
-     border: none;
-     box-shadow: none;
- }
-.sub table tr td {
-    border: none;
-    box-shadow: none;
-}
-.sub table tr td a {
-    border: none;
-    box-shadow: none;
-    /*width: 102px;*/
-}
-.sub table tr td:hover {
-    border: none;
-    box-shadow: none;
-}
