@@ -1,7 +1,6 @@
-#coding: utf-8
+# -*- coding: utf-8 -*-
 
 import os
-import redis
 
 # адрес интеграционного сервера
 IS = "http://10.1.2.107/int-server/index.php?wsdl="
@@ -195,9 +194,6 @@ LOGGING = {
         },
     }
 }
-
-# конфигурация redis
-redis_db = redis.StrictRedis(host='localhost', port=6379, db=0)
 
 
 # конфигурация электронной почты
