@@ -1,5 +1,7 @@
 $(document).ready(function () {
     $('a.spec').live("click", function() {
+        $('.specActive').removeClass('specActive').addClass('spec');
+        $(this).addClass('specActive');
         var $clickSpec = this.id;
         var $value = $(this).text();
         $('table.secondTable tr').hide();
@@ -17,6 +19,8 @@ $(document).ready(function () {
     });
 
     $('a.prof').live("click", function() {
+        $('.profActive').removeClass('profActive').addClass('prof');
+        $(this).addClass('profActive');
         var $clickProf = $(this).text();
         $('table.thirdTable tr').hide();
         $.getJSON("/updates/", {clickProf: $clickProf}, function(data) {
