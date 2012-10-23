@@ -22,7 +22,7 @@ body {
     height: 650px;
     position:relative;
     margin:0 auto;
-    padding:0 0 0 0;
+    padding:0;
 }
 
 .header {
@@ -311,6 +311,12 @@ table.firstTable tr td:hover, table.secondTable tr td:hover, table.thirdTable tr
     -webkit-box-shadow: inset 0 0 30px 4px rgba(56, 140, 227, 0.28);
     -khtml-box-shadow: inset 0 0 30px 4px rgba(56, 140, 227, 0.28);
     box-shadow: inset 0 0 30px 4px rgba(56, 140, 227, 0.28);
+}
+
+/*стиль для выделенных ссылок на странице Подразделение*/
+
+.specActive, .profActive {
+    color: #32a7d6;
 }
 
 /*таблица с кнопками "Отправить" и "Назад" на странице Пациент*/
