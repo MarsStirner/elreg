@@ -4,7 +4,7 @@
 
         <meta content="ru-ru" http-equiv="Content-Language" />
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <title>
             {% block title %}
                 Электронная регистратура
@@ -16,7 +16,12 @@
         <script type="text/javascript" src="{{ STATIC_URL }}/static/js/updates.js"></script>
         <script type="text/javascript" src="{{ STATIC_URL }}/static/js/pacient_page.js"></script>
         <script type="text/javascript">jQuery('input[placeholder]').placeholder();</script>
-		<link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}/static/css/style.css" />
+        <!--[if IE]>
+            <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}/static/css/ie-only.css" />
+        <!--<![endif]-->
+        <!--[if !IE]>-->
+            <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}/static/css/style.css" />
+        <!--<![endif]-->
         <style type="text/css" media="print">
             div.no_print {display: none;}
             table.no_shadow_print {box-shadow: none;}
