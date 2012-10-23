@@ -5,49 +5,60 @@ from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
 from settings import IS
 from suds.client import Client
-
-
 import redis
-#redis_db = redis.StrictRedis(host='localhost', port=6379, db=0)
 
 
-def sessionId(request):
+class Redis ():
+    """ Класс для обращения к серверу redis.
+    Класс содержит методы, котрые сохраняют единственный элемент или множество элементов, а также получают данные из
+    базы redis на основании полученного идентификатора сессии и пары ключ:значение.
+
     """
-    Получение идентификатора сессии или, в случае его отсутствия, создание идентификатора сессии.
-    """
-    id = request.session.get('session_id', False)
-    if not id:
-        s = SessionStore()
-        s.save()
-        id = s.session_key
-    request.session['session_id'] = id
-    return id
+    # конфигурация сервера redis:
+    db = redis.StrictRedis(host='localhost', port=6379, db=0)
 
-
-
-
-
-
-class RedisDB ():
-    redis_db = redis.StrictRedis(host='localhost', port=6379, db=0)
     def __init__(self, request):
-        self.id = sessionId(request)
+        self.id = self.sessionId(request)
 
     def set(self, key, value):
-        self.redis_db.hset(self.id, key, value)
+        """
+        Запись в базу идентификатора сессии, ключа и значения для единственного полученного элемента.
+
+        """
+        self.db.hset(self.id, key, value)
+
+    def sets(self, dict):
+        """
+        Запись в базу идентификатора сессии, ключа и значения для каждого элемента полкченного словаря.
+
+        """
+        for (key, value) in dict.items():
+            self.set(key, value)
 
     def get(self, key):
-        result = self.redis_db.hget(self.id, key)
+        """
+        Получение значения из базы по идентификатору сессии и ключу. Возвращается значение типа string во всех
+        случаях, кроме случая, когда ключ равен "step" - тогда возвращается значение типа integer.
+
+        """
+        result = self.db.hget(self.id, key)
         if key == "step":
             result = int(result)
         return result
 
+    def sessionId(self, request):
+        """
+        Получение идентификатора сессии или, в случае его отсутствия, создание идентификатора сессии.
 
-
-
-
-
-
+        """
+        id = request.session.get('session_id', False)
+        if not id:
+            s = SessionStore()
+            s.save()
+            id = s.session_key
+        request.session['session_id'] = id
+        print id, "<---ID"
+        return id
 
 
 class ListWSDL():
@@ -120,7 +131,7 @@ class ScheduleWSDL():
 
     def getTicketStatus(self, hospitalUid=0, ticketUid=0):
         """
-        Метод возвращает информацию о записи на приём.
+        Метод возвращает информацию о записи на приём. Не используется.
 
         """
         try:
@@ -135,7 +146,13 @@ class ScheduleWSDL():
 
         """
         try:
-            ticket = self.client.service.enqueue(person=person, omiPolicyNumber=omiPolicyNumber, hospitalUid=hospitalUid, doctorUid=doctorUid, timeslotStart=timeslotStart, hospitalUidFrom=hospitalUidFrom, birthday=birthday)
+            ticket = self.client.service.enqueue(person=person,
+                                                omiPolicyNumber=omiPolicyNumber,
+                                                hospitalUid=hospitalUid,
+                                                doctorUid=doctorUid,
+                                                timeslotStart=timeslotStart,
+                                                hospitalUidFrom=hospitalUidFrom,
+                                                birthday=birthday)
         except:
             ticket = []
         return ticket
@@ -146,7 +163,6 @@ def stringValidation(string):
     Простой валидатор переменных типа str, который проверяет наличие в строке SQL-команд.
 
     """
-
     string = r'%s' % string
     for i in ['<', '>', '\\', 'script', 'SELECT', 'UPDATE', 'ALTER', 'DROP']:
         if string.find(i) != -1:
