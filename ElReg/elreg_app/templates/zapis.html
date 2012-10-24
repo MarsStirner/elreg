@@ -18,10 +18,19 @@
 </table>
 <br />
 <div class="no_print" align="center">
-<form id="form" action="/" method="post" name="frm">
-    <input type="button" onClick="window.print();" name="btnPrint" value="Печать" title="Распечатать  уведомление о записи на приём" />
-    <input type="submit" id="button-ready" value="Готово" />
-</form>
+    <form id="form" action="/" method="post" name="frm">
+        <table class="footer_btn">
+            <tr>
+                <td>
+                    <input type="button" id="btnPrint" style="width:102px;height:40px" class="btnPrint" name="btnPrint" value="Печать" title="Распечатать  уведомление о записи на приём" onClick="window.print();" />
+                </td>
+                <td>
+                    <input type="submit" id="button-ready" style="width:102px;height:40px" class="btnReady" name="send" value="Готово" />
+                </td>
+            </tr>
+        </table>
+    </form>
 </div>
+
 <script type="text/javascript">$('div.tabb').attr('class', 'zapis');</script>
 {% endblock %}
