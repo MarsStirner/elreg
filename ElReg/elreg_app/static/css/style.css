@@ -107,7 +107,7 @@ ul.menu-nav li a.current  {
 }
 
 ul.menu-nav li a:hover {
-	color:#64d7ec;
+	color: #32a7d6;
 }
 
 ul.menu-nav li a.current:hover  {
@@ -429,3 +429,18 @@ table.footer_btn {
     cursor: hand;
 }
 
+.btnPrint {
+    border: 0;
+    background: transparent url(../images/btn_print.gif) no-repeat left center;
+    text-indent: -1000em;
+    cursor: pointer;
+    cursor: hand;
+}
+
+.btnReady {
+    border: 0;
+    background: transparent url(../images/btn_ready.gif) no-repeat left center;
+    text-indent: -1000em;
+    cursor: pointer;
+    cursor: hand;
+}
