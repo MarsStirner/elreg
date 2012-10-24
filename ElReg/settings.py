@@ -214,7 +214,7 @@ if DjDT:
     MIDDLEWARE_CLASSES += ('debug_toolbar.middleware.DebugToolbarMiddleware',)
     INSTALLED_APPS += ('debug_toolbar',)
     DEBUG_TOOLBAR_PANELS = (
-        #        'debug_toolbar.panels.version.VersionDebugPanel', # версия Django. убрал. только место занимает.
+#        'debug_toolbar.panels.version.VersionDebugPanel', # версия Django. убрал. только место занимает.
         'debug_toolbar.panels.timer.TimerDebugPanel', # время загрузки страницы
         'debug_toolbar.panels.settings_vars.SettingsVarsDebugPanel', # settings.py
         'debug_toolbar.panels.headers.HeaderDebugPanel', # HTTP хедер
