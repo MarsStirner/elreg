@@ -72,8 +72,9 @@ def podrazdeleniePage(request, template_name, podrazd=0):
         for w in podrazdelenie_list:
             if list.uid.startswith(podrazd) and list.title == w:
                 tmp_list.append((list.uid.split('/')[1], list.address))
+    podrazdelenie_list.sort()
     podrazd_list = zip(podrazdelenie_list, tmp_list)
-    db.sets({'podrazd': podrazd,
+    db.set({'podrazd': podrazd,
             'current_lpu_title': current_lpu[1],
             'current_lpu_phone': current_lpu[3],
             'current_lpu_email': current_lpu[4],
@@ -140,7 +141,7 @@ def vremyaPage(request, template_name, vremya=0):
                     tmpList[dates.index(ticket.start.date())] = ticket
             ticketTable.append(tmpList)
 
-    db.sets({'vremya': vremya,
+    db.set({'vremya': vremya,
             'firstweekday': firstweekday,
             'step': 4
             })
@@ -237,7 +238,7 @@ def pacientPage(request, template_name):
                 )
                 # запись на приём произошла успешно:
                 if ticketPatient['result'] == 'true':
-                    db.sets({'ticketUid': ticketPatient['ticketUid'],
+                    db.set({'ticketUid': ticketPatient['ticketUid'],
                              'date': date,
                              'start_time': start_time,
                              'finish_time': finish_time,
@@ -368,7 +369,7 @@ def updatesPage(request):
     if 'clickSpec' in request.GET:
         spec = request.GET['clickSpec']
         adress = request.GET['value']
-        db.sets({'adress': adress,
+        db.set({'adress': adress,
                  'spec': spec
                 })
         for i in doctors_list:
@@ -386,7 +387,7 @@ def updatesPage(request):
     elif 'clickProf' in request.GET:
         prof = request.GET['clickProf']
         hospital_Uid = '/'.join([db.get('podrazd'), db.get('spec')])
-        db.sets({'prof': prof,
+        db.set({'prof': prof,
                  'hospital_Uid': hospital_Uid
                 })
         for i in doctors_list:
