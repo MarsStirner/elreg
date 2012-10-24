@@ -10,10 +10,10 @@ body, td, th, div, p, label, input {
 
 body {
     overflow: scroll;
-
-    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#afafaf', endColorstr='#ffffff'); /* для IE9 */
-    -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=#afafaf, endColorstr=#ffffff)"; /* для IE8 */
-    background: -ms-linear-gradient(top,  #afafaf,  #ffffff); /* для IE10+ */
+    background-color: #d9d9d9;
+    /*filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#afafaf', endColorstr='#ffffff'); *//* для IE9 */
+    /*-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=#afafaf, endColorstr=#ffffff)"; *//* для IE8 */
+    /*background: -ms-linear-gradient(top,  #afafaf,  #ffffff); *//* для IE10+ */
 }
 
 .main 	{
@@ -39,16 +39,10 @@ a {
 }
 
 input {
-    -moz-border-radius: 5px; /* закругление для старых Mozilla Firefox */
-    -webkit-border-radius: 5px; /* закругление для старых Chrome и Safari */
-    -khtml-border-radius:5px; /* закругл. для браузера Konquerer системы Linux */
     border-radius: 5px; /* закругление углов для всех, кто понимает */
 }
 
 fieldset {
-    -moz-border-radius: 20px; /* закругление для старых Mozilla Firefox */
-    -webkit-border-radius: 20px; /* закругление для старых Chrome и Safari */
-    -khtml-border-radius:20px; /* закругл. для браузера Konquerer системы Linux */
     border-radius: 20px; /* закругление углов для всех, кто понимает */
 }
 
@@ -62,13 +56,7 @@ ul.menu-nav {
     top:91px;
     left:0;
     background:url(../images/top_menu.gif) no-repeat 0 0;
-    -moz-border-radius: 20px; /* закругление для старых Mozilla Firefox */
-    -webkit-border-radius: 20px; /* закругление для старых Chrome и Safari */
-    -khtml-border-radius:20px; /* закругл. для браузера Konquerer системы Linux */
     border-radius: 20px; /* закругление углов для всех, кто понимает */
-    -moz-box-shadow: 0 7px 10px rgba(0, 0, 0, 0.2);
-    -webkit-box-shadow: 0 7px 10px rgba(0, 0, 0, 0.2);
-    -khtml-box-shadow: 0 7px 10px rgba(0, 0, 0, 0.2);
     box-shadow: 0 7px 10px rgba(0, 0, 0, 0.2);
     width:100%;
     height:43px
@@ -101,12 +89,11 @@ ul.menu-nav li:last-child a {
 }
 
 ul.menu-nav li a.current  {
-    color: #64d7ec;
-    /*filter:progid:DXImageTransform.Microsoft.Shadow(color= #555555,strength=4, direction=600);*/
+    color: #32a7d6;
 }
 
 ul.menu-nav li a:hover {
-	color:#64d7ec;
+	color: #32a7d6;
 }
 
 /*---------------------------------------------------------Филдсеты---------------------------------------------------*/
@@ -120,9 +107,6 @@ fieldset div.searchField {
 /*на странице Пациент с формой*/
 
 #info fieldset {
-    -moz-border-radius: 20px; /* закругление для старых Mozilla Firefox */
-    -webkit-border-radius: 20px; /* закругление для старых Chrome и Safari */
-    -khtml-border-radius:20px; /* закругл. для браузера Konquerer системы Linux */
     border-radius: 20px; /* закругление углов для всех, кто понимает */
 }
 
@@ -163,13 +147,7 @@ fieldset div.searchField {
     border: 1px solid #bcbcbc;
     padding: 5px;
     width: 100%; /* Ширина таблицы */
-    -moz-border-radius: 20px; /* закругление для старых Mozilla Firefox */
-    -webkit-border-radius: 20px; /* закругление для старых Chrome и Safari */
-    -khtml-border-radius:20px; /* закругл. для браузера Konquerer системы Linux */
     border-radius: 20px; /* закругление углов для всех, кто понимает */
-    -moz-box-shadow: 0 5px 7px rgba(0, 0, 0, 0.2);
-    -webkit-box-shadow: 0 5px 7px rgba(0, 0, 0, 0.2);
-    -khtml-box-shadow: 0 5px 7px rgba(0, 0, 0, 0.2);
     box-shadow: 0 5px 7px rgba(0, 0, 0, 0.2);
 }
 
@@ -214,13 +192,7 @@ fieldset div.searchField {
     color: #000;
     opacity: 1; /* Полупрозрачность таблицы */
     filter: alpha(Opacity=100); /* Для IE */
-    -moz-border-radius: 10px; /* закругление для старых Mozilla Firefox */
-    -webkit-border-radius: 10px; /* закругление для старых Chrome и Safari */
-    -khtml-border-radius:10px; /* закругл. для браузера Konquerer системы Linux */
     border-radius: 10px; /* закругление углов для всех, кто понимает */
-    -moz-box-shadow: inset 0 0 30px 4px rgba(56, 140, 227, 0.28);
-    -webkit-box-shadow: inset 0 0 30px 4px rgba(56, 140, 227, 0.28);
-    -khtml-box-shadow: inset 0 0 30px 4px rgba(56, 140, 227, 0.28);
     box-shadow: inset 0 0 30px 4px rgba(56, 140, 227, 0.28);
 }
 
@@ -228,9 +200,6 @@ fieldset div.searchField {
 
 table.no_search {
     border: none;
-    -moz-box-shadow: none;
-    -webkit-box-shadow: none;
-    -khtml-box-shadow: none;
     box-shadow: none;
     background-color: rgba(0, 0, 0, 0);
 }
@@ -244,9 +213,6 @@ table.commonTable {
     border: 1px solid #bcbcbc;
     padding: 5px;
     width: 100%; /* Ширина таблицы */
-    -moz-border-radius: 20px; /* закругление для старых Mozilla Firefox */
-    -webkit-border-radius: 20px; /* закругление для старых Chrome и Safari */
-    -khtml-border-radius:20px; /* закругл. для браузера Konquerer системы Linux */
     border-radius: 20px; /* закругление углов для всех, кто понимает */
 }
 
@@ -256,13 +222,7 @@ table.commonTable tr td {
 
 table.commonTable tr td:hover {
     background: rgb(255, 255, 255);
-    -moz-border-radius: 20px; /* закругление для старых Mozilla Firefox */
-    -webkit-border-radius: 20px; /* закругление для старых Chrome и Safari */
-    -khtml-border-radius:20px; /* закругл. для браузера Konquerer системы Linux */
     border-radius: 20px; /* закругление углов для всех, кто понимает */
-    -moz-box-shadow: none;
-    -webkit-box-shadow: none;
-    -khtml-box-shadow: none;
     box-shadow: none;
 }
 
@@ -273,20 +233,11 @@ table.firstTable, table.secondTable, table.thirdTable {
     border: none;
     padding: 5px;
     width: 315px; /* Ширина таблицы */
-    -moz-border-radius: 20px; /* закругление для старых Mozilla Firefox */
-    -webkit-border-radius: 20px; /* закругление для старых Chrome и Safari */
-    -khtml-border-radius:20px; /* закругл. для браузера Konquerer системы Linux */
     border-radius: 20px; /* закругление углов для всех, кто понимает */
-    -moz-box-shadow: none;
-    -webkit-box-shadow: none;
-    -khtml-box-shadow: none;
     box-shadow: none;
 }
 
 table.firstTable:hover, table.secondTable:hover, table.thirdTable:hover {
-    -moz-box-shadow: 0 7px 10px rgba(0, 0, 0, 0.2);
-    -webkit-box-shadow: 0 7px 10px rgba(0, 0, 0, 0.2);
-    -khtml-box-shadow: 0 7px 10px rgba(0, 0, 0, 0.2);
     box-shadow: 0 7px 10px rgba(0, 0, 0, 0.2);
 }
 
@@ -298,13 +249,7 @@ table.firstTable tr td, table.secondTable tr td, table.thirdTable tr td {
 
 table.firstTable tr td:hover, table.secondTable tr td:hover, table.thirdTable tr td:hover {
     border: none;
-    -moz-border-radius: 20px; /* закругление для старых Mozilla Firefox */
-    -webkit-border-radius: 20px; /* закругление для старых Chrome и Safari */
-    -khtml-border-radius:20px; /* закругл. для браузера Konquerer системы Linux */
     border-radius: 20px; /* закругление углов для всех, кто понимает */
-    -moz-box-shadow: inset 0 0 30px 4px rgba(56, 140, 227, 0.28);
-    -webkit-box-shadow: inset 0 0 30px 4px rgba(56, 140, 227, 0.28);
-    -khtml-box-shadow: inset 0 0 30px 4px rgba(56, 140, 227, 0.28);
     box-shadow: inset 0 0 30px 4px rgba(56, 140, 227, 0.28);
 }
 
@@ -344,13 +289,7 @@ table.footer_btn {
     border: 1px solid #bcbcbc;
     padding: 10px;
     width: 100%; /* Ширина таблицы */
-    -moz-border-radius: 20px; /* закругление для старых Mozilla Firefox */
-    -webkit-border-radius: 20px; /* закругление для старых Chrome и Safari */
-    -khtml-border-radius:20px; /* закругл. для браузера Konquerer системы Linux */
     border-radius: 20px; /* закругление углов для всех, кто понимает */
-    -moz-box-shadow: 0 5px 7px rgba(0, 0, 0, 0.2);
-    -webkit-box-shadow: 0 5px 7px rgba(0, 0, 0, 0.2);
-    -khtml-box-shadow: 0 5px 7px rgba(0, 0, 0, 0.2);
     box-shadow: 0 5px 7px rgba(0, 0, 0, 0.2);
 }
 
@@ -391,7 +330,7 @@ table.footer_btn {
 /*все кнопки-картинки*/
 
 .container {
-    width:106px;
+    width:102px;
     height:40px;
     border: none;
     padding: 0;
@@ -399,6 +338,11 @@ table.footer_btn {
     display:inline-block;
     overflow:hidden;
 }
+
+.container img {
+    border: none;
+}
+
 .container:hover {
     text-indent:-102px;
 }
@@ -427,3 +371,18 @@ table.footer_btn {
     cursor: hand;
 }
 
+.btnPrint {
+    border: 0;
+    background: transparent url(../images/btn_print.gif) no-repeat left center;
+    text-indent: -1000em;
+    cursor: pointer;
+    cursor: hand;
+}
+
+.btnReady {
+    border: 0;
+    background: transparent url(../images/btn_ready.gif) no-repeat left center;
+    text-indent: -1000em;
+    cursor: pointer;
+    cursor: hand;
+}
