@@ -9,7 +9,7 @@
     <tr><td>Дата рождения:</td><td colspan="2">{{ birthday }} г.</td></tr>
     <tr><td>Полис ОМС:</td><td colspan="2">{{ omiPolicyNumber }}</td></tr>
     <tr><th colspan="3">ВЫ ЗАПИСАНЫ НА ПРИЕМ:</th></tr>
-    <tr><td>Лечебное учреждение:</td><td colspan="2">{{ current_lpu_title }}. {{  current_podrazd }}</td></tr>
+    <tr><td>Лечебное учреждение:</td><td colspan="2">{{ current_lpu_title }}, {{ adress }}, телефон: {{ current_lpu_phone }}</td></tr>
     <tr><td>Врач:</td><td colspan="2">{{ docName }} ({{ prof }})</td></tr>
     <tr><td>Дата и время приёма:</td><td colspan="2">{{ date }} {{ start_time }} - {{ finish_time }}</td></tr>
     <tr><th colspan="3">ВНИМАНИЕ:</th></tr>
@@ -19,16 +19,8 @@
 <br />
 <div class="no_print" align="center">
     <form id="form" action="/" method="post" name="frm">
-        <table class="footer_btn">
-            <tr>
-                <td>
-                    <input type="button" id="btnPrint" style="width:102px;height:40px" class="btnPrint" name="btnPrint" value="Печать" title="Распечатать  уведомление о записи на приём" onClick="window.print();" />
-                </td>
-                <td>
-                    <input type="submit" id="button-ready" style="width:102px;height:40px" class="btnReady" name="send" value="Готово" />
-                </td>
-            </tr>
-        </table>
+        <input type="button" id="btnPrint" class="btnPrint" name="btnPrint" value="Печать" title="Распечатать  уведомление о записи на приём" onClick="window.print();" />
+        <input type="submit" id="button-ready" class="btnReady" name="send" value="Готово" />
     </form>
 </div>
 
