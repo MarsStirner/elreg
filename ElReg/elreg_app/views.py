@@ -256,8 +256,9 @@ def pacientPage(request, template_name):
                                             'pacientName': db.get('pacientName'),
                                             'birthday': db.get('birthday'),
                                             'omiPolicyNumber': db.get('omiPolicyNumber'),
-                                            'current_podrazd': db.get('current_podrazd'),
                                             'current_lpu_title': db.get('current_lpu_title'),
+                                            'current_lpu_phone': db.get('current_lpu_phone'),
+                                            'adress': db.get('adress'),
                                             'docName': db.get('docName'),
                                             'prof': db.get('prof'),
                                             'date': date,
@@ -277,8 +278,9 @@ def pacientPage(request, template_name):
             # ошибка при записи на приём или ошибки в заполненной форме:
             db.set('step', 5)
             return render_to_response(template_name, {
-                                                      'current_podrazd': db.get('current_podrazd'),
                                                       'current_lpu_title': db.get('current_lpu_title'),
+                                                      'current_lpu_phone': db.get('current_lpu_phone'),
+                                                      'adress': db.get('adress'),
                                                       'prof': db.get('prof'),
                                                       'docName': db.get('docName'),
                                                       'errors': errors,
@@ -347,8 +349,9 @@ def zapisPage(request, template_name):
                                               'pacientName': pacientName,
                                               'birthday': birthday,
                                               'docName': docName,
-                                              'current_podrazd': db.get('current_podrazd'),
                                               'current_lpu_title': db.get('current_lpu_title'),
+                                              'current_lpu_phone': db.get('current_lpu_phone'),
+                                              'adress': db.get('adress'),
                                               'step': db.get('step')})
 
 
@@ -378,10 +381,6 @@ def updatesPage(request):
                 tmp = list(set(tmp))
                 tmp.sort()
         new = dict(zip(xrange(len(tmp)), tmp))
-        hospitals_list = ListWSDL().listHospitals()
-        for i in hospitals_list:
-            if i.uid.startswith('/'.join([db.get('podrazd'), spec])):
-                db.set('current_podrazd', i.title)
 
     # при щелчке на элементе из таблицы со списком специализаций:
     elif 'clickProf' in request.GET:
@@ -392,9 +391,7 @@ def updatesPage(request):
                 })
         for i in doctors_list:
             if i.hospitalUid == hospital_Uid and i.speciality == prof:
-                tmp.append(i)
-        for i in tmp:
-            new[i.uid] = ' '.join([i.name.lastName, i.name.firstName, i.name.patronymic])
+                new[i.uid] = ' '.join([i.name.lastName, i.name.firstName, i.name.patronymic])
 
     # при обращении к странице через адресную строку:
     else:
