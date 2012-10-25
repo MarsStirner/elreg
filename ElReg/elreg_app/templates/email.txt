@@ -3,7 +3,7 @@
 Дата рождения: {{ birthday }}
 Полис ОМС: {{ omiPolicyNumber }}
 ВЫ ЗАПИСАНЫ НА ПРИЕМ:
-Лечебное учреждение: {{ current_lpu_title }} {{ current_podrazd }}
+Лечебное учреждение: {{ current_lpu_title }}, {{ adress }}, телефон: {{ current_lpu_phone }}
 Врач: {{ docName }} ({{ prof }})
 Дата и время приёма: {{ date }} {{ start_time }} - {{ finish_time }}
 ВНИМАНИЕ:
