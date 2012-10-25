@@ -39,9 +39,25 @@ $(document).ready(function () {
             cache: false, // обязательно для IE
             dataType: 'json',
             success: function (data) {
+
+////////////////////////////////////////////////////////////////////////////
+//                var sortable = [];
+//                for (var key in data) {
+//                    alert([key]);
+//                    sortable.push([key, data[key]]);
+//                alert (sortable);
+//                }
+//                for (var i in sortable) {
+//                    alert (sortable[i]);
+//                }
+//                sortable.sort(function(a, b) {return a[1] - b[1]});
+//                alert (sortable);
+////////////////////////////////////////////////////////////////////////////
+
                 var $items = [];
+//                $.each(sortable, function(key, val) {
                 $.each(data, function(key, val) {
-                    $items.push('<tr><td><a href="/time/' + key + '"/">' + val + '</a></td></tr>');
+                    $items.push('<tr><td><a href="/time/' + key + '/">' + val + '</a></td></tr>');
                 });
                 $($items.join('')).fadeIn('fast').appendTo('table.thirdTable');
                 $('body,html').animate({
