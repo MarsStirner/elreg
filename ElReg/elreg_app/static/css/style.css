@@ -44,6 +44,7 @@ input {
     -webkit-border-radius: 5px; /* закругление для старых Chrome и Safari */
     -khtml-border-radius:5px; /* закругл. для браузера Konquerer системы Linux */
     border-radius: 5px; /* закругление углов для всех, кто понимает */
+    margin: 5px 0 5px 0;
 }
 
 fieldset {
@@ -148,11 +149,11 @@ fieldset div.searchField {
 }
 
 .legend li.free {
-    background-color: rgba(19, 255, 6, 0.27);
+    background-color: #baffad;
 }
 
 .legend li.locked {
-    background-color: rgba(255, 18, 8, 0.27);
+    background-color: #ffc8c1;
 }
 
 .legend li.not {
@@ -196,11 +197,11 @@ fieldset div.searchField {
 }
 
 .tabb table td.locked, .tabb table td.locked:hover  {
-     background: rgba(255, 18, 8, 0.27);
+     background: #ffc8c1;
  }
 
 .tabb table td.free {
-    background: rgba(19, 255, 6, 0.27);
+    background: #baffad;
 }
 
 .tabb table td.free  button {
@@ -385,8 +386,8 @@ table.footer_btn {
 
 .field label {
     float: left;
-    width: 200px;
-    margin-right: 10px;
+    width: 150px;
+    margin: 5px 10px 5px 0;
     text-align: right;
     clear: left;
 }
@@ -431,6 +432,9 @@ table.footer_btn {
 
 .btnPrint {
     border: 0;
+    width:102px;
+    height:40px;
+    margin:0 382px 0 0;
     background: transparent url(../images/btn_print.gif) no-repeat left center;
     text-indent: -1000em;
     cursor: pointer;
@@ -439,6 +443,9 @@ table.footer_btn {
 
 .btnReady {
     border: 0;
+    width:102px;
+    height:40px;
+    margin:0 0 0 382px;
     background: transparent url(../images/btn_ready.gif) no-repeat left center;
     text-indent: -1000em;
     cursor: pointer;
