@@ -12,7 +12,7 @@ import datetime
 import json
 
 
-def moPage(request, template_name):
+def indexPage(request, templateName):
     """ Логика страницы МО
     Главная страница сайта. На ней происходит проверка на наличие у пользователя идентификатора сессии
     и создание сессии пользователя в случае отсутствия идентификатора. А также происходит получение
@@ -23,11 +23,11 @@ def moPage(request, template_name):
     # получение списка регионов:
     region_list = Region.objects.filter(activation=True)
     db.set('step', 1)
-    return render_to_response(template_name, {'region_list': region_list,
-                                              'step': db.get('step')})
+    return render_to_response(templateName, {'region_list': region_list},
+                                              context_instance=RequestContext(request))
 
 
-def lpuPage(request, template_name, okato=0):
+def medicalInstitutionPage(request, templateName, okato=0):
     """ Логика страницы ЛПУ
     Из полученного кода ОКАТО находим список всех ЛПУ для данного региона. Если на страницу попадаем через
     кнопку "Поиск ЛПУ", тогда  в okato передается строка search и список ЛПУ не выводится.
@@ -38,64 +38,60 @@ def lpuPage(request, template_name, okato=0):
         okato = db.get('okato')
     if okato != "search":
         db.set('okato', okato)
-        hospitals_list = ListWSDL().listHospitals(okato)
-        current_region = Region.objects.get(code=okato)
+        hospitals_list = ListWSDL().listHospitals(okato) # список ЛПУ выбранного региона
+        current_region = Region.objects.get(code=okato) # название выбранного региона
     db.set('step', 2)
-    step = 2
-    return render_to_response(template_name, locals())
+    return render_to_response(templateName, locals(),
+                                             context_instance=RequestContext(request))
 
 
-def podrazdeleniePage(request, template_name, podrazd=0):
+def subdivisionPage(request, templateName, sub=0):
     """Логика страницы Подразделение/Специализация/Врач
     Выводится список подразделений для выбранного ЛПУ. Остальная логика страницы осуществляется средствами jQuery с
     использованием AJAX'а и определена в скрипте updates.js.
 
     """
     db = Redis(request)
-    if not podrazd:
-        podrazd = db.get('podrazd')
-    info_list = InfoWSDL().getHospitalInfo()
-    podrazdelenie_list = []
+    if not sub:
+        sub = db.get('sub')
+    tmp1_list, tmp2_list = [], []
     current_lpu = ''
     try:
-        for info in info_list:
-            if info.uid.startswith(podrazd):
-                current_lpu = info
-                for b in info.buildings:
-                    podrazdelenie_list.append(b.title)
+        for i in InfoWSDL().getHospitalInfo():
+            if i.uid.startswith(sub):
+                current_lpu = i
+                for j in i.buildings:
+                    tmp1_list.append(j.title)
     except AttributeError:
         return Http404
 
-    tmp_list = []
-    list_list = ListWSDL().listHospitals()
-    for list in list_list:
-        for w in podrazdelenie_list:
-            if list.uid.startswith(podrazd) and list.title == w:
-                tmp_list.append((list.uid.split('/')[1], list.address))
-    podrazdelenie_list.sort()
-    podrazd_list = zip(podrazdelenie_list, tmp_list)
-    db.set({'podrazd': podrazd,
+    for i in ListWSDL().listHospitals():
+        for j in tmp1_list:
+            if i.uid.startswith(sub) and i.title == j:
+                tmp2_list.append((i.uid.split('/')[1], i.address))
+    tmp1_list.sort()
+    subdivision_list = zip(tmp1_list, tmp2_list)
+    db.set({'sub': sub,
             'current_lpu_title': current_lpu[1],
             'current_lpu_phone': current_lpu[3],
             'current_lpu_email': current_lpu[4],
-            'step': 3
-            })
-    return render_to_response(template_name, {'current_lpu': current_lpu,
-                                              'podrazd_list': podrazd_list,
-                                              'step': db.get('step')})
+            'step': 3})
+    return render_to_response(templateName, {'current_lpu': current_lpu,
+                                              'subdivision_list': subdivision_list},
+                                              context_instance=RequestContext(request))
 
 
-def vremyaPage(request, template_name, vremya=0):
+def timePage(request, templateName, vremya=0):
     """Логика страницы Время
     Выводится таблица с расписанием выбранного врача на текущую неделю.
 
     """
     db = Redis(request)
-    now = datetime.date.today()
+    today = datetime.date.today()
     # если попадаем на страницу нажимая кнопку "Назад", "Предыдущая" или "Следующая":
     if not vremya or vremya in ['next','prev']:
         if not vremya:
-            firstweekday = now - datetime.timedelta(days=datetime.date.isoweekday(now)-1)
+            firstweekday = today - datetime.timedelta(days=datetime.date.isoweekday(today)-1)
         elif vremya == 'next':
             a = db.get('firstweekday').split('-')
             firstweekday = datetime.date(int(a[0]), int(a[1]), int(a[2])) + datetime.timedelta(days=7)
@@ -105,16 +101,14 @@ def vremyaPage(request, template_name, vremya=0):
         vremya = db.get('vremya').split('-')
     # если попадаем на страницу после выбора врача на вкладке "Подраздеелние/Специализация/Врач":
     else:
-        firstweekday = now - datetime.timedelta(days=datetime.date.isoweekday(now)-1)
+        firstweekday = today - datetime.timedelta(days=datetime.date.isoweekday(today)-1)
     hospital_Uid = db.get('hospital_Uid')
     ticketList = ScheduleWSDL().getScheduleInfo(hospitalUid=hospital_Uid, doctorUid=vremya)
 
-    docName = '' # ФИО врача
     for i in ListWSDL().listDoctors():
         if i.uid == vremya:
-            docName = i.name
-            docName = ' '.join([docName.lastName, docName.firstName, docName.patronymic])
-            db.set('docName', docName)
+            doctor = ' '.join([i.name.lastName, i.name.firstName, i.name.patronymic]) # ФИО врача
+            db.set('doctor', doctor)
 
     times = [] # Список времен начала записи текущей недели
     dates = [] # Список дат текущей недели
@@ -122,43 +116,36 @@ def vremyaPage(request, template_name, vremya=0):
     for i in xrange(7):
         newDay = firstweekday + datetime.timedelta(days=i)
         dates.append(newDay)
-        for ticket in ticketList:
-            if newDay == ticket.start.date():
-                times.append(ticket.start.time())
+        for j in ticketList:
+            if newDay == j.start.date():
+                times.append(j.start.time())
         times = list(set(times))
         times.sort()
 
     ticketTable = []
     if times:
         currentTicketList = []
-        for ticket in ticketList:
-            if ticket.start.date() in dates:
-                currentTicketList.append(ticket)
-        for time in times:
-            tmpList = [0]*7
-            for ticket in currentTicketList:
-                if ticket.start.time() == time:
-                    tmpList[dates.index(ticket.start.date())] = ticket
-            ticketTable.append(tmpList)
+        for i in ticketList:
+            if i.start.date() in dates:
+                currentTicketList.append(i)
+        for i in times:
+            tmp_list = [0]*7
+            for j in currentTicketList:
+                if j.start.time() == i:
+                    tmp_list[dates.index(j.start.date())] = j
+            ticketTable.append(tmp_list)
 
     db.set({'vremya': vremya,
             'firstweekday': firstweekday,
-            'step': 4
-            })
-    return render_to_response(template_name, {
-                                              'current_lpu_title': db.get('current_lpu_title'),
-                                              'current_lpu_phone': db.get('current_lpu_phone'),
-                                              'adress': db.get('adress'),
-                                              'prof': db.get('prof'),
-                                              'docName': docName,
-                                              'dates': dates,
+            'step': 4})
+    return render_to_response(templateName, {'dates': dates,
                                               'times': times,
                                               'ticketTable': ticketTable,
-                                              'now': datetime.datetime.now(),
-                                              'step': db.get('step')})
+                                              'now': datetime.datetime.now()},
+                                              context_instance=RequestContext(request))
 
 
-def pacientPage(request, template_name):
+def patientPage(request, templateName):
     """Логика страницы Пациент
     Здесь происходит обработка данных полученных от пользователя (на стороне сервера). Осуществляется проверка на
     наличие незаполненных полей и упрощенная валидация введенных данных. Все найденные ошибки заносятся в
@@ -224,7 +211,7 @@ def pacientPage(request, template_name):
                 hospital_Uid = db.get('hospital_Uid')
                 vremya = db.get('vremya')
                 omiPolicyNumber = ' '.join([policy1,policy2])
-                pacientName = ' '.join([lastName,firstName,patronymic])
+                patientName = ' '.join([lastName,firstName,patronymic])
                 ticketPatient = ScheduleWSDL().enqueue(
                     person = {'lastName': unicode(lastName),
                               'firstName': unicode(firstName),
@@ -243,9 +230,8 @@ def pacientPage(request, template_name):
                              'start_time': start_time,
                              'finish_time': finish_time,
                              'omiPolicyNumber': omiPolicyNumber,
-                             'pacientName': pacientName,
-                             'birthday': '.'.join([dd,mm,yy])
-                            })
+                             'patientName': patientName,
+                             'birthday': '.'.join([dd,mm,yy])})
                     # формирование и отправка письма:
                     if userEmail:
                         emailLPU = db.get('current_lpu_email')
@@ -253,14 +239,14 @@ def pacientPage(request, template_name):
                         htmly     = get_template('email.html')
 
                         context = Context({ 'ticketUid': ticketPatient['ticketUid'],
-                                            'pacientName': db.get('pacientName'),
+                                            'patientName': db.get('patientName'),
                                             'birthday': db.get('birthday'),
                                             'omiPolicyNumber': db.get('omiPolicyNumber'),
                                             'current_lpu_title': db.get('current_lpu_title'),
                                             'current_lpu_phone': db.get('current_lpu_phone'),
-                                            'adress': db.get('adress'),
-                                            'docName': db.get('docName'),
-                                            'prof': db.get('prof'),
+                                            'address': db.get('address'),
+                                            'doctor': db.get('doctor'),
+                                            'speciality': db.get('speciality'),
                                             'date': date,
                                             'start_time': start_time,
                                             'finish_time': finish_time })
@@ -277,13 +263,7 @@ def pacientPage(request, template_name):
                     ticketPatient_err = ticketPatient['result']
             # ошибка при записи на приём или ошибки в заполненной форме:
             db.set('step', 5)
-            return render_to_response(template_name, {
-                                                      'current_lpu_title': db.get('current_lpu_title'),
-                                                      'current_lpu_phone': db.get('current_lpu_phone'),
-                                                      'adress': db.get('adress'),
-                                                      'prof': db.get('prof'),
-                                                      'docName': db.get('docName'),
-                                                      'errors': errors,
+            return render_to_response(templateName, {'errors': errors,
                                                       'ticket': ticket,
                                                       'date': date,
                                                       'start_time': start_time,
@@ -297,62 +277,39 @@ def pacientPage(request, template_name):
                                                       'policy1': policy1,
                                                       'policy2': policy2,
                                                       'userEmail': userEmail,
-                                                      'ticketPatient_err': ticketPatient_err,
-                                                      'step': db.get('step')})
+                                                      'ticketPatient_err': ticketPatient_err},
+                                                      context_instance=RequestContext(request))
         # если представление было вызвано нажатием на ячейку таблицы на странице Время:
         db.set('step', 5)
-        return render_to_response(template_name, {
-                                                  'current_lpu_title': db.get('current_lpu_title'),
-                                                  'current_lpu_phone': db.get('current_lpu_phone'),
-                                                  'adress': db.get('adress'),
-                                                  'prof': db.get('prof'),
-                                                  'docName': db.get('docName'),
-                                                  'errors': errors,
+        return render_to_response(templateName, {'errors': errors,
                                                   'ticket': ticket,
                                                   'date': date,
                                                   'start_time': start_time,
-                                                  'finish_time': finish_time,
-                                                  'step': db.get('step')})
+                                                  'finish_time': finish_time},
+                                                  context_instance=RequestContext(request))
     # обращение к форме через адресную строку:
     else:
         return HttpResponseRedirect(reverse('mo'))
 
 
-def zapisPage(request, template_name):
+def registerPage(request, templateName):
     """Логика страницы Запись
     Запись на приём прошла успешно. Здесь происходит запрос на получение сведений о записи (номер талона, имя врача,
     название ЛПУ и т.д.). Далее эти данные передаются в шаблон для вывода на экран и на печать, при необходимости.
 
     """
     db = Redis(request)
-    ticketUid = db.get('ticketUid')
-
-
-    prof = db.get('prof')
-    date = db.get('date')
-    d = date.split('-')
-    dd = datetime.date(int(d[0]),int(d[1]),int(d[2]))
-    start_time = db.get('start_time')
-    finish_time = db.get('finish_time')
-    omiPolicyNumber = db.get('omiPolicyNumber')
-    pacientName = db.get('pacientName')
-    birthday = db.get('birthday')
-    docName = db.get('docName')
-
+    d = db.get('date').split('-')
+    date = datetime.date(int(d[0]),int(d[1]),int(d[2]))
     db.set('step', 6)
-    return render_to_response(template_name, {'ticketUid': ticketUid,
-                                              'prof': prof,
-                                              'date': dd,
-                                              'start_time': start_time,
-                                              'finish_time': finish_time,
-                                              'omiPolicyNumber': omiPolicyNumber,
-                                              'pacientName': pacientName,
-                                              'birthday': birthday,
-                                              'docName': docName,
-                                              'current_lpu_title': db.get('current_lpu_title'),
-                                              'current_lpu_phone': db.get('current_lpu_phone'),
-                                              'adress': db.get('adress'),
-                                              'step': db.get('step')})
+    return render_to_response(templateName, {'ticketUid': db.get('ticketUid'),
+                                              'date': date,
+                                              'start_time': db.get('start_time'),
+                                              'finish_time': db.get('finish_time'),
+                                              'omiPolicyNumber': db.get('omiPolicyNumber'),
+                                              'patientName': db.get('patientName'),
+                                              'birthday': db.get('birthday')},
+                                              context_instance=RequestContext(request))
 
 
 ##### Представления, используемые AJAX'ом: #####
@@ -366,39 +323,36 @@ def updatesPage(request):
     """
     db = Redis(request)
     doctors_list = ListWSDL().listDoctors()
-    tmp, new = [], {}
+    tmp_list, tmp_dict = [], {}
 
     # при щелчке на элементе из таблицы со списком подразделений:
     if 'clickSpec' in request.GET:
         spec = request.GET['clickSpec']
-        adress = request.GET['value']
-        db.set({'adress': adress,
-                 'spec': spec
-                })
+        db.set({'address': request.GET['value'],
+                 'spec': spec})
         for i in doctors_list:
-            if i.hospitalUid == '/'.join([db.get('podrazd'), spec]):
-                tmp.append(i.speciality)
-                tmp = list(set(tmp))
-                tmp.sort()
-        new = dict(zip(xrange(len(tmp)), tmp))
+            if i.hospitalUid == '/'.join([db.get('sub'), spec]):
+                tmp_list.append(i.speciality)
+                tmp_list = list(set(tmp_list))
+                tmp_list.sort()
+        tmp_dict = dict(zip(xrange(len(tmp_list)), tmp_list))
 
     # при щелчке на элементе из таблицы со списком специализаций:
     elif 'clickProf' in request.GET:
-        prof = request.GET['clickProf']
-        hospital_Uid = '/'.join([db.get('podrazd'), db.get('spec')])
-        db.set({'prof': prof,
-                 'hospital_Uid': hospital_Uid
-                })
+        speciality = request.GET['clickProf']
+        hospital_Uid = '/'.join([db.get('sub'), db.get('spec')])
+        db.set({'speciality': speciality,
+                 'hospital_Uid': hospital_Uid})
         for i in doctors_list:
-            if i.hospitalUid == hospital_Uid and i.speciality == prof:
-                new[i.uid] = ' '.join([i.name.lastName, i.name.firstName, i.name.patronymic])
+            if i.hospitalUid == hospital_Uid and i.speciality == speciality:
+                tmp_dict[i.uid] = ' '.join([i.name.lastName, i.name.firstName, i.name.patronymic])
 
     # при обращении к странице через адресную строку:
     else:
         return HttpResponseRedirect(reverse('mo'))
 
     # создание ответа в формате json:
-    return HttpResponse(json.dumps(new), mimetype='application/json')
+    return HttpResponse(json.dumps(tmp_dict), mimetype='application/json')
 
 
 def searchPage(request):
@@ -438,9 +392,7 @@ def searchPage(request):
 
             ### поиск ЛПУ по названию города: ###
             if search_gorod:
-                tmp_list = []
-                tmp_dict ={}
-                lpu_dict = {}
+                tmp_list, tmp_dict, lpu_dict = [], {}, {}
                 # формирование списка доступных городов:
                 region_list = Region.objects.filter(activation=True).exclude(region__iendswith=u'район')
 
@@ -464,10 +416,8 @@ def searchPage(request):
                     hospitals_list = ListWSDL().listHospitals(i)
                     for j in hospitals_list:
                         lpu_dict[j.uid.split('/')[0]] = j.title
-
                 if not result:
                     result = lpu_dict
-
                 else:
                     adict = {}
                     for i in result.items():
@@ -478,8 +428,7 @@ def searchPage(request):
 
             ### поиск ЛПУ по названию района: ###
             if search_rayon:
-                tmp_list = []
-                lpu_dict = {}
+                tmp_list, tmp_dict, lpu_dict = [], {}, {}
                 # формирование списка доступных районов:
                 region_list = Region.objects.filter(activation=True, region__iendswith=u'район')
 
@@ -492,7 +441,6 @@ def searchPage(request):
 
                 # формирование словаря со значениями, удовлетворяющими поиску,
                 # где ключ - uid ЛПУ, а значение - наименование ЛПУ
-                tmp_dict ={}
                 for (region,code) in tmp_list:
                     flag = True
                     for i in search_list:
