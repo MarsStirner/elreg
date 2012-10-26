@@ -9,11 +9,8 @@ body, td, th, div, p, label, input {
 }
 
 body {
+    background: url(../images/background_ie.jpg) fixed repeat-x left top;
     overflow: scroll;
-    background-color: #d9d9d9;
-    /*filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#afafaf', endColorstr='#ffffff'); *//* для IE9 */
-    /*-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=#afafaf, endColorstr=#ffffff)"; *//* для IE8 */
-    /*background: -ms-linear-gradient(top,  #afafaf,  #ffffff); *//* для IE10+ */
 }
 
 .main 	{
@@ -178,7 +175,7 @@ fieldset div.searchField {
 }
 
 .tabb table td.free  button {
-    background: rgba(255, 255, 255, 0);
+    background: #baffad;
     display: block;
     font-size:14px;
     font-weight:bold;
@@ -186,7 +183,7 @@ fieldset div.searchField {
 }
 
 .tabb table td.free  button:hover {
-    color: #000000;
+    box-shadow: inset 0 0 30px 4px #b2caff;
 }
 
 .tabb table td:hover {
@@ -194,7 +191,7 @@ fieldset div.searchField {
     opacity: 1; /* Полупрозрачность таблицы */
     filter: alpha(Opacity=100); /* Для IE */
     border-radius: 10px; /* закругление углов для всех, кто понимает */
-    box-shadow: inset 0 0 30px 4px rgba(56, 140, 227, 0.28);
+    box-shadow: inset 0 0 30px 4px #b2caff;
 }
 
 /*таблица поиска*/
