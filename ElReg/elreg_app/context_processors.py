@@ -1,13 +1,15 @@
-#coding: utf-8
+# -*- coding: utf-8 -*-
 
-from ElReg.settings import redis_db
+from elreg_app.functions import Redis
 
-def customProc(request):
-    id = request.session.session_key
-    step = int(redis_db.hget(id, 'step'))
-    prof = redis_db.hget(id, 'prof')
-    date = redis_db.hget(id, 'date')
-    current_podrazd = redis_db.hget(id, 'current_podrazd')
-    docName = redis_db.hget(id, 'docName')
+def globalContext(request):
+    db = Redis(request)
 
-    return locals()
+    return {
+        'step': db.get('step'),                             # номер шага (вкладки на сайте)
+        'current_lpu_title': db.get('current_lpu_title'),   # наименование выбранного ЛПУ
+        'current_lpu_phone': db.get('current_lpu_phone'),   # номер телефона выбранного ЛПУ
+        'address': db.get('address'),                       # адрес выбранного ЛПУ
+        'speciality': db.get('speciality'),                 # специальность выбранного врача
+        'doctor': db.get('doctor'),                         # ФИО выбранного врача
+    }
