@@ -2,12 +2,12 @@
     <body>
         <table align="center">
             <tr><th colspan="3" align="center">УВЕДОМЛЕНИЕ О ЗАПИСИ НА ПРИЕМ №{{ ticketUid }}</th></tr>
-            <tr align="justify"><td>ФИО (Пациент):</td><td colspan="2">{{ pacientName }}</td></tr>
+            <tr align="justify"><td>ФИО (Пациент):</td><td colspan="2">{{ patientName }}</td></tr>
             <tr align="justify"><td>Дата рождения:</td><td colspan="2">{{ birthday }}</td></tr>
             <tr align="justify"><td>Полис ОМС:</td><td colspan="2">{{ omiPolicyNumber }}</td></tr>
             <tr><th colspan="3" align="center">ВЫ ЗАПИСАНЫ НА ПРИЕМ:</th></tr>
-            <tr align="justify"><td>Лечебное учреждение:</td><td colspan="2">{{ current_lpu_title }}, {{ adress }}, телефон: {{ current_lpu_phone }}</td></tr>
-            <tr align="justify"><td>Врач:</td><td colspan="2">{{ docName }} ({{ prof }})</td></tr>
+            <tr align="justify"><td>Лечебное учреждение:</td><td colspan="2">{{ current_lpu_title }}, {{ address }}, телефон: {{ current_lpu_phone }}</td></tr>
+            <tr align="justify"><td>Врач:</td><td colspan="2">{{ doctor }} ({{ speciality }})</td></tr>
             <tr align="justify"><td>Дата и время приёма:</td><td colspan="2">{{ date }} {{ start_time }} - {{ finish_time }}</td></tr>
             <tr><th colspan="3" align="center">ВНИМАНИЕ:</th></tr>
             <tr align="justify"><td colspan="3">В случае невозможности посещения врача в указанное время, пожалуйста, сообщите об этом лечебному учреждению по контактным данным, указанным в настоящем уведомлении.</td></tr>

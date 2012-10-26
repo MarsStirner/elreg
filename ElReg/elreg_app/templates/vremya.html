@@ -3,9 +3,9 @@
 
 {% block content %}
 
-<p>Лечебное учреждение: {{ current_lpu_title }}, {{ adress }}, телефон: {{ current_lpu_phone }}</p>
-<p>Специализация: {{ prof }}</p>
-<p>Врач: {{ docName }}</p>
+<p>Лечебное учреждение: {{ current_lpu_title }}, {{ address }}, телефон: {{ current_lpu_phone }}</p>
+<p>Специализация: {{ speciality }}</p>
+<p>Врач: {{ doctor }}</p>
 
 <p><a href="{% url vremya %}prev/" class="container"><img src="{{ STATIC_URL }}/static/images/prev_btn.gif" alt="Предыдущая" title="Предыдущая неделя"></a>
    <a href="{% url vremya %}next/" class="container"><img src="{{ STATIC_URL }}/static/images/next_btn.gif" alt="Следующая" title="Следующая неделя"></a>
