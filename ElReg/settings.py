@@ -126,7 +126,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.core.context_processors.request',
     'django.contrib.messages.context_processors.messages',
     'django.core.context_processors.csrf',
-#    'elreg_app.context_processors.customProc',
+    'elreg_app.context_processors.globalContext',
     )
 
 MIDDLEWARE_CLASSES = (
@@ -197,15 +197,23 @@ LOGGING = {
 
 
 # конфигурация электронной почты
-EMAIL_HOST = 'localhost'
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+#EMAIL_BACKEND = 'django.core.mail.message.EmailMultiAlternatives'
 
-EMAIL_PORT = 1025
+#EMAIL_HOST = 'localhost'
+EMAIL_HOST = 'smtp.gmail.com'
 
-EMAIL_HOST_USER = ''
+#EMAIL_PORT = 1025
+EMAIL_PORT = 25
 
+#EMAIL_HOST_USER = ''
+EMAIL_HOST_USER = 'vokulichev@gmail.com'
+
+#EMAIL_HOST_PASSWORD = ''
 EMAIL_HOST_PASSWORD = ''
 
-EMAIL_USE_TLS = False
+#EMAIL_USE_TLS = False
+EMAIL_USE_TLS = True
 
 DEFAULT_FROM_EMAIL = 'test@elreg.ru'
 
