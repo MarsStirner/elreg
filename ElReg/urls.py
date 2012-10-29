@@ -4,6 +4,7 @@ from django.conf.urls import patterns, include, url
 from django.contrib import admin
 from settings import APP_NAME, DEBUG
 admin.autodiscover()
+
 urlpatterns = patterns('',
     # административный интерфейс:
     url(r'^admin/', include(admin.site.urls)),
