@@ -16,7 +16,7 @@
 		<script type="text/javascript" src="{{ STATIC_URL }}/static/js/jquery-1.8.2.min.js"></script>
         <script type="text/javascript" src="{{ STATIC_URL }}/static/js/jquery.placeholder.min.js"></script>
         <script type="text/javascript" src="{{ STATIC_URL }}/static/js/updates.js"></script>
-        <script type="text/javascript" src="{{ STATIC_URL }}/static/js/pacient_page.js"></script>
+        <script type="text/javascript" src="{{ STATIC_URL }}/static/js/patient_page.js"></script>
         <script type="text/javascript">jQuery('input[placeholder]').placeholder();</script>
         <!--[if IE]>
             <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}/static/css/ie-only.css" />
@@ -39,18 +39,18 @@
 		<div class="header">
 			<ul class="menu-nav">
 				<li>
-                    {% if step > 1 %}<a href="{% url mo %}">{% elif step == 1 %}<a class="current">{% else %}<a>{% endif %}МО</a>
+                    {% if step > 1 %}<a href="{% url index %}">{% elif step == 1 %}<a class="current">{% else %}<a>{% endif %}МО</a>
 				</li>
 				<li>
-                    {% if step > 2 %}<a href="{% url lpu %}">{% elif step == 2 %}<a class="current">{% else %}<a>{% endif %}ЛПУ</a>
+                    {% if step > 2 %}<a href="{% url medical_institution %}">{% elif step == 2 %}<a class="current">{% else %}<a>{% endif %}ЛПУ</a>
 				</li>
 				<li>
-                    {% if step > 3 %}<a href="{% url podrazdelenie %}">{% elif step == 3 %}<a class="current">{% else %}<a>{% endif %}Подразделение/Специализация/Врач</a>
+                    {% if step > 3 %}<a href="{% url subdivision %}">{% elif step == 3 %}<a class="current">{% else %}<a>{% endif %}Подразделение/Специализация/Врач</a>
 				<li>
-                    {% if step > 4 %}<a href="{% url vremya %}">{% elif step == 4 %}<a class="current">{% else %}<a>{% endif %}Время</a>
+                    {% if step > 4 %}<a href="{% url time %}">{% elif step == 4 %}<a class="current">{% else %}<a>{% endif %}Время</a>
 				</li>
                 <li>
-                    {% if step > 5 %}<a href="{% url pacient %}">{% elif step == 5 %}<a class="current">{% else %}<a>{% endif %}Пациент</a>
+                    {% if step > 5 %}<a href="{% url patient %}">{% elif step == 5 %}<a class="current">{% else %}<a>{% endif %}Пациент</a>
                 </li>
                 <li>
                     {% if step > 6 %}<a href="">{% elif step == 6 %}<a class="current">{% else %}<a>{% endif %}Запись</a>
