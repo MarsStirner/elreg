@@ -28,14 +28,18 @@ APP_ROOT = os.path.join(PROJECT_ROOT, APP_NAME + '/')
 
 MANAGERS = ADMINS
 
+# Конфигурация базы данных:
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': os.path.join(PROJECT_ROOT, 'elreg.db'),      # Or path to database file if using sqlite3.
-        'USER': '',                             # Not used with sqlite3.
-        'PASSWORD': '',                         # Not used with sqlite3.
-        'HOST': '',                             # Set to empty string for localhost. Not used with sqlite3.
-        'PORT': '',                             # Set to empty string for default. Not used with sqlite3.
+        'ENGINE': 'django.db.backends.sqlite3',         # Изменить окончание в зависимости от используемого СУБД:
+                                                        # 'postgresql_psycopg2', 'mysql', 'sqlite3' или 'oracle'.
+        'NAME': os.path.join(PROJECT_ROOT, 'elreg.db'), # Имя БД или путь до файла БД, если используется sqlite3.
+        'USER': '',                                     # Логин. Не используется с sqlite3.
+        'PASSWORD': '',                                 # Пароль. Не используется с sqlite3.
+        'HOST': '',                                     # Оставить строку пустой, если используется на локальном
+                                                        # хосте. Не используется с sqlite3.
+        'PORT': '',                                     # Оставить строку пустой, если необходимо использовать номер
+                                                        # порта по умолчанию. Не используется с sqlite3.
     }
 }
 
@@ -148,7 +152,7 @@ TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
-    os.path.join(APP_ROOT, 'templates')
+    os.path.join(APP_ROOT, 'templates'),
 )
 
 INSTALLED_APPS = (
@@ -159,7 +163,7 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'elreg_app',
+    APP_NAME,
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
 )
@@ -196,46 +200,50 @@ LOGGING = {
 }
 
 
-# конфигурация электронной почты
+### Конфигурация электронной почты
+
+# сохранение писем на локальном хосте в формате eml по указанному пути (раскомментировать для тестирования):
+#EMAIL_BACKEND = 'eml_email_backend.EmailBackend'
+#EMAIL_FILE_PATH = 'E:/'                # путь до места сохранения eml-файлов на локальной машине
+
+# настройки почты. указать параметры почтового сервера:
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-#EMAIL_BACKEND = 'django.core.mail.message.EmailMultiAlternatives'
 
-#EMAIL_HOST = 'localhost'
-EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST = 'localhost'                # адрес smtp-сервера. например 'smtp.gmail.com'
+                                        # для локального хоста - 'localhost'
 
-#EMAIL_PORT = 1025
-EMAIL_PORT = 25
+EMAIL_PORT = 1025                       # порт smtp-сервера (обычно 587 или 25 для TLS или 465 для SSL)
+                                        # для локального хоста - обычно порт 1025
 
-#EMAIL_HOST_USER = ''
-EMAIL_HOST_USER = 'vokulichev@gmail.com'
+EMAIL_HOST_USER = ''                    # логин
 
-#EMAIL_HOST_PASSWORD = ''
-EMAIL_HOST_PASSWORD = ''
+EMAIL_HOST_PASSWORD = ''                # пароль
 
-#EMAIL_USE_TLS = False
-EMAIL_USE_TLS = True
+EMAIL_USE_TLS = False                   # включить/отключить TLS (для тестового режима - False)
 
-DEFAULT_FROM_EMAIL = 'test@elreg.ru'
+DEFAULT_FROM_EMAIL = 'no-reply@elreg.ru'
+
+
 
 # Конфигурация Django-debug-toolbar
 if DjDT:
     MIDDLEWARE_CLASSES += ('debug_toolbar.middleware.DebugToolbarMiddleware',)
     INSTALLED_APPS += ('debug_toolbar',)
     DEBUG_TOOLBAR_PANELS = (
-#        'debug_toolbar.panels.version.VersionDebugPanel', # версия Django. убрал. только место занимает.
-        'debug_toolbar.panels.timer.TimerDebugPanel', # время загрузки страницы
-        'debug_toolbar.panels.settings_vars.SettingsVarsDebugPanel', # settings.py
-        'debug_toolbar.panels.headers.HeaderDebugPanel', # HTTP хедер
-        'debug_toolbar.panels.request_vars.RequestVarsDebugPanel', # переменные в запросе
-        'debug_toolbar.panels.template.TemplateDebugPanel', # список шаблонов
-        'debug_toolbar.panels.sql.SQLDebugPanel', # SQL-запросы
-        'debug_toolbar.panels.cache.CacheDebugPanel', # кэш
-        'debug_toolbar.panels.signals.SignalDebugPanel', # сигналы
-        'debug_toolbar.panels.logger.LoggingPanel', # лог
+#        'debug_toolbar.panels.version.VersionDebugPanel',              # версия Django. убрал. только место занимает.
+        'debug_toolbar.panels.timer.TimerDebugPanel',                   # время загрузки страницы
+        'debug_toolbar.panels.settings_vars.SettingsVarsDebugPanel',    # settings.py
+        'debug_toolbar.panels.headers.HeaderDebugPanel',                # HTTP хедер
+        'debug_toolbar.panels.request_vars.RequestVarsDebugPanel',      # переменные в запросе
+        'debug_toolbar.panels.template.TemplateDebugPanel',             # список шаблонов
+        'debug_toolbar.panels.sql.SQLDebugPanel',                       # SQL-запросы
+        'debug_toolbar.panels.cache.CacheDebugPanel',                   # кэш
+        'debug_toolbar.panels.signals.SignalDebugPanel',                # сигналы
+        'debug_toolbar.panels.logger.LoggingPanel',                     # лог
         )
     DEBUG_TOOLBAR_CONFIG = {
-        'EXCLUDE_URLS': ('/admin',), # не работает, но будет когда-нибудь отключать отладчик для указанных директорий
-        'INTERCEPT_REDIRECTS': False, # отключает перехват перенаправлений
+        'EXCLUDE_URLS': ('/admin',),    # не работает, но будет когда-нибудь отключать отладчик для указанных директорий
+        'INTERCEPT_REDIRECTS': False,   # отключает перехват перенаправлений
     }
     INTERNAL_IPS = ('127.0.0.1',)
 
