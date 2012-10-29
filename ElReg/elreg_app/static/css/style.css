@@ -317,7 +317,7 @@ table.firstTable tr td:hover, table.secondTable tr td:hover, table.thirdTable tr
 /*стиль для выделенных ссылок на странице Подразделение*/
 
 .specActive, .profActive {
-    color: #32a7d6;
+    color: #00d9ff;
 }
 
 /*таблица с кнопками "Отправить" и "Назад" на странице Пациент*/
@@ -345,7 +345,7 @@ table.footer_btn {
 
 /*таблица на странице Запись*/
 
-.zapis table {
+.register table {
     background: rgb(255, 255, 255);
     border: 1px solid #bcbcbc;
     padding: 10px;
@@ -360,23 +360,23 @@ table.footer_btn {
     box-shadow: 0 5px 7px rgba(0, 0, 0, 0.2);
 }
 
-.zapis table tr th {
+.register table tr th {
     height: 40px;
     font-weight:bold;
     text-align: center;
 }
 
-.zapis table tr td {
+.register table tr td {
     vertical-align: top;
     padding: 5px;
     text-align: justify;
 }
 
-.zapis table tr td:first-child {
+.register table tr td:first-child {
     width: 25%;
 }
 
-.zapis table td:hover {
+.register table td:hover {
     color: #000;
 }
 
