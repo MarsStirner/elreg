@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+
+<div id="info">
+<fieldset>
+<legend><strong>Информация о записи:</strong></legend>
+<p>Лечебное учреждение: {{ current_lpu_title }}, {{ address }}, телефон: {{ current_lpu_phone }}</p>
+<p>Специализация: {{ speciality }}</p>
+<p>Врач: {{ doctor }}</p>
+
+<p>Дата и время приёма: {{ date }} {{ start_time }} - {{ finish_time }}</p>
+</fieldset>
+</div>
+<p>
+    <font color="red">
+    {% if errors %}
+        <b>***Ошибки на странице***</b><br />
+        {% for error in errors %}
+            <b>{{ error }}</b><br />
+        {% endfor %}
+    {% endif %}
+    </font>
+</p>
+
+{% if ticketPatient_err %}
+    <font color="red"><p>{{ ticketPatient_err }}</p></font>
+{% endif %}
+
+<form id="patient_form" action="" method="post" name="frm">
+    <fieldset>
+    <legend><strong>Данные посетителя:</strong></legend>
+        <div class="field">
+            <label for="lastName">Фамилия:*</label>
+            <input type="text" name="lastName" id="lastName" value="{{ lastName }}" maxlength="40" size="30" autocomplete="on" placeholder="Иванов" />
+        </div>
+
+        <div class="field">
+            <label for="firstName">Имя:*</label>
+            <input type="text" name="firstName" id="firstName" value="{{ firstName }}" maxlength="40" size="30" autocomplete="on" placeholder="Иван" />
+        </div>
+
+        <div class="field">
+            <label for="patronymic">Отчество:*</label>
+            <input type="text" name="patronymic" id="patronymic" value="{{ patronymic }}" maxlength="40" size="30" autocomplete="on" placeholder="Иванович" />
+        </div>
+
+        <div class="field">
+            <label for="dd">Дата рождения:*</label>
+            <input type="text" name="dd" id="dd" value="{{ dd }}" maxlength="2" size="2" autocomplete="on" placeholder="01" />
+            <input type="text" name="mm" id="mm" value="{{ mm }}" maxlength="2" size="2" autocomplete="on" placeholder="12" />
+            <input type="text" name="yy" id="yy" value="{{ yy }}" maxlength="4" size="4" autocomplete="on" placeholder="2001" />
+        </div>
+
+        <div class="field">
+            <label for="radio1">Пол:*</label>
+            <input type="radio" name="radio" id="radio1" value="M" /> М
+            <input type="radio" name="radio" id="radio2" value="F" /> Ж
+        </div>
+
+        <div class="field">
+            <label for="policy1">Серия и номер полиса:*</label>
+            <input type="text" name="policy1" id="policy1" value="{{ policy1 }}" maxlength="10" size="2" autocomplete="on" placeholder="12" />
+            <input type="text" name="policy2" id="policy2" value="{{ policy2 }}" maxlength="16" size="20" autocomplete="on" placeholder="1234567890123456" />
+        </div>
+
+        <div class="field">
+            <input id="chb" value="0" type="checkbox" /> - отправить информацию о записи на электронный адрес
+        </div>
+
+        <div class="field">
+            <label for="email">Адрес электронной почты:</label>
+            <input type="text" name="email" id="email" value="{{ userEmail }}" maxlength="50" size="35" disabled="disabled" autocomplete="on" placeholder="example@email.ru" />
+        </div>
+        * - поля, обязательные для заполнения
+    </fieldset>
+
+    <input type="checkbox" id="confirm" name="confirm" value="confirm" />
+    Я даю своё согласие на автоматизированную обработку указанной информации, распространяющейся на осуществление всех действий с ней, включая сбор, передачу по сетям связи общего назначения, накопление, хранение, обновление, изменение, использование, обезличивание, блокирование, уничтожение и обработку посредством внесения в электронную базу данных, систематизации, включения в списки и отчетные формы.
+    <br /><br />
+
+{#    <table class="footer_btn">#}
+{#        <tr>#}
+{#            <td>#}
+{#                <a href="{% url time %}" class="container">#}
+{#                    <img src="{{ STATIC_URL }}/static/images/back_btn.gif" alt="Назад">#}
+{#                </a>#}
+{#            </td>#}
+{#            <td>#}
+{#                <input type="submit" id="button-submit" style="width:102px;height:40px" class="sendsubmit" name="send" value="Подтвердить" disabled />#}
+{#                <input type=hidden name=ticket value="{{ ticket }}" />#}
+{#                <input type=hidden name=flag value=True />#}
+{#            </td>#}
+{#        </tr>#}
+{#    </table>#}
+
+    <a href="{% url time %}" class="container">
+        <img src="{{ STATIC_URL }}/static/images/back_btn.gif" alt="Назад">
+    </a>
+
+    <input type="submit" id="button-submit" style="width:102px;height:40px;padding-top:25px;margin-left:760px" class="sendsubmit" name="send" value="Подтвердить" disabled />
+    <input type=hidden name=ticket value="{{ ticket }}" />
+    <input type=hidden name=flag value=True />
+
+
+
+
+</form>
+{% endblock %}

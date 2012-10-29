@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+
+<p>Лечебное учреждение: {{ current_lpu_title }}, {{ address }}, телефон: {{ current_lpu_phone }}</p>
+<p>Специализация: {{ speciality }}</p>
+<p>Врач: {{ doctor }}</p>
+
+<p><a href="{% url time %}prev/" class="container"><img src="{{ STATIC_URL }}/static/images/prev_btn.gif" alt="Предыдущая" title="Предыдущая неделя"></a>
+   <a href="{% url time %}next/" class="container"><img src="{{ STATIC_URL }}/static/images/next_btn.gif" alt="Следующая" title="Следующая неделя"></a>
+</p>
+
+{% if ticketTable %}
+<fieldset>
+    <legend><strong>Расписание врача:</strong></legend>
+<ul class="legend">
+    <li class="free">
+        Свободно
+    </li>
+    <li class="locked">
+        Занято
+    </li>
+    <li class="not">
+        Приёма нет
+    </li>
+</ul>
+<p>
+<br /><br />
+<form action="{% url patient %}" method="post">
+<table id="trtr" border="1">
+
+    <tr align="center">
+        {% for date in dates %}
+        <th>
+            {{ date|date:"d.n.Y, D" }}
+        </th>
+        {% endfor %}
+    </tr>
+
+    {% for row in ticketTable %}
+        <tr>
+        {% for cell in row %}
+            {% if cell.start > now %}
+                <td align="center" class="{{ cell.status }}">
+                {% if cell.status == 'free' %}
+                    <div><button type=submit class="cell_btn" name=ticket value="{{ cell.start.date|date:"d:m:Y" }}-{{ cell.start.time }}-{{ cell.finish.time }}">
+                        {{ cell.start.time|time:"H:i" }}
+                    </button></div>
+                {% else %}
+                    {{ cell.start.time|time:"H:i" }}
+                {% endif %}
+            {% else %}
+                <td align="center">
+            {% endif %}
+        </td>
+        {% endfor %}
+        </tr>
+    {% endfor %}
+
+    <tr>
+        {% for date in dates %}
+        <th>
+            {{ date|date:"d.n.Y, D" }}
+        </th>
+        {% endfor %}
+    </tr>
+
+</table>
+</form>
+</p>
+</fieldset>
+{% else %}
+<p>Расписания на текущую неделю нет.</p>
+{% endif %}
+
+
+<p>
+    <a href="{% url subdivision %}" class="container">
+        <img src="{{ STATIC_URL }}/static/images/back_btn.gif" alt="Назад">
+    </a>
+</p>
+{% endblock %}

@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+<table>
+    {% for region in region_list %}
+    <tr>
+        <td>
+            <a href ="{% url medical_institution %}{{ region.code }}/">
+                {{ region.region }}
+            </a>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+<p>
+    <a href="{% url medical_institution %}search/" class="container">
+        <img src="{{ STATIC_URL }}/static/images/lpu_search_btn.gif" alt="Поиск ЛПУ">
+    </a>
+</p>
+{% endblock %}
