@@ -81,7 +81,7 @@ def subdivisionPage(request, templateName, sub=0):
                                               context_instance=RequestContext(request))
 
 
-def timePage(request, templateName, vremya=0):
+def timePage(request, templateName, time=0):
     """Логика страницы Время
     Выводится таблица с расписанием выбранного врача на текущую неделю.
 
@@ -89,24 +89,24 @@ def timePage(request, templateName, vremya=0):
     db = Redis(request)
     today = datetime.date.today()
     # если попадаем на страницу нажимая кнопку "Назад", "Предыдущая" или "Следующая":
-    if not vremya or vremya in ['next','prev']:
-        if not vremya:
+    if not time or time in ['next','prev']:
+        if not time:
             firstweekday = today - datetime.timedelta(days=datetime.date.isoweekday(today)-1)
-        elif vremya == 'next':
+        elif time == 'next':
             a = db.get('firstweekday').split('-')
             firstweekday = datetime.date(int(a[0]), int(a[1]), int(a[2])) + datetime.timedelta(days=7)
-        elif vremya == 'prev':
+        elif time == 'prev':
             a = db.get('firstweekday').split('-')
             firstweekday = datetime.date(int(a[0]), int(a[1]), int(a[2])) - datetime.timedelta(days=7)
-        vremya = db.get('vremya').split('-')
+        time = db.get('time').split('-')
     # если попадаем на страницу после выбора врача на вкладке "Подраздеелние/Специализация/Врач":
     else:
         firstweekday = today - datetime.timedelta(days=datetime.date.isoweekday(today)-1)
     hospital_Uid = db.get('hospital_Uid')
-    ticketList = ScheduleWSDL().getScheduleInfo(hospitalUid=hospital_Uid, doctorUid=vremya)
+    ticketList = ScheduleWSDL().getScheduleInfo(hospitalUid=hospital_Uid, doctorUid=time)
 
     for i in ListWSDL().listDoctors():
-        if i.uid == vremya:
+        if i.uid == time:
             doctor = ' '.join([i.name.lastName, i.name.firstName, i.name.patronymic]) # ФИО врача
             db.set('doctor', doctor)
 
@@ -135,7 +135,7 @@ def timePage(request, templateName, vremya=0):
                     tmp_list[dates.index(j.start.date())] = j
             ticketTable.append(tmp_list)
 
-    db.set({'vremya': vremya,
+    db.set({'time': time,
             'firstweekday': firstweekday,
             'step': 4})
     return render_to_response(templateName, {'dates': dates,
@@ -209,7 +209,7 @@ def patientPage(request, templateName):
             # если ошибок в форме нет
             if not errors:
                 hospital_Uid = db.get('hospital_Uid')
-                vremya = db.get('vremya')
+                time = db.get('time')
                 omiPolicyNumber = ' '.join([policy1,policy2])
                 patientName = ' '.join([lastName,firstName,patronymic])
                 ticketPatient = ScheduleWSDL().enqueue(
@@ -218,7 +218,7 @@ def patientPage(request, templateName):
                               'patronymic': unicode(patronymic)},
                     omiPolicyNumber = unicode(omiPolicyNumber),
                     hospitalUid = hospital_Uid,
-                    doctorUid = vremya,
+                    doctorUid = time,
                     timeslotStart = str(date) + 'T' + str(start_time),
                     hospitalUidFrom = unicode("0"),
                     birthday = unicode('-'.join([yy,mm,dd]))
@@ -235,8 +235,8 @@ def patientPage(request, templateName):
                     # формирование и отправка письма:
                     if userEmail:
                         emailLPU = db.get('current_lpu_email')
-                        plaintext = get_template('email.txt')
-                        htmly     = get_template('email.html')
+                        plaintext = get_template('email/email.txt')
+                        htmly     = get_template('email/email.html')
 
                         context = Context({ 'ticketUid': ticketPatient['ticketUid'],
                                             'patientName': db.get('patientName'),
@@ -257,7 +257,7 @@ def patientPage(request, templateName):
                         msg = EmailMultiAlternatives(subject, text_content, from_email, [to])
                         msg.attach_alternative(html_content, "text/html")
                         msg.send()
-                    return HttpResponseRedirect(reverse('zapis'))
+                    return HttpResponseRedirect(reverse('register'))
                 # ошибка записи на приём:
                 else:
                     ticketPatient_err = ticketPatient['result']
@@ -289,7 +289,7 @@ def patientPage(request, templateName):
                                                   context_instance=RequestContext(request))
     # обращение к форме через адресную строку:
     else:
-        return HttpResponseRedirect(reverse('mo'))
+        return HttpResponseRedirect(reverse('index'))
 
 
 def registerPage(request, templateName):
@@ -349,7 +349,7 @@ def updatesPage(request):
 
     # при обращении к странице через адресную строку:
     else:
-        return HttpResponseRedirect(reverse('mo'))
+        return HttpResponseRedirect(reverse('index'))
 
     # создание ответа в формате json:
     return HttpResponse(json.dumps(tmp_dict), mimetype='application/json')
@@ -363,6 +363,46 @@ def searchPage(request):
     Запуск через адресную строку приведет к редиректу на главную страницу.
 
     """
+
+    def searchMethod(region_list, search_input, result=0):
+        """
+        Метод применяется для поиска ЛПУ по названию города или по названию района в зависимости от того, что
+        передается в переменной region_list.
+
+        """
+        tmp_list, tmp_dict, lpu_dict = [], {}, {}
+        # получение списка введенных пользователем слов
+        search_list = search_input.lower().split(' ')
+
+        # формирование временного списка кортежей [(регион, код ОКАТО), ...]
+        for i in region_list:
+            tmp_list.append((i.region.lower(), i.code))
+
+        # формирование словаря result со значениями, удовлетворяющими поиску,
+        # где ключ - uid ЛПУ, а значение - наименование ЛПУ
+        for (region,code) in tmp_list:
+            flag = True
+            for i in search_list:
+                if region.find(i) == -1:
+                    flag = False
+            if flag:
+                tmp_dict[code] = region
+        for i in tmp_dict.keys():
+            hospitals_list = ListWSDL().listHospitals(i)
+            for j in hospitals_list:
+                lpu_dict[j.uid.split('/')[0]] = j.title
+        if not result:
+            result = lpu_dict
+        else:
+            adict = {}
+            for i in result.items():
+                for j in lpu_dict.keys():
+                    if i[0] == j:
+                        adict[i[0]] = i[1]
+            result = adict
+        return result
+
+
     if request.method == 'GET':
         search_lpu = request.GET.get('search_lpu', '')
         search_gorod = request.GET.get('search_gorod', '')
@@ -392,79 +432,23 @@ def searchPage(request):
 
             ### поиск ЛПУ по названию города: ###
             if search_gorod:
-                tmp_list, tmp_dict, lpu_dict = [], {}, {}
                 # формирование списка доступных городов:
                 region_list = Region.objects.filter(activation=True).exclude(region__iendswith=u'район')
-
-                # получение списка введенных пользователем слов
-                search_list = search_gorod.lower().split(' ')
-
-                # формирование временного списка кортежей [(регион, код ОКАТО), ...]
-                for i in region_list:
-                    tmp_list.append((i.region.lower(), i.code))
-
                 # формирование словаря со значениями, удовлетворяющими поиску,
                 # где ключ - uid ЛПУ, а значение - наименование ЛПУ
-                for (region,code) in tmp_list:
-                    flag = True
-                    for i in search_list:
-                        if region.find(i) == -1:
-                            flag = False
-                    if flag:
-                        tmp_dict[code] = region
-                for i in tmp_dict.keys():
-                    hospitals_list = ListWSDL().listHospitals(i)
-                    for j in hospitals_list:
-                        lpu_dict[j.uid.split('/')[0]] = j.title
-                if not result:
-                    result = lpu_dict
-                else:
-                    adict = {}
-                    for i in result.items():
-                        for j in lpu_dict.keys():
-                            if i[0] == j:
-                                adict[i[0]] = i[1]
-                    result = adict
+                result = searchMethod(region_list, search_gorod, result)
 
             ### поиск ЛПУ по названию района: ###
             if search_rayon:
-                tmp_list, tmp_dict, lpu_dict = [], {}, {}
                 # формирование списка доступных районов:
                 region_list = Region.objects.filter(activation=True, region__iendswith=u'район')
-
-                # получение списка введенных пользователем слов
-                search_list = search_rayon.lower().split(' ')
-
-                # формирование временного списка кортежей [(регион, код ОКАТО), ...]
-                for i in region_list:
-                    tmp_list.append((i.region.lower(), i.code))
-
                 # формирование словаря со значениями, удовлетворяющими поиску,
                 # где ключ - uid ЛПУ, а значение - наименование ЛПУ
-                for (region,code) in tmp_list:
-                    flag = True
-                    for i in search_list:
-                        if region.find(i) == -1:
-                            flag = False
-                    if flag:
-                        tmp_dict[code] = region
-                for i in tmp_dict.keys():
-                    hospitals_list = ListWSDL().listHospitals(i)
-                    for j in hospitals_list:
-                        lpu_dict[j.uid.split('/')[0]] = j.title
-                if not result:
-                    result = lpu_dict
-                else:
-                    adict = {}
-                    for i in result.items():
-                        for j in lpu_dict.keys():
-                            if i[0] == j:
-                                adict[i[0]] = i[1]
-                    result = adict
+                result = searchMethod(region_list, search_rayon, result)
 
             # создание ответа в формате json из содержимого словаря result:
             return HttpResponse(json.dumps(result), mimetype='application/json')
 
     # при обращении к странице через адресную строку:
     else:
-        return HttpResponseRedirect(reverse('mo'))
+        return HttpResponseRedirect(reverse('index'))
