@@ -9,7 +9,10 @@ from django.template import Context, RequestContext
 from elreg_app.functions import *
 from elreg_app.models import Region
 import datetime
-import json
+try:
+    import json
+except ImportError:
+    import simplejson as json
 
 
 def indexPage(request, templateName):
