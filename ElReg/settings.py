@@ -11,8 +11,6 @@ DEBUG_SECURE = DEBUG
 
 TEMPLATE_DEBUG = DEBUG
 
-DjDT = False
-
 ADMINS = (
     # ('Your Name', 'your_email@example.com'),
 )
@@ -94,7 +92,7 @@ STATIC_ROOT = os.path.join(APP_ROOT, 'static')
 # Example: "http://media.lawrence.com/static/"
 STATIC_URL = '/static/'
 
-ADMIN_MEDIA_PREFIX = MEDIA_URL + 'admin/'
+ADMIN_MEDIA_PREFIX = STATIC_URL + 'admin/'
 
 # Additional locations of static files
 STATICFILES_DIRS = (
@@ -200,13 +198,8 @@ LOGGING = {
 }
 
 
-### Конфигурация электронной почты
+# Конфигурация электронной почты:
 
-# сохранение писем на локальном хосте в формате eml по указанному пути (раскомментировать для тестирования):
-#EMAIL_BACKEND = 'eml_email_backend.EmailBackend'
-#EMAIL_FILE_PATH = 'E:/'                # путь до места сохранения eml-файлов на локальной машине
-
-# настройки почты. указать параметры почтового сервера:
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
 EMAIL_HOST = 'localhost'                # адрес smtp-сервера. например 'smtp.gmail.com'
@@ -222,36 +215,3 @@ EMAIL_HOST_PASSWORD = ''                # пароль
 EMAIL_USE_TLS = False                   # включить/отключить TLS (для тестового режима - False)
 
 DEFAULT_FROM_EMAIL = 'no-reply@elreg.ru'
-
-
-
-# Конфигурация Django-debug-toolbar
-if DjDT:
-    MIDDLEWARE_CLASSES += ('debug_toolbar.middleware.DebugToolbarMiddleware',)
-    INSTALLED_APPS += ('debug_toolbar',)
-    DEBUG_TOOLBAR_PANELS = (
-#        'debug_toolbar.panels.version.VersionDebugPanel',              # версия Django. убрал. только место занимает.
-        'debug_toolbar.panels.timer.TimerDebugPanel',                   # время загрузки страницы
-        'debug_toolbar.panels.settings_vars.SettingsVarsDebugPanel',    # settings.py
-        'debug_toolbar.panels.headers.HeaderDebugPanel',                # HTTP хедер
-        'debug_toolbar.panels.request_vars.RequestVarsDebugPanel',      # переменные в запросе
-        'debug_toolbar.panels.template.TemplateDebugPanel',             # список шаблонов
-        'debug_toolbar.panels.sql.SQLDebugPanel',                       # SQL-запросы
-        'debug_toolbar.panels.cache.CacheDebugPanel',                   # кэш
-        'debug_toolbar.panels.signals.SignalDebugPanel',                # сигналы
-        'debug_toolbar.panels.logger.LoggingPanel',                     # лог
-        )
-    DEBUG_TOOLBAR_CONFIG = {
-        'EXCLUDE_URLS': ('/admin',),    # не работает, но будет когда-нибудь отключать отладчик для указанных директорий
-        'INTERCEPT_REDIRECTS': False,   # отключает перехват перенаправлений
-    }
-    INTERNAL_IPS = ('127.0.0.1',)
-
-# Конфигурация Sentry (логирование)
-if not DEBUG:
-    INSTALLED_APPS += (
-                        'sentry',
-                        'raven.contrib.django',
-                        'raven.contrib.django',
-                      )
-    SENTRY_DSN = '://361224ad52be4f169e2158838e29b8e6:61f9bd2aa4a743429629e7493c45dffd@/2'

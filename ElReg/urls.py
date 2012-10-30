@@ -11,9 +11,3 @@ urlpatterns = patterns('',
     # электронная регистратура:
     url(r'^', include(APP_NAME + '.urls')),
     )
-
-# адрес sentry:
-if not DEBUG:
-    urlpatterns += patterns('',
-        url(r'^sentry/', include('sentry.web.urls')),
-    )
