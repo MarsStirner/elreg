@@ -41,7 +41,10 @@ class Redis ():
         """
         result = self.db.hget(self.id, key)
         if key == "step":
-            result = int(result)
+            try:
+                result = int(result)
+            except TypeError:
+                result = ''
         return result
 
     def sessionId(self, request):
