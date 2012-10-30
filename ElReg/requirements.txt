@@ -1,7 +1,4 @@
 django==1.4.1
 suds==0.4
 redis==2.7.1
-git+https://github.com/django-debug-toolbar/django-debug-toolbar.git
-git+https://github.com/getsentry/sentry.git
-git+https://github.com/getsentry/raven-python.git
-git+https://github.com/kmike/django-eml-email-backend.git
+simplejson==2.6.2
