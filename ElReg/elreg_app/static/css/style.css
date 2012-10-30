@@ -9,11 +9,7 @@ body, td, th, div, p, label, input {
 }
 
 body {
-    background:#c6c6c6 50% 0 no-repeat fixed;
-    background-image: -webkit-linear-gradient(bottom, rgb(255,255,255) 50%, rgb(175, 175, 175) 100%);
-    background-image: -moz-linear-gradient(bottom, rgb(255,255,255) 50%, rgb(175, 175, 175) 100%);
-    background-image: -khtml-linear-gradient(bottom, rgb(255,255,255) 50%, rgb(175, 175, 175) 100%);
-    background-image: linear-gradient(bottom, rgb(255,255,255) 50%, rgb(175, 175, 175) 100%);
+    background: url(../images/background_ie.jpg) fixed repeat-x left top;
     overflow: scroll;
 }
 
