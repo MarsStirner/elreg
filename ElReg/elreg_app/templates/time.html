@@ -6,6 +6,9 @@
 <p>Лечебное учреждение: {{ current_lpu_title }}, {{ address }}, телефон: {{ current_lpu_phone }}</p>
 <p>Специализация: {{ speciality }}</p>
 <p>Врач: {{ doctor }}</p>
+{% if ticketTable %}
+    <p>Кабинет: {{ office }}</p>
+{% endif %}
 
 <p><a href="{% url time %}prev/" class="container"><img src="{{ STATIC_URL }}/static/images/prev_btn.gif" alt="Предыдущая" title="Предыдущая неделя"></a>
    <a href="{% url time %}next/" class="container"><img src="{{ STATIC_URL }}/static/images/next_btn.gif" alt="Следующая" title="Следующая неделя"></a>
