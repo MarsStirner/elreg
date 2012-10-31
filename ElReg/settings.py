@@ -92,7 +92,7 @@ STATIC_ROOT = os.path.join(APP_ROOT, 'static')
 # Example: "http://media.lawrence.com/static/"
 STATIC_URL = '/static/'
 
-ADMIN_MEDIA_PREFIX = STATIC_URL + 'admin/'
+ADMIN_MEDIA_PREFIX = ROOT_URL + 'static_admin/'
 
 # Additional locations of static files
 STATICFILES_DIRS = (
