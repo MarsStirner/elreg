@@ -107,6 +107,7 @@ def timePage(request, templateName, time=0):
         firstweekday = today - datetime.timedelta(days=datetime.date.isoweekday(today)-1)
     hospital_Uid = db.get('hospital_Uid')
     ticketList = ScheduleWSDL().getScheduleInfo(hospitalUid=hospital_Uid, doctorUid=time)
+    office = ticketList[0].office if ticketList else ''
 
     for i in ListWSDL().listDoctors():
         if i.uid == time:
@@ -143,6 +144,7 @@ def timePage(request, templateName, time=0):
             'step': 4})
     return render_to_response(templateName, {'dates': dates,
                                               'times': times,
+                                              'office': office,
                                               'ticketTable': ticketTable,
                                               'now': datetime.datetime.now()},
                                               context_instance=RequestContext(request))
@@ -227,7 +229,7 @@ def patientPage(request, templateName):
                     birthday = unicode('-'.join([yy,mm,dd]))
                 )
                 # запись на приём произошла успешно:
-                if ticketPatient['result'] == 'true':
+                if ticketPatient['result'] == 'true' and len(ticketPatient['ticketUid'].split('/')[0]) != 0:
                     db.set({'ticketUid': ticketPatient['ticketUid'],
                              'date': date,
                              'start_time': start_time,
@@ -263,7 +265,10 @@ def patientPage(request, templateName):
                     return HttpResponseRedirect(reverse('register'))
                 # ошибка записи на приём:
                 else:
-                    ticketPatient_err = ticketPatient['result']
+                    if ticketPatient['result'] == 'true':
+                        ticketPatient_err = "Ошибка записи"
+                    else:
+                        ticketPatient_err = ticketPatient['result']
             # ошибка при записи на приём или ошибки в заполненной форме:
             db.set('step', 5)
             return render_to_response(templateName, {'errors': errors,
