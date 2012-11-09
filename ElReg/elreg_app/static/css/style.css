@@ -190,6 +190,7 @@ fieldset div.searchField {
     padding: 10px;
     font-size:13px;
     text-decoration:none;
+    display: block;
 }
 
 .tabb table td.locked, .tabb table td.locked:hover  {

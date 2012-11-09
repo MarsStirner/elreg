@@ -101,7 +101,7 @@ def timePage(request, templateName, time=0):
         elif time == 'prev':
             a = db.get('firstweekday').split('-')
             firstweekday = datetime.date(int(a[0]), int(a[1]), int(a[2])) - datetime.timedelta(days=7)
-        time = db.get('time').split('-')
+        time = db.get('time')
     # если попадаем на страницу после выбора врача на вкладке "Подраздеелние/Специализация/Врач":
     else:
         firstweekday = today - datetime.timedelta(days=datetime.date.isoweekday(today)-1)
