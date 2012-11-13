@@ -19,7 +19,7 @@ $(document).ready(function () {
                 $.each(data, function(key, val) {
                     $items.push('<tr><td><a class="prof">' + val + '</a></td></tr>');
                 });
-                $($items.join('')).fadeIn('fast').appendTo('table.secondTable');
+                $('table.secondTable').html($($items.join('')).fadeIn('fast'));
                 $('body,html').animate({
                     scrollTop: 0
                 }, 300);
@@ -61,7 +61,7 @@ $(document).ready(function () {
                 $.each(data, function(key, val) {
                     $items.push('<tr><td><a href="/time/' + key + '/">' + val + '</a></td></tr>');
                 });
-                $($items.join('')).fadeIn('fast').appendTo('table.thirdTable');
+                $('table.thirdTable').html($($items.join('')).fadeIn('fast'));
                 $('body,html').animate({
                     scrollTop: 0
                 }, 300);
