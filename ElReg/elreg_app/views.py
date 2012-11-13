@@ -39,6 +39,9 @@ def medicalInstitutionPage(request, templateName, okato=0):
     db = Redis(request)
     if not okato:
         okato = db.get('okato')
+    if not okato:
+        # в случае прямого перехода на страницу
+        return HttpResponseRedirect(reverse('index'))
     if okato != "search":
         db.set('okato', okato)
         hospitals_list = ListWSDL().listHospitals(okato) # список ЛПУ выбранного региона
@@ -109,7 +112,7 @@ def timePage(request, templateName, time=0):
     ticketList = ScheduleWSDL().getScheduleInfo(hospitalUid=hospital_Uid, doctorUid=time)
     office = ticketList[0].office if ticketList else ''
 
-    for i in ListWSDL().listDoctors():
+    for i in ListWSDL().listDoctors(hospital_Uid):
         if i.uid == time:
             doctor = ' '.join([i.name.lastName, i.name.firstName, i.name.patronymic]) # ФИО врача
             db.set('doctor', doctor)
