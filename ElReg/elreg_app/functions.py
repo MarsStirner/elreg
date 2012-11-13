@@ -82,14 +82,20 @@ class ListWSDL():
             hospitals = []
         return hospitals
 
-    def listDoctors(self, hospital_Uid = 0):
+    def listDoctors(self, hospital_Uid = 0, speciality = 0):
         """
         Метод возвращает список врачей.
 
         """
         try:
             if hospital_Uid:
-                doctors = self.client.service.listDoctors(searchScope = {'hospitalUid': hospital_Uid, }).doctors
+                if speciality:
+                    doctors = self.client.service.listDoctors(
+                        searchScope = {'hospitalUid': hospital_Uid, }, speciality = speciality
+                    ).doctors
+                else:
+                    doctors = self.client.service.listDoctors(searchScope = {'hospitalUid': hospital_Uid, }).doctors
+
             else:
                 doctors = self.client.service.listDoctors().doctors
         except:

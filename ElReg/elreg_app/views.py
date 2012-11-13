@@ -333,20 +333,19 @@ def updatesPage(request):
 
     """
     db = Redis(request)
-    doctors_list = ListWSDL().listDoctors()
-    tmp_list, tmp_dict = [], {}
-
+    data = []
     # при щелчке на элементе из таблицы со списком подразделений:
     if 'clickSpec' in request.GET:
         spec = request.GET['clickSpec']
+        hospital_Uid = '/'.join([db.get('sub'), spec])
+        doctors_list = ListWSDL().listDoctors(hospital_Uid)
         db.set({'address': request.GET['value'],
                  'spec': spec})
         for i in doctors_list:
-            if i.hospitalUid == '/'.join([db.get('sub'), spec]):
-                tmp_list.append(i.speciality)
-                tmp_list = list(set(tmp_list))
-                tmp_list.sort()
-        tmp_dict = dict(zip(xrange(len(tmp_list)), tmp_list))
+            if i.hospitalUid == hospital_Uid:
+                data.append(i.speciality)
+                data = list(set(data))
+                data.sort()
 
     # при щелчке на элементе из таблицы со списком специализаций:
     elif 'clickProf' in request.GET:
@@ -354,16 +353,17 @@ def updatesPage(request):
         hospital_Uid = '/'.join([db.get('sub'), db.get('spec')])
         db.set({'speciality': speciality,
                  'hospital_Uid': hospital_Uid})
+        doctors_list = ListWSDL().listDoctors(hospital_Uid = hospital_Uid, speciality = speciality)
         for i in doctors_list:
             if i.hospitalUid == hospital_Uid and i.speciality == speciality:
-                tmp_dict[i.uid] = ' '.join([i.name.lastName, i.name.firstName, i.name.patronymic])
+                data.append({'uid': i.uid, 'name': ' '.join([i.name.lastName, i.name.firstName, i.name.patronymic])})
 
     # при обращении к странице через адресную строку:
     else:
         return HttpResponseRedirect(reverse('index'))
 
     # создание ответа в формате json:
-    return HttpResponse(json.dumps(tmp_dict), mimetype='application/json')
+    return HttpResponse(json.dumps(data), mimetype='application/json')
 
 
 def searchPage(request):
