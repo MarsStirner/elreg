@@ -25,7 +25,19 @@
 </p>
 
 {% if ticketPatient_err %}
-    <font color="red"><p>{{ ticketPatient_err }}</p></font>
+    <script type="text/javascript">
+        $(function() {
+            $( "#dialog-modal" ).dialog({
+                modal: true,
+                buttons: {
+                    "Закрыть": function() {
+                        $( this ).dialog( "close" );
+                    }
+                }
+            });
+        });
+    </script>
+    <div id="dialog-modal" title="Ошибка записи">{{ ticketPatient_err }}</div>
 {% endif %}
 
 <form id="patient_form" action="" method="post" name="frm">
