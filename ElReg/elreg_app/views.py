@@ -9,6 +9,7 @@ from django.template import Context, RequestContext
 from elreg_app.functions import *
 from elreg_app.models import Region
 import datetime
+from django.utils import timezone
 try:
     import json
 except ImportError:
@@ -145,11 +146,13 @@ def timePage(request, templateName, time=0):
     db.set({'time': time,
             'firstweekday': firstweekday,
             'step': 4})
+
     return render_to_response(templateName, {'dates': dates,
                                               'times': times,
                                               'office': office,
                                               'ticketTable': ticketTable,
-                                              'now': datetime.datetime.now()},
+                                              'now': timezone.localtime(timezone.now()).replace(tzinfo=None),
+                                            },
                                               context_instance=RequestContext(request))
 
 
