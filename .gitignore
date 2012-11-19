@@ -7,3 +7,4 @@
 *.dll
 *.db
 build/*
+settings_local.py

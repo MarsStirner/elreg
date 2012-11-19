@@ -9,7 +9,7 @@ class Region (models.Model):
 
     """
     region = models.CharField(max_length=100,)
-    code = models.PositiveIntegerField(default=0)
+    code = models.BigIntegerField(default=0, max_length=12)
     activation = models.BooleanField(default=True)
 
     def __unicode__(self):

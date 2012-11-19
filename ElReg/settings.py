@@ -161,6 +161,7 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'south',
     APP_NAME,
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
@@ -215,3 +216,6 @@ EMAIL_HOST_PASSWORD = ''                # пароль
 EMAIL_USE_TLS = False                   # включить/отключить TLS (для тестового режима - False)
 
 DEFAULT_FROM_EMAIL = 'no-reply@elreg.ru'
+
+# Импортируем настройки из локального конфига
+from settings_local import *

@@ -2,3 +2,5 @@ django==1.4.1
 suds==0.4
 redis==2.7.1
 simplejson==2.6.2
+mysql-python
+south
