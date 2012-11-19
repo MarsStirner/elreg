@@ -9,6 +9,7 @@ from django.template import Context, RequestContext
 from elreg_app.functions import *
 from elreg_app.models import Region
 import datetime
+import math
 from django.utils import timezone
 try:
     import json
@@ -27,7 +28,9 @@ def indexPage(request, templateName):
     # получение списка регионов:
     region_list = Region.objects.filter(activation=True)
     db.set('step', 1)
-    return render_to_response(templateName, {'region_list': region_list},
+
+    return render_to_response(templateName, {'region_list': region_list,
+                                             'break_keys': (math.ceil(len(region_list)/3.), math.ceil(2*len(region_list)/3.),),},
                                               context_instance=RequestContext(request))
 
 

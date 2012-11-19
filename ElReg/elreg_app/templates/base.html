@@ -1,5 +1,5 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns="http://www.w3.org/1999/html" xml:lang="en-gb" lang="en-gb" dir="ltr">
+<!DOCTYPE html>
+<html lang="en-gb" xmlns="http://www.w3.org/1999/html">
 	<head>
         <link href="{{ STATIC_URL }}/static/images/favicon.ico" rel="icon" type="image/x-icon" />
         <link href="{{ STATIC_URL }}/static/images/favicon.ico" rel="shortcut icon" type="image/x-icon" />
@@ -7,6 +7,7 @@
         <meta content="ru-ru" http-equiv="Content-Language" />
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>
             {% block title %}
                 Электронная регистратура
@@ -14,16 +15,16 @@
         </title>
 
 		<script type="text/javascript" src="{{ STATIC_URL }}/static/js/jquery-1.8.2.min.js"></script>
-		<script type="text/javascript" src="{{ STATIC_URL }}/static/js/jquery-ui-1.9.1.custom.min.js"></script>
+{#		<script type="text/javascript" src="{{ STATIC_URL }}/static/js/jquery-ui-1.9.1.custom.min.js"></script>#}
         <script type="text/javascript" src="{{ STATIC_URL }}/static/js/jquery.placeholder.min.js"></script>
-        <script type="text/javascript" src="{{ STATIC_URL }}/static/js/updates.js"></script>
-        <script type="text/javascript" src="{{ STATIC_URL }}/static/js/patient_page.js"></script>
+        <script type="text/javascript" src="{{ STATIC_URL }}/static/js/scripts.js"></script>
+        <script type="text/javascript" src="{{ STATIC_URL }}/static/bootstrap/js/bootstrap.min.js"></script>
         <script type="text/javascript">jQuery('input[placeholder]').placeholder();</script>
         <!--[if IE]>
             <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}/static/css/ie-only.css" />
         <!--<![endif]-->
         <!--[if !IE]>-->
-            <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}/static/css/style.css" />
+{#            <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}/static/css/style.css" />#}
         <!--<![endif]-->
         <style type="text/css" media="print">
             div.no_print {display: none;}
@@ -31,45 +32,49 @@
             table.no_shadow_print tr td {font-size: 18px;}
         </style>
         <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}/static/css/jquery-ui/blitzer/jquery-ui-1.9.1.custom.min.css" />
+        <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}/static/bootstrap/css/bootstrap.min.css" />
+        <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}/static/css/style.css" />
 	</head>
-	
 	<body>
-    <div class="main"> 
-		<!--header-->
-        <div class="no_print">
-		<div class="header">
-			<ul class="menu-nav">
-				<li>
-                    {% if step > 1 %}<a href="{% url index %}">{% elif step == 1 %}<a class="current">{% else %}<a>{% endif %}МО</a>
-				</li>
-				<li>
-                    {% if step > 2 %}<a href="{% url medical_institution %}">{% elif step == 2 %}<a class="current">{% else %}<a>{% endif %}ЛПУ</a>
-				</li>
-				<li>
-                    {% if step > 3 %}<a href="{% url subdivision %}">{% elif step == 3 %}<a class="current">{% else %}<a>{% endif %}Подразделение/Специализация/Врач</a>
-				<li>
-                    {% if step > 4 %}<a href="{% url time %}">{% elif step == 4 %}<a class="current">{% else %}<a>{% endif %}Время</a>
-				</li>
-                <li>
-                    {% if step > 5 %}<a href="{% url patient %}">{% elif step == 5 %}<a class="current">{% else %}<a>{% endif %}Пациент</a>
-                </li>
-                <li>
-                    {% if step > 6 %}<a href="">{% elif step == 6 %}<a class="current">{% else %}<a>{% endif %}Запись</a>
-                </li>
-			</ul>	    
-		</div>
+    <div class="container">
+    <header class="no_print">
+        <div class="row-fluid page-header no_print">
+            <div class="span1"><a href="/" title="На главную"><img src="{{ STATIC_URL }}/static/images/logo.png"></a></div>
+            <div class="span11"><h1>Электронная регистрация</h1></div>
         </div>
-        <br />
-        <br />
-		<!--main-->
-		<div class="wrapper-content content-top">
-			<div class="clear">
-                <div class="tabb">
-                    {% block content %}
-                    {% endblock %}
-                </div>
-			</div>
-		</div>
+        <div class="navbar no_print">
+            <div class="navbar-inner">
+                <ul class="nav">
+                    <li {% if step == 1 %}class="active"{% endif %}>
+                        {% if step > 1 %}<a href="{% url index %}">{% else %}<a>{% endif %}<big>МО</big></a>
+                    </li>
+                    <li class="divider-vertical"></li>
+                    <li {% if step == 2 %}class="active"{% endif %}>
+                        {% if step > 2 %}<a href="{% url medical_institution %}">{% else %}<a>{% endif %}<big>ЛПУ</big></a>
+                    </li>
+                    <li class="divider-vertical"></li>
+                    <li {% if step == 3 %}class="active"{% endif %}>
+                        {% if step > 3 %}<a href="{% url subdivision %}">{% else %}<a>{% endif %}<big>Подразделение/Специализация/Врач</big></a>
+                    </li>
+                    <li class="divider-vertical"></li>
+                    <li {% if step == 4 %}class="active"{% endif %}>
+                        {% if step > 4 %}<a href="{% url time %}">{% else %}<a>{% endif %}<big>Время</big></a>
+                    </li>
+                    <li class="divider-vertical"></li>
+                    <li {% if step == 5 %}class="active"{% endif %}>
+                        {% if step > 5 %}<a href="{% url patient %}">{% else %}<a>{% endif %}<big>Пациент</big></a>
+                    </li>
+                    <li class="divider-vertical"></li>
+                    <li {% if step == 6 %}class="active"{% endif %}>
+                        {% if step > 6 %}<a href="">{% else %}<a>{% endif %}<big>Запись</big></a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </header>
+    <section>
+		{% block content %}{% endblock %}
+    </section>
 	</div>
 	</body>
 </html>

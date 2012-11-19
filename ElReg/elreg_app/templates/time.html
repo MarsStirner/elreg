@@ -1,86 +1,85 @@
 {% extends "base.html" %}
-
+{% load custom_filters %}
 
 {% block content %}
-
-<p>Лечебное учреждение: {{ current_lpu_title }}, {{ address }}, телефон: {{ current_lpu_phone }}</p>
-<p>Специализация: {{ speciality }}</p>
-<p>Врач: {{ doctor }}</p>
-{% if ticketTable %}
-    <p>Кабинет: {{ office }}</p>
-{% endif %}
-
-<p><a href="{% url time %}prev/" class="container"><img src="{{ STATIC_URL }}/static/images/prev_btn.gif" alt="Предыдущая" title="Предыдущая неделя"></a>
-   <a href="{% url time %}next/" class="container"><img src="{{ STATIC_URL }}/static/images/next_btn.gif" alt="Следующая" title="Следующая неделя"></a>
+<blockquote>
+    <dl class="dl-horizontal">
+        <dt>Лечебное учреждение:</dt><dd>{{ current_lpu_title }}</dd>
+        <dd>{{ address }}</dd>
+        <dt>Телефон:</dt><dd>{{ current_lpu_phone }}</dd>
+        <dt>Специализация:</dt><dd>{{ speciality }}</dd>
+        <dt>Врач:</dt><dd>{{ doctor }}</dd>
+        {% if ticketTable %}
+            <dt>Кабинет:</dt><dd>{{ office }}</dd>
+        {% endif %}
+    </dl>
+</blockquote>
+<legend>
+<p><a href="{% url time %}prev/" class="btn btn-info" title="Предыдущая неделя">Предыдущая неделя</a>
+   <a href="{% url time %}next/" class="btn btn-info" title="Следующая неделя">Следующая неделя</a>
 </p>
-
+</legend>
 {% if ticketTable %}
-<fieldset>
-    <legend><strong>Расписание врача:</strong></legend>
-<ul class="legend">
-    <li class="free">
-        Свободно
-    </li>
-    <li class="locked">
-        Занято
-    </li>
-    <li class="not">
-        Приёма нет
-    </li>
-</ul>
-<p>
-<br /><br />
+<div class="well well-large">
 <form action="{% url patient %}" method="post">
-<table id="trtr" border="1">
-
-    <tr align="center">
-        {% for date in dates %}
-        <th>
-            {{ date|date:"d.n.Y, D" }}
-        </th>
-        {% endfor %}
-    </tr>
-
-    {% for row in ticketTable %}
+    <table class="table  table-condensed">
+        <caption>
+            <div class="row-fluid">
+                <div class="span3"><p class="lead"><big>Расписание врача:</big></p></div>
+                <div class="span3 offset6">
+                    <span class="label label-success">Свободно</span>
+                    <span class="label label-important">Занято</span>
+                    <span class="label">Приёма нет</span>
+                </div>
+            </div>
+        </caption>
+        <thead>
         <tr>
-        {% for cell in row %}
-            {% if cell.start > now %}
-                <td align="center" class="{{ cell.status }}">
-                {% if cell.status == 'free' %}
-                    <div><button type=submit class="cell_btn" name=ticket value="{{ cell.start.date|date:"d:m:Y" }}-{{ cell.start.time }}-{{ cell.finish.time }}">
-                        {{ cell.start.time|time:"H:i" }}
-                    </button></div>
-                {% else %}
-                    {{ cell.start.time|time:"H:i" }}
-                {% endif %}
-            {% else %}
-                <td align="center">
-            {% endif %}
-        </td>
+        {% for date in dates %}
+            <th class="th-centered">
+                {{ date|date:"d.n.Y" }}, {{ date|date:"D"|truncate_chars:"2" }}.
+            </th>
         {% endfor %}
         </tr>
-    {% endfor %}
-
-    <tr>
-        {% for date in dates %}
-        <th>
-            {{ date|date:"d.n.Y, D" }}
-        </th>
+        </thead>
+        <tbody>
+        {% for row in ticketTable %}
+            <tr>
+                {% for cell in row %}
+                    {% if cell.start > now %}
+                        <td class="{{ cell.status }}">
+                            {% if cell.status == 'free' %}
+                                <button type="submit" class="btn btn-block btn-success" name=ticket value="{{ cell.start.date|date:"d:m:Y" }}-{{ cell.start.time }}-{{ cell.finish.time }}">
+                                    {{ cell.start.time|time:"H:i" }}
+                                </button>
+                            {% elif cell.status == 'locked' %}
+                                <button type="button" class="btn btn-block btn-danger disabled" name=ticket value="{{ cell.start.date|date:"d:m:Y" }}-{{ cell.start.time }}-{{ cell.finish.time }}">
+                                    {{ cell.start.time|time:"H:i" }}
+                                </button>
+                            {% endif %}
+                            {% else %}
+                        <td align="center">
+                        <button type="button" class="btn btn-block disabled" name=ticket value="{{ cell.start.date|date:"d:m:Y" }}-{{ cell.start.time }}-{{ cell.finish.time }}"></button>
+                    {% endif %}
+                </td>
+                {% endfor %}
+            </tr>
         {% endfor %}
-    </tr>
-
-</table>
+            <tr>
+                {% for date in dates %}
+                    <th class="th-centered">
+                        {{ date|date:"d.n.Y" }}, {{ date|date:"D"|truncate_chars:"2" }}.
+                    </th>
+                {% endfor %}
+            </tr>
+        </tbody>
+    </table>
 </form>
-</p>
-</fieldset>
+</div>
 {% else %}
-<p>Расписания на текущую неделю нет.</p>
+<legend>Расписания на текущую неделю нет</legend>
 {% endif %}
-
-
 <p>
-    <a href="{% url subdivision %}" class="container">
-        <img src="{{ STATIC_URL }}/static/images/back_btn.gif" alt="Назад">
-    </a>
+    <a href="{% url subdivision %}" class="btn btn-primary btn-large" title="Назад">Вернуться</a>
 </p>
 {% endblock %}

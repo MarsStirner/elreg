@@ -1,21 +1,30 @@
 {% extends "base.html" %}
 
-
 {% block content %}
-<table>
-    {% for region in region_list %}
-    <tr>
-        <td>
-            <a href ="{% url medical_institution %}{{ region.code }}/">
-                {{ region.region }}
-            </a>
-        </td>
-    </tr>
-    {% endfor %}
-</table>
+    <div class="row-fluid">
+        {% for region in region_list %}
+        {% if forloop.first %}
+        <div class="span4">
+            <ul class="nav nav-tabs nav-stacked">
+        {% endif %}
+        {% if forloop.counter0 in break_keys %}
+            </ul>
+        </div>
+        <div class="span4">
+            <ul class="nav nav-tabs nav-stacked">
+        {% endif %}
+                <li>
+                    <a href ="{% url medical_institution %}{{ region.code }}/">
+                        <h4>{{ region.region }}</h4>
+                    </a>
+                </li>
+        {% if forloop.last %}
+            </ul>
+        </div>
+        {% endif %}
+        {% endfor %}
+    </div>
 <p>
-    <a href="{% url medical_institution %}search/" class="container">
-        <img src="{{ STATIC_URL }}/static/images/lpu_search_btn.gif" alt="Поиск ЛПУ">
-    </a>
+    <a href="{% url medical_institution %}search/" class="btn btn-primary btn-large" title="Поиск ЛПУ">Поиск ЛПУ</a>
 </p>
 {% endblock %}
