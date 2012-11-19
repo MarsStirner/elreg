@@ -108,6 +108,7 @@ $(document).ready(function () {
         var $dd = $('#dd');
         var $mm = $('#mm');
         var $yy = $('#yy');
+        var $policy1 = $('#policy1');
         var $policy2 = $('#policy2');
         var $email = $('#email');
         if (!$lastName.val()) {
@@ -180,12 +181,14 @@ $(document).ready(function () {
             }
             $('#radio1').closest('.control-group').removeClass('error').addClass('success');
         }
-        if (!$policy2.val()) {
+
+        var regex = /^([0-9])+$/;
+        if (!$policy1.val() || !$policy2.val() || !regex.test($policy2.val())) {
             $('#policy2').closest('.control-group').addClass('error');
             if($('#note6')){
                 $('#note6').hide();
             }
-            $('<span class="help-inline" id="note6">Введите номер полиса</span>').fadeIn('slow').insertAfter($policy2);
+            $('<span class="help-inline" id="note6">Введите корректный номер полиса</span>').fadeIn('slow').insertAfter($policy2);
             $policy2.focus();
             return false;
         }else {

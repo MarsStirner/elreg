@@ -1,7 +1,16 @@
-.navbar .nav > li {
+ul.top_path {
+    width:100%;
+}
+.top_path > li {
     padding: 0 10px;
-}.navbar .nav > li.divider-vertical {
+    min-width: 10%;
+}
+.top_path > li > a{
+    text-align: center;
+}
+.top_path > li.divider-vertical {
     padding: 0;
+    min-width: 0;
 }
 .dl-horizontal dt {
     width: 170px;
@@ -14,4 +23,7 @@ th.th-centered{
 }
 blockquote {
     border-color: #B94A48;
+}
+ul.upper_case li{
+    text-transform: uppercase;
 }

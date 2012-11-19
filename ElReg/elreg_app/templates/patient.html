@@ -13,14 +13,16 @@
     </dl>
 </blockquote>
 <p>
-    <font color="red">
-    {% if errors %}
-        <b>***Ошибки на странице***</b><br />
+    <div id="dialog-modal" class="alert alert-error" title="Ошибка записи">
+        {#    <button type="button" class="close" data-dismiss="alert">&times;</button>#}
+        <strong>Ошибка записи!</strong>
         {% for error in errors %}
-            <b>{{ error }}</b><br />
+            {{ error }}<br />
         {% endfor %}
-    {% endif %}
-    </font>
+    </div>
+    <script type="text/javascript">
+        $(".alert").alert();
+    </script>
 </p>
 
 {% if ticketPatient_err %}
@@ -72,8 +74,8 @@
     <div class="control-group">
         <label class="control-label" for="radio1">Пол<span class="text-error">*</span></label>
         <div class="controls">
-            <input type="radio" name="radio" id="radio1" value="M" {% if request.POST.radio == 'M' %}checked="checked"{% endif %} /> М
-            <input type="radio" name="radio" id="radio2" value="F" {% if request.POST.radio == 'F' %}checked="checked"{% endif %} /> Ж
+            <input type="radio" name="radio" id="radio1" value="M"{% if request.POST.radio == 'M' %}checked="checked"{% endif %} /> М
+            <input type="radio" name="radio" id="radio2" value="F"{% if request.POST.radio == 'F' %}checked="checked"{% endif %} /> Ж
         </div>
     </div>
 

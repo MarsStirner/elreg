@@ -2,43 +2,46 @@
 
 {% block content %}
 <legend><h3>Поиск ЛПУ:</h3></legend>
-<div class="row-fluid well well-small">
-    <div class="span6">
-        <form id="form" action="" method="post" name="frm" class="form-horizontal">
-            <fieldset>
-                <div class="control-group">
-                    <label class="control-label" for="search_lpu">Наименование ЛПУ:</label>
-                    <div class="controls">
-                        <input type="text" name="search" id="search_lpu" maxlength="100" class="input-block-level" onkeyup="searchLpu()" />
+<div class="well well-small">
+    <div class="row-fluid">
+        <div class="span6">
+            <form id="form" action="" method="post" name="frm" class="form-horizontal">
+                <fieldset>
+                    <div class="control-group">
+                        <label class="control-label" for="search_lpu">Наименование ЛПУ:</label>
+                        <div class="controls">
+                            <input type="text" name="search" id="search_lpu" maxlength="100" class="input-block-level" onkeyup="searchLpu()" />
+                        </div>
                     </div>
-                </div>
-                <div class="control-group">
-                    <label class="control-label" for="search_gorod">Город:</label>
-                    <div class="controls">
-                        <input type="text" name="search" id="search_gorod" maxlength="100" class="input-block-level" onkeyup="searchGorod()" value="{{ current_region }}" />
+                    <div class="control-group">
+                        <label class="control-label" for="search_gorod">Город:</label>
+                        <div class="controls">
+                            <input type="text" name="search" id="search_gorod" maxlength="100" class="input-block-level" onkeyup="searchGorod()" value="{{ current_region }}" />
+                        </div>
                     </div>
-                </div>
-                <div class="control-group">
-                    <label class="control-label" for="search_rayon">Район:</label>
-                    <div class="controls">
-                        <input type="text" name="search" id="search_rayon" maxlength="100" class="input-block-level" onkeyup="searchRayon()" />
+                    <div class="control-group">
+                        <label class="control-label" for="search_rayon">Район:</label>
+                        <div class="controls">
+                            <input type="text" name="search" id="search_rayon" maxlength="100" class="input-block-level" onkeyup="searchRayon()" />
+                        </div>
                     </div>
-                </div>
-            </fieldset>
-        </form>
+                </fieldset>
+            </form>
+        </div>
     </div>
 </div>
-{% if hospitals_list %}
+
 <div class="row-fluid">
     <div class="span12">
-        <ul id="search_table" class="nav nav-tabs nav-stacked">
+        <ul id="search_table" class="nav nav-tabs nav-stacked upper_case">
+        {% if hospitals_list %}
             {% for hospital in hospitals_list %}
             <li><a href="{% url subdivision %}{{ hospital.uid|slice:":2"|cut:"/" }}/">{{ hospital.title }}</a></li>
             {% endfor %}
+        {% endif %}
         </ul>
     </div>
 </div>
-{% endif %}
 <a href="{% url index %}" class="btn btn-primary btn-large">Вернуться</a>
 
     <script type="text/javascript">
@@ -53,7 +56,7 @@
             $.getJSON("/search/", {search_lpu: search_lpu, search_gorod: search_gorod, search_rayon: search_rayon}, function(data) {
                 var $items = [];
                 $.each(data, function(key, val) {
-                    $items.push('<li><a href="{% url subdivision %}'+ url_subdivision + key + '/">' + val + '</a></li>');
+                    $items.push('<li><a href="{% url subdivision %}' + key + '/">' + val + '</a></li>');
                 });
                 $("#search_table").html($items.join('')).fadeIn('fast');
             });

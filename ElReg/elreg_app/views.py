@@ -210,8 +210,8 @@ def patientPage(request, templateName):
             if not dd or not mm or not yy:
                 errors.append(u'Введите дату рождения')
             # полис
-            policy1 = request.POST.get('policy1', '')
-            policy2 = request.POST.get('policy2', '')
+            policy1 = request.POST.get('policy1', '').strip()
+            policy2 = request.POST.get('policy2', '').strip()
             if not policy2:
                 errors.append(u"Введите серию и номер полиса")
             # электронная почта
