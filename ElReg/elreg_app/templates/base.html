@@ -20,12 +20,6 @@
         <script type="text/javascript" src="{{ STATIC_URL }}/static/js/scripts.js"></script>
         <script type="text/javascript" src="{{ STATIC_URL }}/static/bootstrap/js/bootstrap.min.js"></script>
         <script type="text/javascript">jQuery('input[placeholder]').placeholder();</script>
-        <!--[if IE]>
-            <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}/static/css/ie-only.css" />
-        <!--<![endif]-->
-        <!--[if !IE]>-->
-{#            <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}/static/css/style.css" />#}
-        <!--<![endif]-->
         <style type="text/css" media="print">
             div.no_print {display: none;}
             table.no_shadow_print {box-shadow: none;}
@@ -45,26 +39,26 @@
         <div class="navbar no_print">
             <div class="navbar-inner">
                 <ul class="nav top_path">
-                    <li {% if step == 1 %}class="active"{% endif %}>
+                    <li {% if step == 1 %}active"{% endif %}>
                         {% if step > 1 %}<a href="{% url index %}">{% else %}<a>{% endif %}<big>МО</big></a>
                     </li>
-                    <li class="divider-vertical"></li>
+                    <li class="divider-vertical arrow_box"></li>
                     <li {% if step == 2 %}class="active"{% endif %}>
                         {% if step > 2 %}<a href="{% url medical_institution %}">{% else %}<a>{% endif %}<big>ЛПУ</big></a>
                     </li>
-                    <li class="divider-vertical"></li>
+                    <li class="divider-vertical arrow_box"></li>
                     <li {% if step == 3 %}class="active"{% endif %}>
                         {% if step > 3 %}<a href="{% url subdivision %}">{% else %}<a>{% endif %}<big>Подразделение/Специализация/Врач</big></a>
                     </li>
-                    <li class="divider-vertical"></li>
+                    <li class="divider-vertical arrow_box"></li>
                     <li {% if step == 4 %}class="active"{% endif %}>
                         {% if step > 4 %}<a href="{% url time %}">{% else %}<a>{% endif %}<big>Время</big></a>
                     </li>
-                    <li class="divider-vertical"></li>
+                    <li class="divider-vertical arrow_box"></li>
                     <li {% if step == 5 %}class="active"{% endif %}>
                         {% if step > 5 %}<a href="{% url patient %}">{% else %}<a>{% endif %}<big>Пациент</big></a>
                     </li>
-                    <li class="divider-vertical"></li>
+                    <li class="divider-vertical arrow_box"></li>
                     <li {% if step == 6 %}class="active"{% endif %}>
                         {% if step > 6 %}<a href="">{% else %}<a>{% endif %}<big>Запись</big></a>
                     </li>

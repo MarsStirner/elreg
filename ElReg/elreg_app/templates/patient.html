@@ -12,6 +12,7 @@
         <dt>Дата и время приёма:</dt><dd>{{ date }} {{ start_time }} - {{ finish_time }}</dd>
     </dl>
 </blockquote>
+{% if errors %}
 <p>
     <div id="dialog-modal" class="alert alert-error" title="Ошибка записи">
         {#    <button type="button" class="close" data-dismiss="alert">&times;</button>#}
@@ -24,6 +25,7 @@
         $(".alert").alert();
     </script>
 </p>
+{% endif %}
 
 {% if ticketPatient_err %}
     <div id="dialog-modal" class="alert alert-error" title="Ошибка записи">
@@ -113,7 +115,7 @@
     </div>
 
     <div class="form-actions">
-        <button type="submit" id="button-submit" class="btn btn-success disabled">Подтвердить</button>
+        <button type="submit" id="button-submit" class="btn btn-success disabled" disabled>Подтвердить</button>
         <a href="{% url time %}" class="btn">Отменить</a>
     </div>
 {#    <table class="footer_btn">#}

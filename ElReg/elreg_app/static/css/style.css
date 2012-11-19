@@ -27,3 +27,38 @@ blockquote {
 ul.upper_case li{
     text-transform: uppercase;
 }
+.no_shadow_print h4, .no_shadow_print h5{
+    text-align: center;
+}
+.arrow_box {
+    position: relative;
+    background: whiteSmoke;
+    border: 0;
+}
+.arrow_box:after, .arrow_box:before {
+    left: 100%;
+    border: solid transparent;
+    content: " ";
+    height: 0;
+    width: 0;
+    position: absolute;
+    pointer-events: none;
+}
+
+.arrow_box:after {
+    border-color: rgba(0, 0, 0, 0);
+    border-left-color: #FAFAFA;
+    border-width: 19px;
+    top: 50%;
+    margin-top: -19px;
+}
+.arrow_box:before {
+    border-color: rgba(136, 183, 213, 0);
+    border-left-color: #88b7d5;
+    border-width: 21px;
+    top: 50%;
+    margin-top: -21px;
+}
+.navbar li.arrow_box {
+    border-left: 0;
+}

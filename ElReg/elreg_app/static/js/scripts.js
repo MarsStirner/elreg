@@ -78,6 +78,7 @@ $(document).ready(function () {
 //    Проверка чекбокса "Согласие..."
     $ ('#confirm').click(function() {
         $('#button-submit').toggleClass('disabled');
+        $('#button-submit').attr('disabled', false);
     });
 
 //    Проверка данных в формах
