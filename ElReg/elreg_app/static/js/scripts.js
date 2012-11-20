@@ -76,9 +76,14 @@ $(document).ready(function () {
 $(document).ready(function () {
 
 //    Проверка чекбокса "Согласие..."
-    $ ('#confirm').click(function() {
-        $('#button-submit').toggleClass('disabled');
-        $('#button-submit').attr('disabled', false);
+    $('#confirm').click(function() {
+        if($('#confirm').is(':checked')){
+            $('#button-submit').toggleClass('disabled');
+            $('#button-submit').attr('disabled', false);
+        } else {
+            $('#button-submit').toggleClass('disabled');
+            $('#button-submit').attr('disabled', true);
+        }
     });
 
 //    Проверка данных в формах
