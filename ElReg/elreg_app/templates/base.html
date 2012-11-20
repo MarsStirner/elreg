@@ -19,6 +19,7 @@
         <script type="text/javascript" src="{{ STATIC_URL }}/static/js/jquery.placeholder.min.js"></script>
         <script type="text/javascript" src="{{ STATIC_URL }}/static/js/scripts.js"></script>
         <script type="text/javascript" src="{{ STATIC_URL }}/static/bootstrap/js/bootstrap.min.js"></script>
+        <script type="text/javascript" src="{{ STATIC_URL }}/static/js/ie6.min.js"></script>
         <script type="text/javascript">jQuery('input[placeholder]').placeholder();</script>
         <style type="text/css" media="print">
             div.no_print {display: none;}
@@ -27,6 +28,9 @@
         </style>
         <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}/static/css/jquery-ui/blitzer/jquery-ui-1.9.1.custom.min.css" />
         <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}/static/bootstrap/css/bootstrap.min.css" />
+        <!--[if IE 6]>
+            <link href="{{ STATIC_URL }}/static/css/ie6.min.css" rel="stylesheet">
+        <![endif]-->
         <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}/static/css/style.css" />
 	</head>
 	<body>
@@ -36,31 +40,31 @@
             <div class="span1"><a href="/" title="На главную"><img src="{{ STATIC_URL }}/static/images/logo.png"></a></div>
             <div class="span11"><h1>Электронная регистрация</h1></div>
         </div>
-        <div class="navbar no_print">
+        <div class="navbar top_path no_print">
             <div class="navbar-inner">
-                <ul class="nav top_path">
-                    <li {% if step == 1 %}active"{% endif %}>
-                        {% if step > 1 %}<a href="{% url index %}">{% else %}<a>{% endif %}<big>МО</big></a>
+                <ul class="nav">
+                    <li {% if step == 1 %}class="active"{% endif %}>
+                        {% if step > 1 %}<a href="{% url index %}">{% else %}<a>{% endif %}<span class="label{% if step >= 1 %} label-info{% endif %}">1</span> <big>МО</big></a>
                     </li>
-                    <li class="divider-vertical arrow_box"></li>
+                    <li class="divider-vertical"></li>
                     <li {% if step == 2 %}class="active"{% endif %}>
-                        {% if step > 2 %}<a href="{% url medical_institution %}">{% else %}<a>{% endif %}<big>ЛПУ</big></a>
+                        {% if step > 2 %}<a href="{% url medical_institution %}">{% else %}<a>{% endif %}<span class="label{% if step >= 2 %} label-info{% endif %}">2</span> <big>ЛПУ</big></a>
                     </li>
-                    <li class="divider-vertical arrow_box"></li>
+                    <li class="divider-vertical"></li>
                     <li {% if step == 3 %}class="active"{% endif %}>
-                        {% if step > 3 %}<a href="{% url subdivision %}">{% else %}<a>{% endif %}<big>Подразделение/Специализация/Врач</big></a>
+                        {% if step > 3 %}<a href="{% url subdivision %}">{% else %}<a>{% endif %}<span class="label{% if step >= 3 %} label-info{% endif %}">3</span> <big>Подразделение/Специализация/Врач</big></a>
                     </li>
-                    <li class="divider-vertical arrow_box"></li>
+                    <li class="divider-vertical"></li>
                     <li {% if step == 4 %}class="active"{% endif %}>
-                        {% if step > 4 %}<a href="{% url time %}">{% else %}<a>{% endif %}<big>Время</big></a>
+                        {% if step > 4 %}<a href="{% url time %}">{% else %}<a>{% endif %}<span class="label{% if step >= 4 %} label-info{% endif %}">4</span> <big>Время</big></a>
                     </li>
-                    <li class="divider-vertical arrow_box"></li>
+                    <li class="divider-vertical"></li>
                     <li {% if step == 5 %}class="active"{% endif %}>
-                        {% if step > 5 %}<a href="{% url patient %}">{% else %}<a>{% endif %}<big>Пациент</big></a>
+                        {% if step > 5 %}<a href="{% url patient %}">{% else %}<a>{% endif %}<span class="label{% if step >= 5 %} label-info{% endif %}">5</span> <big>Пациент</big></a>
                     </li>
-                    <li class="divider-vertical arrow_box"></li>
+                    <li class="divider-vertical"></li>
                     <li {% if step == 6 %}class="active"{% endif %}>
-                        {% if step > 6 %}<a href="">{% else %}<a>{% endif %}<big>Запись</big></a>
+                        {% if step > 6 %}<a href="">{% else %}<a>{% endif %}<span class="label{% if step >= 6 %} label-info{% endif %}">6</span> <big>Запись</big></a>
                     </li>
                 </ul>
             </div>

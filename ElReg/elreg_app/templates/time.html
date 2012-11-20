@@ -59,7 +59,7 @@
                             {% endif %}
                             {% else %}
                         <td align="center">
-                        <button type="button" class="btn btn-block disabled" name=ticket value="{{ cell.start.date|date:"d:m:Y" }}-{{ cell.start.time }}-{{ cell.finish.time }}"></button>
+                        <button type="button" class="btn btn-block disabled" name=ticket value="{{ cell.start.date|date:"d:m:Y" }}-{{ cell.start.time }}-{{ cell.finish.time }}">&nbsp;</button>
                     {% endif %}
                 </td>
                 {% endfor %}
