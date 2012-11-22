@@ -15,6 +15,9 @@ from django.utils import timezone
 from livesettings import config_value
 from django.core.mail import get_connection
 import settings
+from django import forms
+from captcha.fields import CaptchaField
+
 # import the logging library
 import logging
 # Get an instance of a logger
@@ -186,6 +189,14 @@ def patientPage(request, templateName):
     url-адреса в адресную строку, будет осуществлен редирект на главную страницу.
 
     """
+
+
+    def get_captcha_form(data = {}):
+        class CaptchaForm(forms.Form):
+            captcha = CaptchaField()
+        f = CaptchaForm(data, auto_id = True)
+        return f
+
     db = Redis(request)
     errors = []
     if request.method == 'POST':
@@ -233,6 +244,10 @@ def patientPage(request, templateName):
             userEmail = request.POST.get('email', '')
             if userEmail and not emailValidation(userEmail):
                 errors.append(u'Введите корректно адрес электронной почты')
+
+            form = get_captcha_form(request.POST)
+            if not form.is_valid():
+                errors.append(u'Введёно неверное значение проверочного выражения')
 
             ticketPatient_err = ''
             # если ошибок в форме нет
@@ -321,7 +336,9 @@ def patientPage(request, templateName):
                                                       'policy1': policy1,
                                                       'policy2': policy2,
                                                       'userEmail': userEmail,
-                                                      'ticketPatient_err': ticketPatient_err},
+                                                      'ticketPatient_err': ticketPatient_err,
+                                                      'captcha': get_captcha_form()['captcha']
+                                                      },
                                                       context_instance=RequestContext(request))
         # если представление было вызвано нажатием на ячейку таблицы на странице Время:
         db.set('step', 5)
@@ -329,12 +346,12 @@ def patientPage(request, templateName):
                                                   'ticket': ticket,
                                                   'date': date,
                                                   'start_time': start_time,
-                                                  'finish_time': finish_time},
+                                                  'finish_time': finish_time,
+                                                  'captcha': get_captcha_form()['captcha']},
                                                   context_instance=RequestContext(request))
     # обращение к форме через адресную строку:
     else:
         return HttpResponseRedirect(reverse('index'))
-
 
 def registerPage(request, templateName):
     """Логика страницы Запись

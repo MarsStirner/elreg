@@ -11,4 +11,5 @@ urlpatterns = patterns('',
     url(r'^admin/', include(admin.site.urls)),
     # электронная регистратура:
     url(r'^', include(APP_NAME + '.urls')),
-    )
+    url(r'^captcha/', include('captcha.urls')),
+)

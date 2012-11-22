@@ -36,3 +36,9 @@ ul.upper_case li{
 .navbar{
     min-width:1170px;
 }
+.captcha{
+    border: 1px solid #CCC;
+}
+input#captcha_1{
+    width: 56px;
+}

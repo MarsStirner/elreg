@@ -164,6 +164,7 @@ INSTALLED_APPS = (
     'south',
     APP_NAME,
     'livesettings',
+    'captcha',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
 )
@@ -201,6 +202,12 @@ LOGGING = {
 
 CACHE_PREFIX = 'elreg'
 CACHE_TIMEOUT = 300
+
+# Конфигурация CAPTCHA
+CAPTCHA_CHALLENGE_FUNCT = 'captcha.helpers.math_challenge'
+CAPTCHA_NOISE_FUNCTIONS = ()
+CAPTCHA_LETTER_ROTATION = (-10, 10)
+CAPTCHA_FOREGROUND_COLOR = '#000'
 
 # Конфигурация электронной почты:
 

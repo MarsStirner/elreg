@@ -230,6 +230,20 @@ $(document).ready(function () {
         }else{
             $('#email').closest('.control-group').removeClass('error').addClass('success');
         }
+        if (!$('#captcha_1').val()){
+            $('#captcha_1').closest('.control-group').addClass('error');
+            if($('#note8')){
+                $('#note8').hide();
+            }
+            $('<span class="help-inline" id="note8">Введите результат выражения</span>').fadeIn('slow').insertAfter($('#captcha_1'));
+            $('#captcha_1').focus();
+            return false;
+        } else {
+            if($('#note8')){
+                $('#note8').hide();
+            }
+            $('#captcha_1').closest('.control-group').removeClass('error').addClass('success');
+        }
         return true;
     })
 });
