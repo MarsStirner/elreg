@@ -3,4 +3,7 @@ suds==0.4
 redis==2.7.1
 simplejson==2.6.2
 mysql-python
+pytz
 south
+pip install -e hg+http://bitbucket.org/bkroeze/django-livesettings/#egg=django-livesettings
+pip install -e hg+http://bitbucket.org/bkroeze/django-keyedcache/#egg=django-keyedcache

@@ -29,9 +29,9 @@ MANAGERS = ADMINS
 # Конфигурация базы данных:
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',         # Изменить окончание в зависимости от используемого СУБД:
+        'ENGINE': '',         # Изменить окончание в зависимости от используемого СУБД:
                                                         # 'postgresql_psycopg2', 'mysql', 'sqlite3' или 'oracle'.
-        'NAME': os.path.join(PROJECT_ROOT, 'elreg.db'), # Имя БД или путь до файла БД, если используется sqlite3.
+        'NAME': '', # Имя БД или путь до файла БД, если используется sqlite3.
         'USER': '',                                     # Логин. Не используется с sqlite3.
         'PASSWORD': '',                                 # Пароль. Не используется с sqlite3.
         'HOST': '',                                     # Оставить строку пустой, если используется на локальном
@@ -163,6 +163,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'south',
     APP_NAME,
+    'livesettings',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
 )
@@ -198,24 +199,21 @@ LOGGING = {
     }
 }
 
+CACHE_PREFIX = 'elreg'
+CACHE_TIMEOUT = 300
 
 # Конфигурация электронной почты:
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
-EMAIL_HOST = 'localhost'                # адрес smtp-сервера. например 'smtp.gmail.com'
-                                        # для локального хоста - 'localhost'
-
-EMAIL_PORT = 1025                       # порт smtp-сервера (обычно 587 или 25 для TLS или 465 для SSL)
-                                        # для локального хоста - обычно порт 1025
-
-EMAIL_HOST_USER = ''                    # логин
-
-EMAIL_HOST_PASSWORD = ''                # пароль
-
-EMAIL_USE_TLS = False                   # включить/отключить TLS (для тестового режима - False)
-
-DEFAULT_FROM_EMAIL = 'no-reply@elreg.ru'
+#EMAIL_HOST = 'localhost'                # адрес smtp-сервера. например 'smtp.gmail.com'
+#                                        # для локального хоста - 'localhost'
+#EMAIL_PORT = 1025                       # порт smtp-сервера (обычно 587 или 25 для TLS или 465 для SSL)
+#                                        # для локального хоста - обычно порт 1025
+#EMAIL_HOST_USER = ''                    # логин
+#EMAIL_HOST_PASSWORD = ''                # пароль
+#EMAIL_USE_TLS = False                   # включить/отключить TLS (для тестового режима - False)
+#DEFAULT_FROM_EMAIL = 'no-reply@elreg.ru'
 
 # Импортируем настройки из локального конфига
 from settings_local import *

@@ -10,7 +10,16 @@ from elreg_app.functions import *
 from elreg_app.models import Region
 import datetime
 import math
+import pytz
 from django.utils import timezone
+from livesettings import config_value
+from django.core.mail import get_connection
+import settings
+# import the logging library
+import logging
+# Get an instance of a logger
+logger = logging.getLogger(__name__)
+
 try:
     import json
 except ImportError:
@@ -96,6 +105,12 @@ def timePage(request, templateName, time=0):
     Выводится таблица с расписанием выбранного врача на текущую неделю.
 
     """
+
+    try:
+        timezone.activate(pytz.timezone(config_value('TZ','TIME_ZONE')))
+    except:
+        timezone.activate(pytz.timezone(settings.TIME_ZONE))
+
     db = Redis(request)
     today = datetime.date.today()
     # если попадаем на страницу нажимая кнопку "Назад", "Предыдущая" или "Следующая":
@@ -268,9 +283,21 @@ def patientPage(request, templateName):
                         subject, from_email, to = u'Уведомление о записи на приём', emailLPU, userEmail
                         text_content = plaintext.render(context)
                         html_content = htmly.render(context)
-                        msg = EmailMultiAlternatives(subject, text_content, from_email, [to])
+                        connection = get_connection(settings.EMAIL_BACKEND, False,
+                            **{'host':config_value('Mail','EMAIL_HOST'),
+                             'port':config_value('Mail','EMAIL_PORT'),
+                             'username':config_value('Mail','EMAIL_HOST_USER'),
+                             'password':config_value('Mail','EMAIL_HOST_PASSWORD'),
+                             'use_tls':config_value('Mail','EMAIL_USE_TLS'),
+                             })
+                        msg = EmailMultiAlternatives(subject, text_content, from_email, [to], connection = connection,)
                         msg.attach_alternative(html_content, "text/html")
-                        msg.send()
+                        try:
+                            msg.send()
+                        except:
+                            logger.error("Couldn't connect to smtp")
+
+
                     return HttpResponseRedirect(reverse('register'))
                 # ошибка записи на приём:
                 else:

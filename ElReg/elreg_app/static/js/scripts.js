@@ -76,6 +76,13 @@ $(document).ready(function () {
 $(document).ready(function () {
 
 //    Проверка чекбокса "Согласие..."
+    if($('#confirm').is(':checked')){
+        $('#button-submit').removeClass('disabled');
+        $('#button-submit').attr('disabled', false);
+    } else {
+        $('#button-submit').addClass('disabled');
+        $('#button-submit').attr('disabled', true);
+    }
     $('#confirm').click(function() {
         if($('#confirm').is(':checked')){
             $('#button-submit').toggleClass('disabled');
@@ -203,8 +210,8 @@ $(document).ready(function () {
             }
             $('#policy2').closest('.control-group').removeClass('error').addClass('success');
         }
-        if ($email.val()) {
-            $('#email').closest('.control-group').removeClass('success').addClass('error');
+        if ( $('#chb').is(':checked') && $email.val()) {
+            $('#email').closest('.control-group').removeClass('error').addClass('success');
             if($('#note7')){
                 $('#note7').hide();
             }
@@ -212,12 +219,15 @@ $(document).ready(function () {
             if(!regex.test($email.val())){
                 $('<span class="help-inline" id="note6">Введите корректно email</span>').fadeIn('slow').insertAfter($email);
                 $email.focus();
+                $('#email').closest('.control-group').removeClass('success').addClass('error');
                 return false;
             }
-        } else {
+        } else if($('#chb').is(':checked')) {
             if($('#note7')){
                 $('#note7').hide();
             }
+            $('#email').closest('.control-group').removeClass('success').addClass('error');
+        }else{
             $('#email').closest('.control-group').removeClass('error').addClass('success');
         }
         return true;

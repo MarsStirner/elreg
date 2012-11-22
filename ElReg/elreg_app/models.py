@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from django.db import models
+import config
 
 class Region (models.Model):
     """Модель БД с названиями МО и их кодах ОКАТО
