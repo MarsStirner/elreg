@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from livesettings import config_register, config_register_list
 from livesettings.values import *
+from custom_livesettings.values import ImageValue
 #from django.utils.translation import ugettext_lazy as _
 
 # First, setup a grup to hold all our possible configs
@@ -27,11 +28,11 @@ config_register_list(
 
 TIME_ZONE = ConfigurationGroup(
     'TZ',               # key: internal name of the group to be created
-    u'Настройка часового пояса',  # name: verbose name which can be automatically translated
+    u'Региональные настройки',  # name: verbose name which can be automatically translated
     ordering=1             # ordering: order of group in the list (default is 1)
 )
 
-config_register(
+config_register_list(
     # Listbox with multiple selection - MultipleStringValue with choices
     StringValue( TIME_ZONE, 'TIME_ZONE',
         description=u'Выбор часовой зоны', ordering=0, help_text=u'Выбор часовой зоны для текущей установки сервиса',
@@ -48,4 +49,6 @@ config_register(
             ('Asia/Magadan', u'Магаданское время (UTC+12)'),
             ),
     ),
+    ImageValue( TIME_ZONE, 'LOGO_FILE', description=u'Файл логотипа', ordering=1, default='',
+        help_text=u'Логотип/герб региона для размещения в шапке страниц'),
 )
