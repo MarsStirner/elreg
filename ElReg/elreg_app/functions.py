@@ -67,7 +67,7 @@ class ListWSDL():
     Класс содержит методы listHospitals и listDoctors, обращающиеся к одноименным методам web-сервиса.
 
     """
-#    client = Client(IS + "list")
+    client = Client(IS + "list")
     def listHospitals(self, okato=0):
         """
         Метод принимает код ОКАТО и возвращает ЛПУ, удовлетворяющее требованию, или список ЛПУ,
@@ -109,7 +109,7 @@ class InfoWSDL():
     Класс содержит метод getHospitalInfo, обращающийся к одноименному методу web-сервиса.
 
     """
-#    client = Client(IS + "info")
+    client = Client(IS + "info")
     def getHospitalInfo(self):
         """
         Метод возвращает инвормацию об ЛПУ.
@@ -127,7 +127,7 @@ class ScheduleWSDL():
     Класс содержит методы getScheduleInfo, getTicketStatus и enqueue, обращающиеся к одноименным методам web-сервиса.
 
     """
-#    client = Client(IS + "schedule")
+    client = Client(IS + "schedule")
     def getScheduleInfo(self, hospitalUid=0, doctorUid=0):
         """
         Метод возвращает расписания врачей.
