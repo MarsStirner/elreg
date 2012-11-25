@@ -205,6 +205,14 @@ sys.path.insert(0, os.path.abspath(os.path.join(root_path, 'app')))
 sys.path.insert(0, os.path.abspath(os.path.join(root_path, 'app', 'webapp')))
 ```
 
+* Применение изменений, внесенных в файлы .py
+
+Для того, чтобы избавиться от постоянно перезагрузки Apache после внесения изменений в файлы проекта, достаточно выполнить следующую команду:
+
+```
+touch /srv/my_project/elreg/ElReg/wsgi.py
+```
+
 Дополнительную информацию по настройке сервера можно получить по адресу:
 
 http://www.lennu.net/2012/05/14/django-deployement-installation-to-ubuntu-12-dot-04-server/
