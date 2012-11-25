@@ -91,12 +91,13 @@ git clone https://github.com/KorusConsulting/elreg.git
 Устанавливаем ПО для разрешения зависимостей
 
 * Для mysql-python:
+
 ```
 apt-get build-dep python-mysqldb
 ```
 * Для PIL (установка модулей и настройка путей к библиотекам):
-```
 
+```
 apt-get install libjpeg8 libjpeg8-dev libfreetype6 libfreetype6-dev
 ln -s /usr/lib/x86_64-linux-gnu/libjpeg.so /usr/lib
 ln -s /usr/lib/x86_64-linux-gnu/libfreetype.so /usr/lib
@@ -118,7 +119,9 @@ pip install -r elreg/ElReg/requirements.txt
 ```
 nano /etc/apache2/sites-available/DOMAIN
 ```
+
 вставить следующее содержимое, подставив вместо USER и DOMAIN имя ранее созданного пользователя и выбранный домен:
+
 ```
 <VirtualHost *:80>
 ServerAdmin root@DOMAIN
