@@ -1,13 +1,12 @@
 # -*- coding: utf-8 -*-
 
 from django import forms
-from django.forms.widgets import ClearableFileInput
 from livesettings.overrides import get_overrides
 from livesettings.values import Value
 from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
 import logging
-import livesettings.signals
+import livesettings.signals as signals
 import settings
 import os
 
@@ -18,8 +17,28 @@ log = logging.getLogger('configuration')
 class ImageValue(Value):
 
     class field(forms.ImageField):
+
+        class FakeFieldFile(object):
+            """
+            Quacks like a FieldFile (has a .url and unicode representation), but
+            doesn't require us to care about storages etc.
+
+            """
+            url = ''
+            name = ''
+
+            def __unicode__(self):
+                return self.name
+
         def __init__(self, *args, **kwargs):
             kwargs['required'] = False
+            if kwargs['initial']:
+                if os.path.isfile(os.path.join(settings.MEDIA_ROOT, kwargs['initial'])):
+                    file_obj = self.FakeFieldFile()
+                    file_obj.name = kwargs['initial']
+                    file_obj.url = os.path.join(settings.MEDIA_URL, kwargs['initial'])
+                    kwargs['initial'] = file_obj
+
             forms.ImageField.__init__(self, *args, **kwargs)
 
     def update(self, value, request):
@@ -78,7 +97,7 @@ class ImageValue(Value):
 
     def __handle_uploaded_file(self, file):
         try:
-            default_storage.save(os.path.join(settings.STATIC_ROOT, file.name), ContentFile(file.read()))
+            default_storage.save(os.path.join(settings.MEDIA_ROOT, file.name), ContentFile(file.read()))
         except:
             return None
         else:
@@ -86,7 +105,7 @@ class ImageValue(Value):
 
     def get_url(self):
         if self.value:
-            return os.path.join(settings.STATIC_URL, self.value)
+            return os.path.join(settings.MEDIA_URL, self.value)
         return ""
 
 

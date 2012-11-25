@@ -49,6 +49,20 @@ config_register_list(
             ('Asia/Magadan', u'Магаданское время (UTC+12)'),
             ),
     ),
-    ImageValue( TIME_ZONE, 'LOGO_FILE', description=u'Файл логотипа', ordering=1, default='',
+    StringValue(TIME_ZONE, 'SITE_NAME',  description=u'Название сайта в шапку', ordering=1,
+        help_text=u'Название сайте в шапку', default=u'Портал государственных и муниципальных услуг'),
+    StringValue(TIME_ZONE, 'REGION_NAME',  description=u'Наименование региона в шапку', ordering=2,
+        help_text=u'Наименование региона в шапку (вторая строка)'),
+    ImageValue( TIME_ZONE, 'LOGO_FILE', description=u'Файл логотипа', ordering=3, default='',
         help_text=u'Логотип/герб региона для размещения в шапке страниц'),
+)
+
+IS = ConfigurationGroup(
+    'IS',               # key: internal name of the group to be created
+    u'Интеграционный сервис',  # name: verbose name which can be automatically translated
+    ordering=2             # ordering: order of group in the list (default is 1)
+)
+config_register(
+    StringValue(IS, 'URL',  description=u'Адрес интеграционного сервиса',
+        help_text=u'Адрес интеграционного сервиса', default="http://10.1.2.107/int-server/index.php?wsdl="),
 )

@@ -3,10 +3,11 @@
 from django.contrib.sessions.backends.db import SessionStore
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
-from settings import IS
+from livesettings import config_value
 from suds.client import Client
 import redis
 
+IS = config_value('IS', 'URL')
 
 class Redis ():
     """ Класс для обращения к серверу redis.

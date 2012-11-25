@@ -63,23 +63,6 @@ def group_settings(request, group, template='livesettings/group_settings.html'):
         else:
             # Leave the form populated with current setting values
             #form = editor()
-            files = {}
-            for setting in settings:
-                if isinstance(setting, ConfigurationGroup):
-                    for s in setting:
-                        if isinstance(s, ImageValue):
-                            url = s.get_url()
-                            if url:
-#                                print s
-                                s.setting.value = {'url':url}
-#                                print s.setting.value
-#                                s.editor_value = url
-                else:
-                    if isinstance(setting, ImageValue):
-                        url = setting.get_url()
-                        if url:
-                            setting.setting.value = {'url':url}
-#                            setting.editor_value = url
 
             form = forms.SettingsEditor(settings=settings)
     else:
@@ -110,7 +93,6 @@ def export_as_python(request):
     """Export site settings as a dictionary of dictionaries"""
 
     from livesettings.models import Setting, LongSetting
-    import pprint
 
     work = {}
     both = list(Setting.objects.all())

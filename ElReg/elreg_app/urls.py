@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from django.conf.urls import patterns, url
-from settings import APP_NAME
+from settings import APP_NAME, MEDIA_ROOT
 
 urlpatterns = patterns(APP_NAME + '.views',
     # страницы сайта:
@@ -17,4 +17,9 @@ urlpatterns = patterns(APP_NAME + '.views',
     # адреса, используемые только AJAX'ом:
     url(r'^search/$', 'searchPage'),
     url(r'^updates/$', 'updatesPage'),
+)
+urlpatterns += patterns('',
+    url(r'^media/(?P<path>.*)$', 'django.views.static.serve', {
+        'document_root': MEDIA_ROOT,
+        }),
 )
