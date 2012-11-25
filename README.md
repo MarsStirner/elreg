@@ -90,11 +90,11 @@ git clone https://github.com/KorusConsulting/elreg.git
 
 Устанавливаем ПО для разрешения зависимостей
 
-*Для mysql-python:
+* Для mysql-python:
 ```
 apt-get build-dep python-mysqldb
 ```
-*Для PIL (установка модулей и настройка путей к библиотекам):
+* Для PIL (установка модулей и настройка путей к библиотекам):
 ```
 
 apt-get install libjpeg8 libjpeg8-dev libfreetype6 libfreetype6-dev
@@ -152,7 +152,7 @@ Allow from all
 </VirtualHost>
 ```
 
-*Активировать конфигурацию:
+* Активировать конфигурацию:
 
 DOMAIN - ранее выбранный домен
 ```
