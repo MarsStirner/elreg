@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from django.conf.urls import patterns, url
-from settings import APP_NAME, MEDIA_ROOT
+from settings import APP_NAME, MEDIA_ROOT, STATIC_ROOT
 
 urlpatterns = patterns(APP_NAME + '.views',
     # страницы сайта:
@@ -21,5 +21,8 @@ urlpatterns = patterns(APP_NAME + '.views',
 urlpatterns += patterns('',
     url(r'^media/(?P<path>.*)$', 'django.views.static.serve', {
         'document_root': MEDIA_ROOT,
+        }),
+    url(r'^static/(?P<path>.*)$', 'django.views.static.serve', {
+        'document_root': STATIC_ROOT,
         }),
 )
