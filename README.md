@@ -187,7 +187,7 @@ python elreg/ElReg/manage.py migrate
 
 **Восстановление дампа БД**
 ```
-python elreg/ElReg/manage.py loaddata elreg.json
+python elreg/ElReg/manage.py loaddata elreg/ElReg/elreg.json
 ```
 
 **Настройка сайта**
