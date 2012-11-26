@@ -48,7 +48,7 @@ http://dev.mysql.com/doc/refman/5.1/en/create-user.html
 
 http://dev.mysql.com/doc/refman/5.1/en/grant.html
 
-Для работы с данными пользователю БД достаточно следующего набора привелегий:
+Для работы с данными пользователю БД достаточно следующего набора привилегий:
 SELECT, INSERT, UPDATE, DELETE, FILE, CREATE, ALTER, INDEX, DROP, CREATE TEMPORARY TABLES
 
 **Подготовка директорий для размещения проекта**
@@ -155,7 +155,7 @@ Allow from all
 </VirtualHost>
 ```
 
-* Активировать конфигурацию:
+** Активировать конфигурацию:
 
 DOMAIN - ранее выбранный домен
 ```
