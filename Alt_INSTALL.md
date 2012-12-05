@@ -86,6 +86,7 @@ git clone https://github.com/KorusConsulting/elreg.git
 ```
 Переключиться на ветку "AltLinux" и сделать pull изменений:
 ```
+cd elreg
 git checkout AltLinux
 git pull
 ```
