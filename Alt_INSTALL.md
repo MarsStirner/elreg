@@ -116,7 +116,8 @@ ln -s /usr/lib/x86_64-linux-gnu/libz.so /usr/lib
 ```
 apt-get install ftp://ftp.altlinux.org/pub/distributions/ALTLinux/Sisyphus/files/SRPMS/python-module-django-1.4-alt1.src.rpm
 apt-get install ftp://ftp.altlinux.org/pub/distributions/ALTLinux/Sisyphus/files/x86_64/RPMS/redis-2.4.7-alt2.x86_64.rpm
-apt-get install python-imaging
+apt-get install python-module-imaging
+pip install redis --upgrade
 ```
 
 При получении сообщений об ошибках необходимо разрешить необходимые зависимости и повторно выполнить установку из requirements.txt. В конечном результате все пакеты должны установиться без уведомления об ошибках.
