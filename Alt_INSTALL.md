@@ -100,12 +100,12 @@ git pull
 * Для mysql-python:
 
 ```
-apt-get build-dep python-mysqldb
+apt-get python-module-MySQLdb
 ```
 * Для PIL (установка модулей и настройка путей к библиотекам):
 
 ```
-apt-get install libjpeg8 libjpeg8-dev libfreetype6 libfreetype6-dev
+apt-get install libjpeg libjpeg-devel libfreetype libfreetype-devel
 ln -s /usr/lib/x86_64-linux-gnu/libjpeg.so /usr/lib
 ln -s /usr/lib/x86_64-linux-gnu/libfreetype.so /usr/lib
 ln -s /usr/lib/x86_64-linux-gnu/libz.so /usr/lib
@@ -114,10 +114,9 @@ ln -s /usr/lib/x86_64-linux-gnu/libz.so /usr/lib
 **Устанавливаем django и используемые модули**
 
 ```
-apt-get install python-django
-apt-get install redis-server
-apt-get install python-mysqldb
-apt-get install python-imaging python-imaging-tk
+apt-get install ftp://ftp.altlinux.org/pub/distributions/ALTLinux/Sisyphus/files/SRPMS/python-module-django-1.4-alt1.src.rpm
+apt-get install ftp://ftp.altlinux.org/pub/distributions/ALTLinux/Sisyphus/files/x86_64/RPMS/redis-2.4.7-alt2.x86_64.rpm
+apt-get install python-imaging
 ```
 
 При получении сообщений об ошибках необходимо разрешить необходимые зависимости и повторно выполнить установку из requirements.txt. В конечном результате все пакеты должны установиться без уведомления об ошибках.
