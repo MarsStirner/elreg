@@ -100,7 +100,7 @@ git pull
 * Для mysql-python:
 
 ```
-apt-get python-module-MySQLdb
+apt-get install python-module-MySQLdb
 ```
 * Для PIL (установка модулей и настройка путей к библиотекам):
 
