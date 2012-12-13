@@ -74,7 +74,7 @@ source my_project/venv/bin/activate
 Пользователь, из-под которого будет работать mod_wsgi процесс.
 В качестве USERNAME используется произвольное имя.
 ```
-useradd --system --no-create-home --home-dir /var/www/webapps/my_project/ --user-group USERNAME
+/usr/sbin/useradd --system --no-create-home --home-dir /var/www/webapps/my_project/ --user-group USERNAME
 chsh -s /bin/bash USERNAME
 ```
 
