@@ -9,7 +9,7 @@
 
 * Серверная ОС семейства Linux
 * Python 2.7
-* MySQL 5
+* MySQL 5, libmysqlclient-devel
 * Web-Server Apache + mod_wsgi
 * git
 * zlib
@@ -29,7 +29,7 @@ apt-get upgrade
 **Установка виртуального окружения и инструмента работы с пакетами Python**
 
 ```
-apt-get -y install python python-dev python-setuptools
+apt-get -y install python python-dev python-module-setuptools
 easy_install virtualenv virtualenvwrapper pip
 ```
 
@@ -74,7 +74,7 @@ source my_project/venv/bin/activate
 Пользователь, из-под которого будет работать mod_wsgi процесс.
 В качестве USERNAME используется произвольное имя.
 ```
-useradd --system --no-create-home --home-dir /var/www/webapps/my_project/ --user-group USERNAME
+/usr/sbin/useradd --system --no-create-home --home-dir /var/www/webapps/my_project/ --user-group USERNAME
 chsh -s /bin/bash USERNAME
 ```
 
@@ -100,7 +100,7 @@ git pull
 * Для mysql-python:
 
 ```
-apt-get python-module-MySQLdb
+apt-get install python-module-MySQLdb
 ```
 * Для PIL (установка модулей и настройка путей к библиотекам):
 
@@ -115,6 +115,13 @@ ln -s /usr/lib/x86_64-linux-gnu/libz.so /usr/lib
 
 ```
 apt-get install ftp://ftp.altlinux.org/pub/distributions/ALTLinux/Sisyphus/files/SRPMS/python-module-django-1.4-alt1.src.rpm
+```
+в случае возникновения проблем установки django из rpm, исполльзовать следующий способ:
+```
+pip install -r ElReg/requirements.txt
+```
+Дополнительные модули:
+```
 apt-get install ftp://ftp.altlinux.org/pub/distributions/ALTLinux/Sisyphus/files/x86_64/RPMS/redis-2.4.7-alt2.x86_64.rpm
 apt-get install python-module-imaging
 pip install redis --upgrade
@@ -127,7 +134,7 @@ pip install redis --upgrade
 
 Создать конфиг сайта и отредактировать его любым текстовым редактором, в качестве DOMAIN использовать выбранное доменное имя сайта:
 ```
-nano /etc/apache2/sites-available/DOMAIN
+nano /etc/httpd2/conf/sites-available/DOMAIN
 ```
 
 вставить следующее содержимое, подставив вместо USER и DOMAIN имя ранее созданного пользователя и выбранный домен:
