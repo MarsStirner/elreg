@@ -134,7 +134,7 @@ pip install redis --upgrade
 
 Создать конфиг сайта и отредактировать его любым текстовым редактором, в качестве DOMAIN использовать выбранное доменное имя сайта:
 ```
-nano /etc/apache2/sites-available/DOMAIN
+nano /etc/httpd2/conf/sites-available/DOMAIN
 ```
 
 вставить следующее содержимое, подставив вместо USER и DOMAIN имя ранее созданного пользователя и выбранный домен:
