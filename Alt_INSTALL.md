@@ -115,6 +115,13 @@ ln -s /usr/lib/x86_64-linux-gnu/libz.so /usr/lib
 
 ```
 apt-get install ftp://ftp.altlinux.org/pub/distributions/ALTLinux/Sisyphus/files/SRPMS/python-module-django-1.4-alt1.src.rpm
+```
+в случае возникновения проблем установки django из rpm, исполльзовать следующий способ:
+```
+pip install -r ElReg/requirements.txt
+```
+Дополнительные модули:
+```
 apt-get install ftp://ftp.altlinux.org/pub/distributions/ALTLinux/Sisyphus/files/x86_64/RPMS/redis-2.4.7-alt2.x86_64.rpm
 apt-get install python-module-imaging
 pip install redis --upgrade
