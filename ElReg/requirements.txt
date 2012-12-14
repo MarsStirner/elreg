@@ -1,3 +1,4 @@
 django==1.4.1
 redis==2.7.1
 PIL #http://obroll.com/install-python-pil-python-image-library-on-ubuntu-11-10-oneiric/
+mysql-python
