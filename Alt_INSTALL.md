@@ -9,7 +9,7 @@
 
 * Серверная ОС семейства Linux
 * Python 2.7
-* MySQL 5
+* MySQL 5, libmysqlclient-devel
 * Web-Server Apache + mod_wsgi
 * git
 * zlib
@@ -29,7 +29,7 @@ apt-get upgrade
 **Установка виртуального окружения и инструмента работы с пакетами Python**
 
 ```
-apt-get -y install python python-dev python-setuptools
+apt-get -y install python python-dev python-module-setuptools
 easy_install virtualenv virtualenvwrapper pip
 ```
 
@@ -53,11 +53,11 @@ SELECT, INSERT, UPDATE, DELETE, FILE, CREATE, ALTER, INDEX, DROP, CREATE TEMPORA
 
 **Подготовка директорий для размещения проекта**
 
-Используем директорию /srv/ для обеспечения защищенной установки сайта. Вместо /srv можно использовать любую удобную директорию на сервере (например, /var/www/webapps). При этом, следуя инструкции, необходимо подразумевать, что вместо /srv необходимо указывать Вашу директорию.
+Используем директорию /var/www/webapps/ для установки сайта.
 
 В качестве имени проекта (my_project) можно использовать произвольное.
 ```
-cd /srv/
+cd /var/www/webapps/
 mkdir -p my_project/app my_project/app/conf/apache
 mkdir -p my_project/logs my_project/run/eggs
 ```
@@ -74,15 +74,21 @@ source my_project/venv/bin/activate
 Пользователь, из-под которого будет работать mod_wsgi процесс.
 В качестве USERNAME используется произвольное имя.
 ```
-useradd --system --no-create-home --home-dir /srv/my_project/ --user-group USERNAME
+/usr/sbin/useradd --system --no-create-home --home-dir /var/www/webapps/my_project/ --user-group USERNAME
 chsh -s /bin/bash USERNAME
 ```
 
 **Клонирование github репозитория**
 
-Перейти в корневую директорию проекта (в нашем примере: /srv/my_project) и выполнить команду:
+Перейти в корневую директорию проекта (в нашем примере: /var/www/webapps/my_project) и выполнить команду:
 ```
 git clone https://github.com/KorusConsulting/elreg.git
+```
+Переключиться на ветку "AltLinux" и сделать pull изменений:
+```
+cd elreg
+git checkout AltLinux
+git pull
 ```
 при этом необходимо наличие github аккаунта с правами доступа в корпоративный репозиторий
 
@@ -94,12 +100,12 @@ git clone https://github.com/KorusConsulting/elreg.git
 * Для mysql-python:
 
 ```
-apt-get build-dep python-mysqldb
+apt-get install python-module-MySQLdb
 ```
 * Для PIL (установка модулей и настройка путей к библиотекам):
 
 ```
-apt-get install libjpeg8 libjpeg8-dev libfreetype6 libfreetype6-dev
+apt-get install libjpeg libjpeg-devel libfreetype libfreetype-devel
 ln -s /usr/lib/x86_64-linux-gnu/libjpeg.so /usr/lib
 ln -s /usr/lib/x86_64-linux-gnu/libfreetype.so /usr/lib
 ln -s /usr/lib/x86_64-linux-gnu/libz.so /usr/lib
@@ -108,7 +114,17 @@ ln -s /usr/lib/x86_64-linux-gnu/libz.so /usr/lib
 **Устанавливаем django и используемые модули**
 
 ```
-pip install -r elreg/ElReg/requirements.txt
+apt-get install ftp://ftp.altlinux.org/pub/distributions/ALTLinux/Sisyphus/files/SRPMS/python-module-django-1.4-alt1.src.rpm
+```
+в случае возникновения проблем установки django из rpm, исполльзовать следующий способ:
+```
+pip install -r ElReg/requirements.txt
+```
+Дополнительные модули:
+```
+apt-get install ftp://ftp.altlinux.org/pub/distributions/ALTLinux/Sisyphus/files/x86_64/RPMS/redis-2.4.7-alt2.x86_64.rpm
+apt-get install python-module-imaging
+pip install redis --upgrade
 ```
 
 При получении сообщений об ошибках необходимо разрешить необходимые зависимости и повторно выполнить установку из requirements.txt. В конечном результате все пакеты должны установиться без уведомления об ошибках.
@@ -118,7 +134,7 @@ pip install -r elreg/ElReg/requirements.txt
 
 Создать конфиг сайта и отредактировать его любым текстовым редактором, в качестве DOMAIN использовать выбранное доменное имя сайта:
 ```
-nano /etc/apache2/sites-available/DOMAIN
+nano /etc/httpd2/conf/sites-available/DOMAIN
 ```
 
 вставить следующее содержимое, подставив вместо USER и DOMAIN имя ранее созданного пользователя и выбранный домен:
@@ -128,27 +144,27 @@ nano /etc/apache2/sites-available/DOMAIN
 ServerAdmin root@DOMAIN
 ServerName DOMAIN
 
-Alias /site_media/ /srv/my_project/elreg/ElReg/elreg_app/media/
-Alias /static_admin/ /srv/my_project/venv/lib/python2.7/site-packages/django/contrib/admin/static/
-Alias /static/ /srv/my_project/elreg/ElReg/elreg_app/static/
-Alias /robots.txt /srv/my_project/app/webapp/site_media/robots.txt
-Alias /favicon.ico /srv/my_project/elreg/ElReg/elreg_app/static/images/favicon.ico
+Alias /site_media/ /var/www/webapps/my_project/elreg/ElReg/elreg_app/media/
+Alias /static_admin/ /var/www/webapps/my_project/venv/lib/python2.7/site-packages/django/contrib/admin/static/
+Alias /static/ /var/www/webapps/my_project/elreg/ElReg/elreg_app/static/
+Alias /robots.txt /var/www/webapps/my_project/app/webapp/site_media/robots.txt
+Alias /favicon.ico /var/www/webapps/my_project/elreg/ElReg/elreg_app/static/images/favicon.ico
 
-CustomLog "|/usr/sbin/rotatelogs /srv/my_project/logs/access.log.%Y%m%d-%H%M%S 5M" combined
-ErrorLog "|/usr/sbin/rotatelogs /srv/my_project/logs/error.log.%Y%m%d-%H%M%S 5M"
+CustomLog "|/usr/sbin/rotatelogs /var/www/webapps/my_project/logs/access.log.%Y%m%d-%H%M%S 5M" combined
+ErrorLog "|/usr/sbin/rotatelogs /var/www/webapps/my_project/logs/error.log.%Y%m%d-%H%M%S 5M"
 LogLevel warn
 
-WSGIDaemonProcess DOMAIN user=USER group=USER processes=1 threads=15 maximum-requests=10000 python-path=/srv/my_project/venv/lib/python2.7/site-packages python-eggs=/srv/my_project/run/eggs
+WSGIDaemonProcess DOMAIN user=USER group=USER processes=1 threads=15 maximum-requests=10000 python-path=/var/www/webapps/my_project/venv/lib/python2.7/site-packages python-eggs=/var/www/webapps/my_project/run/eggs
 WSGIProcessGroup DOMAIN
-WSGIScriptAlias / /srv/my_project/elreg/ElReg/wsgi.py
+WSGIScriptAlias / /var/www/webapps/my_project/elreg/ElReg/wsgi.py
 
-<Directory /srv/my_project/elreg/ElReg/elreg_app/media>
+<Directory /var/www/webapps/my_project/elreg/ElReg/elreg_app/media>
 Order deny,allow
 Allow from all
 Options -Indexes FollowSymLinks
 </Directory>
 
-<Directory /srv/my_project/app/conf/apache>
+<Directory /var/www/webapps/my_project/app/conf/apache>
 Order deny,allow
 Allow from all
 </Directory>
@@ -166,7 +182,7 @@ a2ensite DOMAIN
 **Установить привилегии для директории проекта**
 
 ```
-chown -R USERNAME:USERNAME /srv/my_project/
+chown -R USERNAME:USERNAME /var/www/webapps/my_project/
 ```
 
 **Перезапустить апач**
@@ -177,7 +193,7 @@ service apache2 restart
 
 **Настройка django**
 
-Для первоначальной настройки django необходимо прописать параметры подключение к БД в файле /srv/my_project/elreg/ElReg/settings_local.py
+Для первоначальной настройки django необходимо прописать параметры подключение к БД в файле /var/www/webapps/my_project/elreg/ElReg/settings_local.py
 Затем выполнить команду для создания таблиц в БД:
 ```
 python elreg/ElReg/manage.py syncdb
@@ -217,7 +233,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(root_path, 'app', 'webapp')))
 Для того, чтобы избавиться от постоянно перезагрузки Apache после внесения изменений в файлы проекта, достаточно выполнить следующую команду:
 
 ```
-touch /srv/my_project/elreg/ElReg/wsgi.py
+touch /var/www/webapps/my_project/elreg/ElReg/wsgi.py
 ```
 
 Дополнительную информацию по настройке сервера можно получить по адресу:
