@@ -30,7 +30,7 @@ class Redis ():
         """
         if value:
             self.db.hset(self.id, key, value)
-        else:
+        elif isinstance(key, dict):
             for (key, value) in key.items():
                 self.set(key, value)
 
