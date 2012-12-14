@@ -106,9 +106,6 @@ apt-get install python-module-MySQLdb
 
 ```
 apt-get install libjpeg libjpeg-devel libfreetype libfreetype-devel
-ln -s /usr/lib/x86_64-linux-gnu/libjpeg.so /usr/lib
-ln -s /usr/lib/x86_64-linux-gnu/libfreetype.so /usr/lib
-ln -s /usr/lib/x86_64-linux-gnu/libz.so /usr/lib
 ```
 
 **Устанавливаем django и используемые модули**
