@@ -9,7 +9,7 @@
 
 * Серверная ОС семейства Linux
 * Python 2.7
-* MySQL 5
+* MySQL 5, libmysqlclient-devel
 * Web-Server Apache + mod_wsgi
 * git
 * zlib
