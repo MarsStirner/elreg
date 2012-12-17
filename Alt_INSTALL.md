@@ -147,8 +147,8 @@ Alias /static/ /var/www/webapps/my_project/elreg/ElReg/elreg_app/static/
 Alias /robots.txt /var/www/webapps/my_project/app/webapp/site_media/robots.txt
 Alias /favicon.ico /var/www/webapps/my_project/elreg/ElReg/elreg_app/static/images/favicon.ico
 
-CustomLog "|/usr/sbin/rotatelogs /var/www/webapps/my_project/logs/access.log.%Y%m%d-%H%M%S 5M" combined
-ErrorLog "|/usr/sbin/rotatelogs /var/www/webapps/my_project/logs/error.log.%Y%m%d-%H%M%S 5M"
+CustomLog "|/usr/sbin/rotatelogs2 /var/www/webapps/my_project/logs/access.log.%Y%m%d-%H%M%S 5M" combined
+ErrorLog "|/usr/sbin/rotatelogs2 /var/www/webapps/my_project/logs/error.log.%Y%m%d-%H%M%S 5M"
 LogLevel warn
 
 WSGIDaemonProcess DOMAIN user=USER group=USER processes=1 threads=15 maximum-requests=10000 python-path=/var/www/webapps/my_project/venv/lib/python2.7/site-packages python-eggs=/var/www/webapps/my_project/run/eggs
