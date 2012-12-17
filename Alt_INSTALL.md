@@ -30,7 +30,7 @@ apt-get upgrade
 
 ```
 apt-get -y install python python-dev python-module-setuptools
-easy_install virtualenv virtualenvwrapper pip
+easy_install virtualenv pip
 ```
 
 **Конфигурирование MySQL**
