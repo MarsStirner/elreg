@@ -196,6 +196,9 @@ service apache2 restart
 python elreg/ElReg/manage.py syncdb
 python elreg/ElReg/manage.py migrate
 ```
+```
+python elreg/ElReg/manage.py collectstatic
+```
 
 В процессе будет предложено ввести логин/пароль администратора.
 
