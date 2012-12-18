@@ -114,13 +114,16 @@ class InfoWSDL():
     def __init__(self):
         self.client = Client(IS + "info")
 
-    def getHospitalInfo(self):
+    def getHospitalInfo(self, hospitalUid=0):
         """
         Метод возвращает инвормацию об ЛПУ.
 
         """
         try:
-            info_list = self.client.service.getHospitalInfo()
+            if hospitalUid:
+                info_list = self.client.service.getHospitalInfo(hospitalUid=hospitalUid)
+            else:
+                info_list = self.client.service.getHospitalInfo()
         except:
             info_list = []
         return info_list
