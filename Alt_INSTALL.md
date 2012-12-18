@@ -8,7 +8,7 @@
 -----------
 
 * Серверная ОС семейства Linux
-* Python 2.7
+* Python 2.6 и выше
 * MySQL 5, libmysqlclient-devel
 * Web-Server Apache + mod_wsgi
 * git
@@ -30,7 +30,7 @@ apt-get upgrade
 
 ```
 apt-get -y install python python-dev python-module-setuptools
-easy_install virtualenv virtualenvwrapper pip
+easy_install virtualenv pip
 ```
 
 **Конфигурирование MySQL**
@@ -106,9 +106,6 @@ apt-get install python-module-MySQLdb
 
 ```
 apt-get install libjpeg libjpeg-devel libfreetype libfreetype-devel
-ln -s /usr/lib/x86_64-linux-gnu/libjpeg.so /usr/lib
-ln -s /usr/lib/x86_64-linux-gnu/libfreetype.so /usr/lib
-ln -s /usr/lib/x86_64-linux-gnu/libz.so /usr/lib
 ```
 
 **Устанавливаем django и используемые модули**
@@ -145,16 +142,16 @@ ServerAdmin root@DOMAIN
 ServerName DOMAIN
 
 Alias /site_media/ /var/www/webapps/my_project/elreg/ElReg/elreg_app/media/
-Alias /static_admin/ /var/www/webapps/my_project/venv/lib/python2.7/site-packages/django/contrib/admin/static/
+Alias /static_admin/ /var/www/webapps/my_project/venv/lib/python2.6/site-packages/django/contrib/admin/static/
 Alias /static/ /var/www/webapps/my_project/elreg/ElReg/elreg_app/static/
 Alias /robots.txt /var/www/webapps/my_project/app/webapp/site_media/robots.txt
 Alias /favicon.ico /var/www/webapps/my_project/elreg/ElReg/elreg_app/static/images/favicon.ico
 
-CustomLog "|/usr/sbin/rotatelogs /var/www/webapps/my_project/logs/access.log.%Y%m%d-%H%M%S 5M" combined
-ErrorLog "|/usr/sbin/rotatelogs /var/www/webapps/my_project/logs/error.log.%Y%m%d-%H%M%S 5M"
+CustomLog "|/usr/sbin/rotatelogs2 /var/www/webapps/my_project/logs/access.log.%Y%m%d 5M" combined
+ErrorLog "|/usr/sbin/rotatelogs2 /var/www/webapps/my_project/logs/error.log.%Y%m%d 5M"
 LogLevel warn
 
-WSGIDaemonProcess DOMAIN user=USER group=USER processes=1 threads=15 maximum-requests=10000 python-path=/var/www/webapps/my_project/venv/lib/python2.7/site-packages python-eggs=/var/www/webapps/my_project/run/eggs
+WSGIDaemonProcess DOMAIN user=USER group=USER processes=1 threads=15 maximum-requests=10000 python-path=/var/www/webapps/my_project/venv/lib/python2.6/site-packages python-eggs=/var/www/webapps/my_project/run/eggs
 WSGIProcessGroup DOMAIN
 WSGIScriptAlias / /var/www/webapps/my_project/elreg/ElReg/wsgi.py
 
@@ -223,7 +220,7 @@ http://DOMEN/admin/settings/
 
 ```
 root_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', '..'))
-sys.path.insert(0, os.path.abspath(os.path.join(root_path, 'venv/lib/python2.7/site-packages/')))
+sys.path.insert(0, os.path.abspath(os.path.join(root_path, 'venv/lib/python2.6/site-packages/')))
 sys.path.insert(0, os.path.abspath(os.path.join(root_path, 'app')))
 sys.path.insert(0, os.path.abspath(os.path.join(root_path, 'app', 'webapp')))
 ```
