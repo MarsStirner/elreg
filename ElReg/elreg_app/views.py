@@ -76,16 +76,28 @@ def subdivisionPage(request, templateName, sub=0):
     db = Redis(request)
     if not sub:
         sub = db.get('sub')
+
+    hospitalUid = 0
+    try:
+        hospitalUid = sub.split('/')[0]+'/0'
+    except:
+        pass
+
     tmp1_list, tmp2_list = [], []
     current_lpu = ''
     try:
-        for i in InfoWSDL().getHospitalInfo():
+        if hospitalUid:
+            hospital = InfoWSDL().getHospitalInfo(hospitalUid=hospitalUid)
+        else:
+            hospital = InfoWSDL().getHospitalInfo()
+
+        for i in hospital:
             if i.uid.startswith(sub):
                 current_lpu = i
                 for j in i.buildings:
                     tmp1_list.append(j.title)
     except AttributeError:
-        return Http404
+        raise Http404
 
     for i in ListWSDL().listHospitals():
         for j in tmp1_list:

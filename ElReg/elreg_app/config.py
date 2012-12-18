@@ -52,7 +52,7 @@ config_register_list(
     StringValue(TIME_ZONE, 'SITE_NAME',  description=u'Название сайта в шапку', ordering=1,
         help_text=u'Название сайте в шапку', default=u'Портал государственных и муниципальных услуг'),
     StringValue(TIME_ZONE, 'REGION_NAME',  description=u'Наименование региона в шапку', ordering=2,
-        help_text=u'Наименование региона в шапку (вторая строка)'),
+        help_text=u'Наименование региона в шапку (вторая строка)', default=''),
     ImageValue( TIME_ZONE, 'LOGO_FILE', description=u'Файл логотипа', ordering=3, default='',
         help_text=u'Логотип/герб региона для размещения в шапке страниц'),
 )
