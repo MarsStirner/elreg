@@ -85,7 +85,7 @@ def subdivisionPage(request, templateName, sub=0):
                 for j in i.buildings:
                     tmp1_list.append(j.title)
     except AttributeError:
-        return Http404
+        raise Http404
 
     for i in ListWSDL().listHospitals():
         for j in tmp1_list:
