@@ -196,7 +196,7 @@ $(document).ready(function () {
         }
 
         var regex = /^([0-9])+$/;
-        if (!$policy1.val() || !$policy2.val() || !regex.test($policy2.val())) {
+        if (/*!$policy1.val() || */!$policy2.val() || !regex.test($policy2.val())) {
             $('#policy2').closest('.control-group').addClass('error');
             if($('#note6')){
                 $('#note6').hide();
