@@ -12,7 +12,7 @@
 * MySQL 5, libmysqlclient-devel
 * Web-Server Apache + mod_wsgi
 * git
-* zlib
+* zlib, zlib-devel
 
 Установка
 -----------
@@ -105,7 +105,7 @@ apt-get install python-module-MySQLdb
 * Для PIL (установка модулей и настройка путей к библиотекам):
 
 ```
-apt-get install libjpeg libjpeg-devel libfreetype libfreetype-devel
+apt-get install libjpeg libjpeg-devel libfreetype libfreetype-devel zlib zlib-devel
 ```
 
 **Устанавливаем django и используемые модули**
