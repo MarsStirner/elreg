@@ -122,6 +122,7 @@ pip install -r ElReg/requirements.txt
 apt-get install ftp://ftp.altlinux.org/pub/distributions/ALTLinux/Sisyphus/files/x86_64/RPMS/redis-2.4.7-alt2.x86_64.rpm
 apt-get install python-module-imaging
 pip install redis --upgrade
+service redis-server start
 ```
 
 При получении сообщений об ошибках необходимо разрешить необходимые зависимости и повторно выполнить установку из requirements.txt. В конечном результате все пакеты должны установиться без уведомления об ошибках.
