@@ -186,7 +186,7 @@ chown -R USERNAME:USERNAME /var/www/webapps/my_project/
 **Перезапустить апач**
 
 ```
-service apache2 restart
+service httpd2 restart
 ```
 
 **Настройка django**
