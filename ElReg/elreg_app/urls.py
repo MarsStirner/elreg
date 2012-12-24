@@ -11,7 +11,7 @@ urlpatterns = patterns(APP_NAME + '.views',
     url(r'^subdivision/$', 'subdivisionPage', {'templateName': 'subdivision.html'}, name="subdivision"),
     url(r'^subdivision/(?P<sub>\d{1,2})/$', 'subdivisionPage', {'templateName': 'subdivision.html'}),
     url(r'^time/$', 'timePage', {'templateName': 'time.html'}, name="time"),
-    url(r'^time/(?P<time>\d{2,3}|next|prev)/$', 'timePage', {'templateName': 'time.html'}),
+    url(r'^time/(?P<time>\d+|next|prev)/$', 'timePage', {'templateName': 'time.html'}),
     url(r'^patient/$', 'patientPage', {'templateName': 'patient.html'}, name="patient"),
     url(r'^register/$', 'registerPage', {'templateName': 'register.html'}, name="register"),
     # адреса, используемые только AJAX'ом:
