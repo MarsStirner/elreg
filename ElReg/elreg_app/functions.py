@@ -78,9 +78,9 @@ class ListWSDL():
         """
         try:
             if okato:
-                hospitals = list(self.client.service.listHospitals({'ocatoCode': okato}).hospitals)
+                hospitals = self.client.service.listHospitals({'ocatoCode': okato}).hospitals
             else:
-                hospitals = list(self.client.service.listHospitals().hospitals)
+                hospitals = self.client.service.listHospitals().hospitals
         except:
             hospitals = []
         else:
