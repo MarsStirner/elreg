@@ -9,3 +9,5 @@
 build/*
 migrations/*
 settings_local.py
+static_admin*
+to_slave.py
