@@ -3,7 +3,7 @@
 {% block content %}
 <blockquote>
     <dl class="dl-horizontal">
-        <dt>Лечебное учреждение:</dt><dd>{{ current_lpu.title }}</dd>
+        <dt>Лечебное учреждение:</dt><dd>{{ current_lpu.name }}</dd>
         <dt>Телефон:</dt><dd>{{ current_lpu.phone }}</dd>
         <dt>Электронная почта:</dt><dd><a href="mailto:{{ current_lpu.email }}">{{ current_lpu.email }}</a></dd>
     </dl>
@@ -13,7 +13,7 @@
 <div class="span4">
     <ul class="firstTable nav nav-pills nav-stacked">
         {% for subdivision in subdivision_list %}
-            <li><a id="{{ subdivision.1.0 }}" href="javascript:;" class="spec">{{ subdivision.0 }} {% if subdivision.1.1 %}({{ subdivision.1.1 }}){% endif %}</a></li>
+            <li><a id="{{ subdivision.id }}" href="javascript:;" class="spec">{{ subdivision.name }} {% if subdivision.address %}({{ subdivision.address }}){% endif %}</a></li>
         {% endfor %}
     </ul>
 </div>

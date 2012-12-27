@@ -83,7 +83,7 @@ def subdivisionPage(request, templateName, sub=0):
     except:
         pass
 
-    tmp1_list, tmp2_list = [], []
+    tmp1_list, subdivision_list = [], []
     current_lpu = ''
     try:
         if hospitalUid:
@@ -94,17 +94,15 @@ def subdivisionPage(request, templateName, sub=0):
         for i in hospital:
             if i.uid.startswith(sub):
                 current_lpu = i
-                for j in i.buildings:
-                    tmp1_list.append(j.title)
+                for j in i.buildings[0]:
+                    subdivision_list.append({
+                        'name': unicode(j.name),
+                        'id': j.id,
+                        'address': unicode(j.address) if j.address else ""
+                    })
     except AttributeError:
         raise Http404
 
-    for i in ListWSDL().listHospitals():
-        for j in tmp1_list:
-            if i.uid.startswith(sub) and i.title == j:
-                tmp2_list.append((i.uid.split('/')[1], i.address))
-    tmp1_list.sort()
-    subdivision_list = zip(tmp1_list, tmp2_list)
     db.set({'sub': sub,
             'current_lpu_title': current_lpu[1],
             'current_lpu_phone': current_lpu[3],
