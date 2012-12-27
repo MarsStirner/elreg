@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-DEBUG = False
+DEBUG = True
 # Конфигурация базы данных:
 DATABASES = {
     'default': {

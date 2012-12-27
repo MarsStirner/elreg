@@ -68,7 +68,7 @@ class ListWSDL():
 
     """
     def __init__(self):
-        self.client = Client(IS + "list")
+        self.client = Client(IS % "list", cache=None)
 
     def listHospitals(self, okato=0):
         """
@@ -78,7 +78,7 @@ class ListWSDL():
         """
         try:
             if okato:
-                hospitals = self.client.service.listHospitals(ocatoCode=okato).hospitals
+                hospitals = self.client.service.listHospitals({'ocatoCode': okato}).hospitals
             else:
                 hospitals = self.client.service.listHospitals().hospitals
         except:
@@ -93,11 +93,11 @@ class ListWSDL():
         try:
             if hospital_Uid:
                 if speciality:
-                    doctors = self.client.service.listDoctors(
-                        searchScope = {'hospitalUid': hospital_Uid, }, speciality = speciality
-                    ).doctors
+                    doctors = self.client.service.listDoctors({
+                        'searchScope': {'hospitalUid': hospital_Uid, }, 'speciality': speciality
+                    }).doctors
                 else:
-                    doctors = self.client.service.listDoctors(searchScope = {'hospitalUid': hospital_Uid, }).doctors
+                    doctors = self.client.service.listDoctors({'searchScope': {'hospitalUid': hospital_Uid, }}).doctors
 
             else:
                 doctors = self.client.service.listDoctors().doctors
@@ -112,7 +112,7 @@ class InfoWSDL():
 
     """
     def __init__(self):
-        self.client = Client(IS + "info")
+        self.client = Client(IS % "info", cache=None)
 
     def getHospitalInfo(self, hospitalUid=0):
         """
@@ -121,7 +121,7 @@ class InfoWSDL():
         """
         try:
             if hospitalUid:
-                info_list = self.client.service.getHospitalInfo(hospitalUid=hospitalUid)
+                info_list = self.client.service.getHospitalInfo({'hospitalUid': hospitalUid})
             else:
                 info_list = self.client.service.getHospitalInfo()
         except:
@@ -135,7 +135,7 @@ class ScheduleWSDL():
 
     """
     def __init__(self):
-        self.client = Client(IS + "schedule")
+        self.client = Client(IS % "schedule", cache=None)
 
     def getScheduleInfo(self, hospitalUid=0, doctorUid=0):
         """
@@ -143,7 +143,7 @@ class ScheduleWSDL():
 
         """
         try:
-            ticket = self.client.service.getScheduleInfo(hospitalUid=hospitalUid, doctorUid=doctorUid)
+            ticket = self.client.service.getScheduleInfo({'hospitalUid': hospitalUid, 'doctorUid': doctorUid})
         except:
             ticket = []
         return ticket
@@ -154,7 +154,7 @@ class ScheduleWSDL():
 
         """
         try:
-            ticket = self.client.service.getTicketStatus(hospitalUid=hospitalUid, ticketUid=ticketUid)[0]
+            ticket = self.client.service.getTicketStatus({'hospitalUid': hospitalUid, 'ticketUid': ticketUid})[0]
         except:
             ticket = []
         return ticket
@@ -165,13 +165,15 @@ class ScheduleWSDL():
 
         """
         try:
-            ticket = self.client.service.enqueue(person=person,
-                                                omiPolicyNumber=omiPolicyNumber,
-                                                hospitalUid=hospitalUid,
-                                                doctorUid=doctorUid,
-                                                timeslotStart=timeslotStart,
-                                                hospitalUidFrom=hospitalUidFrom,
-                                                birthday=birthday)
+            ticket = self.client.service.enqueue({
+                'person': person,
+                'omiPolicyNumber': omiPolicyNumber,
+                'hospitalUid': hospitalUid,
+                'doctorUid': doctorUid,
+                'timeslotStart': timeslotStart,
+                'hospitalUidFrom': hospitalUidFrom,
+                'birthday': birthday
+            })
         except:
             ticket = []
         return ticket

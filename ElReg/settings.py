@@ -3,7 +3,7 @@
 import os
 
 # адрес интеграционного сервера
-IS = "http://10.1.2.107/int-server/index.php?wsdl="
+IS = "http://127.0.0.1:9910/%s/?wsdl"
 
 DEBUG = True
 
