@@ -64,5 +64,5 @@ IS = ConfigurationGroup(
 )
 config_register(
     StringValue(IS, 'URL',  description=u'Адрес интеграционного сервиса',
-        help_text=u'Адрес интеграционного сервиса', default="http://84.204.44.39:7023/int-server/index.php?wsdl="),
+        help_text=u'Адрес интеграционного сервиса', default="http://127.0.0.1:9910/%s/?wsdl"),
 )
