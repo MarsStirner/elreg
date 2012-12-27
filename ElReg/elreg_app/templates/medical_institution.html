@@ -36,7 +36,7 @@
         <ul id="search_table" class="nav nav-tabs nav-stacked upper_case">
         {% if hospitals_list %}
             {% for hospital in hospitals_list %}
-            <li><a href="{% url subdivision %}{{ hospital.uid|slice:":2"|cut:"/" }}/">{{ hospital.title }}</a></li>
+            <li><a href="{% url subdivision %}{{ hospital.uid|slice:":2"|cut:"/" }}/">{{ hospital.name }}</a></li>
             {% endfor %}
         {% endif %}
         </ul>
