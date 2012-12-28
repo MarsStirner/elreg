@@ -104,9 +104,9 @@ def subdivisionPage(request, templateName, sub=0):
         raise Http404
 
     db.set({'sub': sub,
-            'current_lpu_title': current_lpu[1],
-            'current_lpu_phone': current_lpu[3],
-            'current_lpu_email': current_lpu[4],
+            'current_lpu_title': current_lpu.name,
+            'current_lpu_phone': current_lpu.phone,
+            'current_lpu_email': current_lpu.email,
             'step': 3})
     return render_to_response(templateName, {'current_lpu': current_lpu,
                                               'subdivision_list': subdivision_list},
@@ -140,13 +140,19 @@ def timePage(request, templateName, time=0):
     # если попадаем на страницу после выбора врача на вкладке "Подраздеелние/Специализация/Врач":
     else:
         firstweekday = today - datetime.timedelta(days=datetime.date.isoweekday(today)-1)
-    hospital_Uid = db.get('hospital_Uid')
-    ticketList = ScheduleWSDL().getScheduleInfo(hospitalUid=hospital_Uid, doctorUid=time)
-    office = ticketList[0].office if ticketList else ''
 
-    for i in ListWSDL().listDoctors(hospital_Uid):
-        if i.uid == time:
-            doctor = ' '.join([i.name.lastName, i.name.firstName, i.name.patronymic]) # ФИО врача
+    hospital_Uid = db.get('hospital_Uid')
+    ticketList = ScheduleWSDL().getScheduleInfo(hospitalUid=hospital_Uid, doctorUid=time)[0]
+    try:
+        office = ticketList[0].office
+    except:
+        office = ''
+
+    doctors = ListWSDL().listDoctors(hospital_Uid)
+
+    for i in doctors:
+        if i.uid == int(time):
+            doctor = ' '.join([unicode(i.name.lastName), unicode(i.name.firstName), unicode(i.name.patronymic)]) # ФИО врача
             db.set('doctor', doctor)
 
     times = [] # Список времен начала записи текущей недели
@@ -277,9 +283,10 @@ def patientPage(request, templateName):
                     hospitalUidFrom = unicode("0"),
                     birthday = unicode('-'.join([yy,mm,dd]))
                 )
+
                 # запись на приём произошла успешно:
-                if ticketPatient['result'] == 'true' and len(ticketPatient['ticketUid'].split('/')[0]) != 0:
-                    db.set({'ticketUid': ticketPatient['ticketUid'],
+                if ticketPatient.result == True and len(ticketPatient['ticketUid'].split('/')[0]) != 0:
+                    db.set({'ticketUid': ticketPatient.ticketUid,
                              'date': date,
                              'start_time': start_time,
                              'finish_time': finish_time,
@@ -326,10 +333,10 @@ def patientPage(request, templateName):
                     return HttpResponseRedirect(reverse('register'))
                 # ошибка записи на приём:
                 else:
-                    if ticketPatient['result'] == 'true':
+                    if ticketPatient.result == True:
                         ticketPatient_err = "Ошибка записи"
                     else:
-                        ticketPatient_err = ticketPatient['result']
+                        ticketPatient_err = ticketPatient.message
             # ошибка при записи на приём или ошибки в заполненной форме:
             db.set('step', 5)
             return render_to_response(templateName, {'errors': errors,
