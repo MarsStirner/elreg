@@ -468,7 +468,7 @@ def searchPage(request):
         for i in tmp_dict.keys():
             hospitals_list = ListWSDL().listHospitals(i)
             for j in hospitals_list:
-                lpu_dict[j.uid.split('/')[0]] = j.title
+                lpu_dict[j.uid.split('/')[0]] = j.name
         if not result:
             result = lpu_dict
         else:
@@ -497,7 +497,7 @@ def searchPage(request):
 
                 # формирование временного списка кортежей [(uid ЛПУ, наименование ЛПУ), ...]
                 for i in InfoWSDL().getHospitalInfo():
-                    tmp_list.append((i.uid.split('/')[0], i.title.lower()))
+                    tmp_list.append((i.uid.split('/')[0], i.name.lower()))
                 # формирование словаря со значениями, удовлетворяющими поиску,
                 # где ключ - uid ЛПУ, а значение - наименование ЛПУ
                 for (uid,title) in tmp_list:
