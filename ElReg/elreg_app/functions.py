@@ -100,13 +100,15 @@ class ListWSDL():
                     }).doctors
                 else:
                     doctors = self.client.service.listDoctors({'searchScope': {'hospitalUid': hospital_Uid, }}).doctors
-
             else:
                 doctors = self.client.service.listDoctors().doctors
         except:
             doctors = []
         else:
-            doctors = doctors[0]
+            if doctors and len(doctors):
+                doctors = doctors[0]
+            else:
+                doctors = []
         return doctors
 
 
