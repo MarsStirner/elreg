@@ -142,7 +142,11 @@ def timePage(request, templateName, time=0):
         firstweekday = today - datetime.timedelta(days=datetime.date.isoweekday(today)-1)
 
     hospital_Uid = db.get('hospital_Uid')
-    ticketList = ScheduleWSDL().getScheduleInfo(hospitalUid=hospital_Uid, doctorUid=time)[0]
+    ticketList = ScheduleWSDL().getScheduleInfo(hospitalUid=hospital_Uid, doctorUid=time)
+
+    if ticketList:
+        ticketList = ticketList[0]
+
     try:
         office = ticketList[0].office
     except:
@@ -161,18 +165,20 @@ def timePage(request, templateName, time=0):
     for i in xrange(7):
         newDay = firstweekday + datetime.timedelta(days=i)
         dates.append(newDay)
-        for j in ticketList:
-            if newDay == j.start.date():
-                times.append(j.start.time())
+        if ticketList:
+            for j in ticketList:
+                if newDay == j.start.date():
+                    times.append(j.start.time())
         times = list(set(times))
         times.sort()
 
     ticketTable = []
     if times:
         currentTicketList = []
-        for i in ticketList:
-            if i.start.date() in dates:
-                currentTicketList.append(i)
+        if ticketList:
+            for i in ticketList:
+                if i.start.date() in dates:
+                    currentTicketList.append(i)
         for i in times:
             tmp_list = [0]*7
             for j in currentTicketList:
