@@ -280,7 +280,7 @@ def patientPage(request, templateName):
                     hospitalUid = hospital_Uid,
                     doctorUid = time,
                     timeslotStart = str(date) + 'T' + str(start_time),
-                    hospitalUidFrom = unicode("0"),
+                    hospitalUidFrom = "0",
                     birthday = unicode('-'.join([yy,mm,dd]))
                 )
 
