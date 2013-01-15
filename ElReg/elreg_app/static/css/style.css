@@ -3,7 +3,7 @@
 }
 .top_path ul > li {
     padding: 0 10px;
-    min-width: 10%;
+    min-width: 9%;
 }
 .top_path ul > li > a{
     text-align: center;
@@ -13,7 +13,7 @@
     min-width: 0;
 }
 .top_path .label{
-    vertical-align: text-bottom;
+    vertical-align: top;
 }
 .dl-horizontal dt {
     width: 170px;
