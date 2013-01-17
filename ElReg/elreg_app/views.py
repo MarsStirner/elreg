@@ -94,7 +94,7 @@ def subdivisionPage(request, templateName, sub=0):
         for i in hospital:
             if i.uid.startswith(sub):
                 current_lpu = i
-                for j in i.buildings[0]:
+                for j in i.buildings:
                     subdivision_list.append({
                         'name': unicode(j.name),
                         'id': j.id,

@@ -37,7 +37,7 @@
         <tr>
         {% for date in dates %}
             <th class="th-centered">
-                {{ date|date:"d.n.Y" }}, {{ date|date:"D"|truncate_chars:"2" }}.
+                {{ date|date:"d.m.Y" }}, {{ date|date:"D"|truncate_chars:"2" }}.
             </th>
         {% endfor %}
         </tr>
