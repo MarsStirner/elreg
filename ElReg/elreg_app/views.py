@@ -144,9 +144,6 @@ def timePage(request, templateName, time=0):
     hospital_Uid = db.get('hospital_Uid')
     ticketList = ScheduleWSDL().getScheduleInfo(hospitalUid=hospital_Uid, doctorUid=time)
 
-    if ticketList:
-        ticketList = ticketList[0]
-
     try:
         office = ticketList[0].office
     except:

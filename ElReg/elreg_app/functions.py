@@ -78,13 +78,11 @@ class ListWSDL():
         """
         try:
             if okato:
-                hospitals = self.client.service.listHospitals({'ocatoCode': okato}).hospitals[0]
+                hospitals = self.client.service.listHospitals({'ocatoCode': okato}).hospitals
             else:
-                hospitals = self.client.service.listHospitals().hospitals[0]
+                hospitals = self.client.service.listHospitals().hospitals
         except:
             hospitals = []
-        else:
-            hospitals = hospitals
         return hospitals
 
     def listDoctors(self, hospital_Uid = 0, speciality = 0):
@@ -104,11 +102,6 @@ class ListWSDL():
                 doctors = self.client.service.listDoctors().doctors
         except:
             doctors = []
-        else:
-            if doctors and len(doctors):
-                doctors = doctors[0]
-            else:
-                doctors = []
         return doctors
 
 
@@ -127,9 +120,9 @@ class InfoWSDL():
         """
         try:
             if hospitalUid:
-                info_list = self.client.service.getHospitalInfo({'hospitalUid': hospitalUid}).info[0]
+                info_list = self.client.service.getHospitalInfo({'hospitalUid': hospitalUid}).info
             else:
-                info_list = self.client.service.getHospitalInfo().info[0]
+                info_list = self.client.service.getHospitalInfo().info
         except:
             info_list = []
         return info_list
@@ -149,11 +142,9 @@ class ScheduleWSDL():
 
         """
         try:
-            ticket = self.client.service.getScheduleInfo({'hospitalUid': hospitalUid, 'doctorUid': doctorUid})
+            ticket = self.client.service.getScheduleInfo({'hospitalUid': hospitalUid, 'doctorUid': doctorUid}).timeslots
         except:
             ticket = []
-        else:
-            ticket = ticket[0]
         return ticket
 
     def getTicketStatus(self, hospitalUid=0, ticketUid=0):
@@ -162,7 +153,7 @@ class ScheduleWSDL():
 
         """
         try:
-            ticket = self.client.service.getTicketStatus({'hospitalUid': hospitalUid, 'ticketUid': ticketUid})[0]
+            ticket = self.client.service.getTicketStatus({'hospitalUid': hospitalUid, 'ticketUid': ticketUid})
         except:
             ticket = []
         return ticket
