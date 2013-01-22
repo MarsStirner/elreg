@@ -6,6 +6,12 @@ from django.core.exceptions import ValidationError
 from livesettings import config_value
 from suds.client import Client
 import redis
+import settings
+
+import logging
+if settings.DEBUG:
+    logging.basicConfig(level=logging.INFO)
+    logging.getLogger('suds.client').setLevel(logging.DEBUG)
 
 IS = config_value('IS', 'URL')
 
