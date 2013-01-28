@@ -36,7 +36,7 @@ easy_install virtualenv pip
 **Конфигурирование MySQL**
 
 ```
-echo "CREATE DATABASE DATABASENAME;" | mysql -u root -p
+echo "CREATE DATABASE DATABASENAME DEFAULT CHARACTER SET utf8;" | mysql -u root -p
 echo "CREATE USER 'DATABASEUSER'@'localhost' IDENTIFIED BY 'PASSWORD';" | mysql -u root -p
 echo "GRANT ALL PRIVILEGES ON DATABASENAME.* TO 'DATABASEUSER'@'localhost';" | mysql -u root -p
 echo "FLUSH PRIVILEGES;" | mysql -u root -p
