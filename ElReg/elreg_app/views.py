@@ -265,7 +265,7 @@ def patientPage(request, templateName):
 
             form = get_captcha_form(request.POST)
             if not form.is_valid():
-                errors.append(u'Введёно неверное значение проверочного выражения')
+                errors.append(u'Введёно неверное значение проверочного выражения или истекло время отведенное для его ввода')
 
             ticketPatient_err = ''
             # если ошибок в форме нет
