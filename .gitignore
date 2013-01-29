@@ -12,4 +12,4 @@ migrations/
 media/
 settings_local.py
 static_admin*
-to_slave.py
+to_slave.pyz
