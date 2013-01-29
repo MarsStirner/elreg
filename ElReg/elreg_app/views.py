@@ -177,11 +177,16 @@ def timePage(request, templateName, time=0):
                 if i.start.date() in dates:
                     currentTicketList.append(i)
         for i in times:
+            add_to_table = False
             tmp_list = [0]*7
             for j in currentTicketList:
+                if j.status in ('free', 'locked'):
+                    add_to_table = True
                 if j.start.time() == i:
                     tmp_list[dates.index(j.start.date())] = j
-            ticketTable.append(tmp_list)
+
+            if add_to_table:
+                ticketTable.append(tmp_list)
 
     db.set({'time': time,
             'firstweekday': firstweekday,
