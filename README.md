@@ -36,7 +36,7 @@ easy_install virtualenv virtualenvwrapper pip
 **Конфигурирование MySQL**
 
 ```
-echo "CREATE DATABASE DATABASENAME;" | mysql -u root -p
+echo "CREATE DATABASE DATABASENAME DEFAULT CHARACTER SET utf8;" | mysql -u root -p
 echo "CREATE USER 'DATABASEUSER'@'localhost' IDENTIFIED BY 'PASSWORD';" | mysql -u root -p
 echo "GRANT ALL PRIVILEGES ON DATABASENAME.* TO 'DATABASEUSER'@'localhost';" | mysql -u root -p
 echo "FLUSH PRIVILEGES;" | mysql -u root -p
@@ -110,6 +110,13 @@ ln -s /usr/lib/x86_64-linux-gnu/libz.so /usr/lib
 ```
 pip install -r elreg/ElReg/requirements.txt
 ```
+**Дополнительные модули:**
+```
+apt-get install redis-server
+pip install redis --upgrade
+service redis-server start
+```
+При получении сообщений об ошибках необходимо разрешить необходимые зависимости и повторно выполнить установку из requirements.txt. В конечном результате все пакеты должны установиться без уведомления об ошибках.
 
 При получении сообщений об ошибках необходимо разрешить необходимые зависимости и повторно выполнить установку из requirements.txt. В конечном результате все пакеты должны установиться без уведомления об ошибках.
 
@@ -182,6 +189,9 @@ service apache2 restart
 ```
 python elreg/ElReg/manage.py syncdb
 python elreg/ElReg/manage.py migrate
+```
+```
+python elreg/ElReg/manage.py collectstatic
 ```
 
 В процессе будет предложено ввести логин/пароль администратора.
