@@ -128,6 +128,7 @@ def timePage(request, templateName, time=0):
 
     db = Redis(request)
     today = datetime.date.today()
+    now = datetime.datetime.now()
     # если попадаем на страницу нажимая кнопку "Назад", "Предыдущая" или "Следующая":
     if not time or time in ['next','prev']:
         if not time:
@@ -173,10 +174,10 @@ def timePage(request, templateName, time=0):
             add_to_table = False
             tmp_list = [0]*7
             for j in currentTicketList:
-                if j.status in ('free', 'locked'):
-                    add_to_table = True
                 if j.start.time() == i:
                     tmp_list[dates.index(j.start.date())] = j
+                    if j.start>now and j.status in ('free', 'locked'):
+                        add_to_table = True
 
             if add_to_table:
                 ticketTable.append(tmp_list)
