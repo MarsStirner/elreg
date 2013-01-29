@@ -15,8 +15,11 @@
     </dl>
 </blockquote>
 <legend>
-<p><a href="{% url time %}prev/" class="btn btn-info" title="Предыдущая неделя">Предыдущая неделя</a>
-   <a href="{% url time %}next/" class="btn btn-info" title="Следующая неделя">Следующая неделя</a>
+<p>
+    <div class="row-fluid">
+        <div class="span3"><a href="{% url time %}prev/" class="btn btn-info" title="Предыдущая неделя">Предыдущая неделя</a></div>
+        <div class="span3 offset6"> <a href="{% url time %}next/" class="btn btn-info pull-right" title="Следующая неделя">Следующая неделя</a></div>
+    </div>
 </p>
 </legend>
 {% if ticketTable %}
@@ -68,7 +71,7 @@
             <tr>
                 {% for date in dates %}
                     <th class="th-centered">
-                        {{ date|date:"d.n.Y" }}, {{ date|date:"D"|truncate_chars:"2" }}.
+                        {{ date|date:"d.m.Y" }}, {{ date|date:"D"|truncate_chars:"2" }}.
                     </th>
                 {% endfor %}
             </tr>
