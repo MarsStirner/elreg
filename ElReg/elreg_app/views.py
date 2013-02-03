@@ -103,11 +103,13 @@ def subdivisionPage(request, templateName, sub=0):
     except AttributeError:
         raise Http404
 
-    db.set({'sub': sub,
+    add_params = {'sub': sub, 'step': 3}
+    if current_lpu:
+        add_params.update({
             'current_lpu_title': current_lpu.name,
             'current_lpu_phone': current_lpu.phone,
-            'current_lpu_email': current_lpu.email,
-            'step': 3})
+            'current_lpu_email': current_lpu.email,})
+    db.set(add_params)
     return render_to_response(templateName, {'current_lpu': current_lpu,
                                               'subdivision_list': subdivision_list},
                                               context_instance=RequestContext(request))
