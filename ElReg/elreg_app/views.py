@@ -310,7 +310,7 @@ def patientPage(request, templateName):
                         plaintext = get_template('email/email.txt')
                         htmly     = get_template('email/email.html')
 
-                        context = Context({ 'ticketUid': ticketPatient['ticketUid'],
+                        context = Context({ 'ticketUid': ticketPatient.ticketUid,
                                             'patientName': db.get('patientName'),
                                             'birthday': db.get('birthday'),
                                             'omiPolicyNumber': db.get('omiPolicyNumber'),
