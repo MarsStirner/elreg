@@ -59,8 +59,12 @@
                                 <button type="button" class="btn btn-block btn-danger disabled" name=ticket value="{{ cell.start.date|date:"d:m:Y" }}-{{ cell.start.time }}-{{ cell.finish.time }}">
                                     {{ cell.start.time|time:"H:i" }}
                                 </button>
-                            {% endif %}
                             {% else %}
+                                <button type="button" class="btn btn-block disabled" name=ticket value="{{ cell.start.date|date:"d:m:Y" }}-{{ cell.start.time }}-{{ cell.finish.time }}">
+                                    {{ cell.start.time|time:"H:i" }}
+                                </button>
+                            {% endif %}
+                    {% else %}
                         <td align="center">
                         <button type="button" class="btn btn-block disabled" name=ticket value="{{ cell.start.date|date:"d:m:Y" }}-{{ cell.start.time }}-{{ cell.finish.time }}">&nbsp;</button>
                     {% endif %}
