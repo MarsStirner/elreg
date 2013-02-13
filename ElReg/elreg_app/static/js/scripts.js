@@ -1,7 +1,7 @@
 jQuery.support.cors = true;
 
 $(document).ready(function () {
-    $('a.spec').live("click", function() {
+    function spec_handler() {
         $(this).closest('ul').children('li').removeClass('active');
 //        $('.specActive').removeClass('specActive').addClass('spec');
         $(this).closest('li').addClass('active');
@@ -24,18 +24,20 @@ $(document).ready(function () {
                 $('body,html').animate({
                     scrollTop: 0
                 }, 300);
+                $('a.prof').on("click", prof_handler);
             }
         });
-    });
+    }
+    $('a.spec').on("click", spec_handler);
 
-    $('a.prof').live("click", function() {
+    function prof_handler(){
         $(this).closest('ul').children('li').removeClass('active');
 //        $('.specActive').removeClass('specActive').addClass('spec');
         $(this).closest('li').addClass('active');
         $('.profActive').removeClass('profActive').addClass('prof');
         $(this).addClass('profActive');
         var $clickProf = $(this).text();
-        $('table.thirdTable tr').hide();
+        $('ul.thirdTable').html("");
         $.ajax({
             url: '/updates/',
             data: {clickProf: $clickProf},
@@ -43,25 +45,7 @@ $(document).ready(function () {
             cache: false, // обязательно для IE
             dataType: 'json',
             success: function (data) {
-
-////////////////////////////////////////////////////////////////////////////
-//                сортировка третьего столбца на странице Подраздеелние:
-////////////////////////////////////////////////////////////////////////////
-//                var sortable = [];
-//                for (var key in data) {
-//                    alert([key]);
-//                    sortable.push([key, data[key]]);
-//                alert (sortable);
-//                }
-//                for (var i in sortable) {
-//                    alert (sortable[i]);
-//                }
-//                sortable.sort(function(a, b) {return a[1] - b[1]});
-//                alert (sortable);
-////////////////////////////////////////////////////////////////////////////
-
                 var $items = [];
-//                $.each(sortable, function(key, val) {
                 $.each(data, function(key, val) {
                     $items.push('<li><a href="/time/' + val.uid + '/">' + val.name + '</a></li>');
                 });
@@ -71,25 +55,23 @@ $(document).ready(function () {
                 }, 300);
             }
         });
-    });
+    }
+    $('a.prof').on("click", prof_handler);
 });
+
 $(document).ready(function () {
 
 //    Проверка чекбокса "Согласие..."
     if($('#confirm').is(':checked')){
-        $('#button-submit').removeClass('disabled');
-        $('#button-submit').attr('disabled', false);
+        $('#button-submit').removeClass('disabled').attr('disabled', false);
     } else {
-        $('#button-submit').addClass('disabled');
-        $('#button-submit').attr('disabled', true);
+        $('#button-submit').addClass('disabled').attr('disabled', true);
     }
     $('#confirm').click(function() {
         if($('#confirm').is(':checked')){
-            $('#button-submit').toggleClass('disabled');
-            $('#button-submit').attr('disabled', false);
+            $('#button-submit').toggleClass('disabled').attr('disabled', false);
         } else {
-            $('#button-submit').toggleClass('disabled');
-            $('#button-submit').attr('disabled', true);
+            $('#button-submit').toggleClass('disabled').attr('disabled', true);
         }
     });
 
@@ -226,7 +208,9 @@ $(document).ready(function () {
             if($('#note7')){
                 $('#note7').hide();
             }
+            $('<span class="help-inline" id="note6">Не указан email</span>').fadeIn('slow').insertAfter($email);
             $('#email').closest('.control-group').removeClass('success').addClass('error');
+            return false;
         }else{
             $('#email').closest('.control-group').removeClass('error').addClass('success');
         }

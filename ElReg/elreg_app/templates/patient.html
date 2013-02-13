@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
-<legend xmlns="http://www.w3.org/1999/html" xmlns="http://www.w3.org/1999/html"><big>Информация о записи:</big></legend>
+<legend><big>Информация о записи:</big></legend>
 <blockquote>
     <dl class="dl-horizontal">
         <dt>Лечебное учреждение:</dt><dd>{{ current_lpu_title }}</dd>
@@ -98,13 +98,13 @@
 
     <div class="control-group">
         <div class="controls">
-            <input id="chb" value="0" type="checkbox" /> - отправить информацию о записи на электронный адрес
+            <input id="chb" value="1" name="send_email" type="checkbox"{% if request.POST.send_email %}checked="checked"{% endif %} /> - отправить информацию о записи на электронный адрес
         </div>
     </div>
     <div class="control-group">
         <label class="control-label" for="email">Адрес электронной почты</label>
         <div class="controls">
-            <input type="text" class="span4" name="email" id="email" value="{{ userEmail }}" maxlength="50" size="35" disabled="disabled" autocomplete="on" placeholder="example@email.ru" />
+            <input type="text" class="span4" name="email" id="email" value="{{ userEmail }}" maxlength="50" size="35" {% if not request.POST.send_email %}disabled="disabled"{% endif %} autocomplete="on" placeholder="example@email.ru" />
         </div>
     </div>
 
