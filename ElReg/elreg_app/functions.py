@@ -164,7 +164,7 @@ class ScheduleWSDL():
             ticket = []
         return ticket
 
-    def enqueue(self, person, omiPolicyNumber, hospitalUid, doctorUid, timeslotStart, hospitalUidFrom, birthday):
+    def enqueue(self, person, document, hospitalUid, doctorUid, timeslotStart, hospitalUidFrom, birthday, sex):
         """
         Метод принимает данные о пациенте и возвращает номер талона и результат записи на приём.
 
@@ -172,12 +172,13 @@ class ScheduleWSDL():
         try:
             ticket = self.client.service.enqueue({
                 'person': person,
-                'omiPolicyNumber': omiPolicyNumber,
+                'document': document,
                 'hospitalUid': hospitalUid,
                 'doctorUid': doctorUid,
                 'timeslotStart': timeslotStart,
                 'hospitalUidFrom': hospitalUidFrom,
-                'birthday': birthday
+                'birthday': birthday,
+                'sex': sex
             })
         except:
             ticket = []

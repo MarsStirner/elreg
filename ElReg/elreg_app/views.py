@@ -6,8 +6,8 @@ from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.template.loader import get_template
 from django.shortcuts import render_to_response
 from django.template import Context, RequestContext
-from elreg_app.functions import *
-from elreg_app.models import Region
+from functions import *
+from models import Region
 import datetime
 import math
 import pytz
@@ -41,9 +41,11 @@ def indexPage(request, templateName):
     region_list = Region.objects.filter(activation=True)
     db.set('step', 1)
 
-    return render_to_response(templateName, {'region_list': region_list,
-                                             'break_keys': (math.ceil(len(region_list)/3.), math.ceil(2*len(region_list)/3.),),},
-                                              context_instance=RequestContext(request))
+    return render_to_response(templateName,
+                              {'region_list': region_list,
+                               'break_keys': (math.ceil(len(region_list) / 3.), math.ceil(2 * len(region_list) / 3.),),
+                               },
+                              context_instance=RequestContext(request))
 
 
 def medicalInstitutionPage(request, templateName, okato=0):
@@ -60,11 +62,10 @@ def medicalInstitutionPage(request, templateName, okato=0):
         return HttpResponseRedirect(reverse('index'))
     if okato != "search":
         db.set('okato', okato)
-        hospitals_list = ListWSDL().listHospitals(okato) # список ЛПУ выбранного региона
-        current_region = Region.objects.get(code=okato) # название выбранного региона
+        hospitals_list = ListWSDL().listHospitals(okato)  # список ЛПУ выбранного региона
+        current_region = Region.objects.get(code=okato)  # название выбранного региона
     db.set('step', 2)
-    return render_to_response(templateName, locals(),
-                                             context_instance=RequestContext(request))
+    return render_to_response(templateName, locals(), context_instance=RequestContext(request))
 
 
 def subdivisionPage(request, templateName, sub=0):
@@ -79,7 +80,7 @@ def subdivisionPage(request, templateName, sub=0):
 
     hospitalUid = 0
     try:
-        hospitalUid = sub.split('/')[0]+'/0'
+        hospitalUid = sub.split('/')[0] + '/0'
     except:
         pass
 
@@ -108,11 +109,10 @@ def subdivisionPage(request, templateName, sub=0):
         add_params.update({
             'current_lpu_title': current_lpu.name,
             'current_lpu_phone': current_lpu.phone,
-            'current_lpu_email': current_lpu.email,})
+            'current_lpu_email': current_lpu.email, })
     db.set(add_params)
-    return render_to_response(templateName, {'current_lpu': current_lpu,
-                                              'subdivision_list': subdivision_list},
-                                              context_instance=RequestContext(request))
+    return render_to_response(templateName, {'current_lpu': current_lpu, 'subdivision_list': subdivision_list},
+                              context_instance=RequestContext(request))
 
 
 def timePage(request, templateName, time=0):
@@ -122,7 +122,7 @@ def timePage(request, templateName, time=0):
     """
 
     try:
-        timezone.activate(pytz.timezone(config_value('TZ','TIME_ZONE')))
+        timezone.activate(pytz.timezone(config_value('TZ', 'TIME_ZONE')))
     except:
         timezone.activate(pytz.timezone(settings.TIME_ZONE))
 
@@ -142,7 +142,7 @@ def timePage(request, templateName, time=0):
         time = db.get('time')
     # если попадаем на страницу после выбора врача на вкладке "Подраздеелние/Специализация/Врач":
     else:
-        firstweekday = today - datetime.timedelta(days=datetime.date.isoweekday(today)-1)
+        firstweekday = today - datetime.timedelta(days=datetime.date.isoweekday(today) - 1)
 
     hospital_Uid = db.get('hospital_Uid')
     ticketList = ScheduleWSDL().getScheduleInfo(hospitalUid=hospital_Uid, doctorUid=time)
@@ -181,7 +181,7 @@ def timePage(request, templateName, time=0):
                     currentTicketList.append(i)
         for i in times:
             add_to_table = False
-            tmp_list = [0]*7
+            tmp_list = [0] * 7
             for j in currentTicketList:
                 if j.start.time() == i:
                     tmp_list[dates.index(j.start.date())] = j
@@ -196,12 +196,12 @@ def timePage(request, templateName, time=0):
             'step': 4})
 
     return render_to_response(templateName, {'dates': dates,
-                                              'times': times,
-                                              'office': office,
-                                              'ticketTable': ticketTable,
-                                              'now': timezone.localtime(timezone.now()).replace(tzinfo=None),
-                                            },
-                                              context_instance=RequestContext(request))
+                                             'times': times,
+                                             'office': office,
+                                             'ticketTable': ticketTable,
+                                             'now': timezone.localtime(timezone.now()).replace(tzinfo=None),
+                                             },
+                              context_instance=RequestContext(request))
 
 
 def patientPage(request, templateName):
@@ -217,11 +217,10 @@ def patientPage(request, templateName):
 
     """
 
-
-    def get_captcha_form(data = {}):
+    def get_captcha_form(data):
         class CaptchaForm(forms.Form):
             captcha = CaptchaField()
-        f = CaptchaForm(data, auto_id = True)
+        f = CaptchaForm(data, auto_id=True)
         return f
 
     db = Redis(request)
@@ -262,11 +261,37 @@ def patientPage(request, templateName):
             yy = request.POST.get('yy', '')
             if not dd or not mm or not yy:
                 errors.append(u'Введите дату рождения')
-            # полис
-            policy1 = request.POST.get('policy1', '').strip()
-            policy2 = request.POST.get('policy2', '').strip()
-            if not policy2:
-                errors.append(u"Введите серию и номер полиса")
+            # документ
+            document_type = request.POST.get('document_type', '').strip()
+            series = request.POST.get('series', '').strip()
+            number = request.POST.get('number', '').strip()
+            doc_meta_type = ''
+
+            document = dict()
+            if not document_type:
+                errors.append(u"Выберите тип документа")
+            else:
+                if document_type in ('policy_type_2', 'policy_type_3'):
+                    doc_meta_type = 'oms_dms'
+                    document['policy_type'] = int(document_type.replace('policy_type_', ''))
+                    document['series'] = series
+                    document['number'] = number
+                elif document_type in ('doc_type_4', 'doc_type_7'):
+                    doc_meta_type = 'doc'
+                    document['document_code'] = int(document_type.replace('doc_type_', ''))
+                    document['series'] = series
+                    document['number'] = number
+                elif document_type == 'client_id':
+                    doc_meta_type = 'amb'
+                    document['client_id'] = int(number)
+                elif document_type == 'policy_type_4':
+                    doc_meta_type = 'new_oms'
+                    document['policy_type'] = int(document_type.replace('policy_type_', ''))
+                    document['number'] = number
+
+                if not number:
+                    errors.append(u"Введите номер документа")
+
             # электронная почта
             userEmail = request.POST.get('email', '')
             if userEmail and not emailValidation(userEmail):
@@ -281,105 +306,108 @@ def patientPage(request, templateName):
             if not errors:
                 hospital_Uid = db.get('hospital_Uid')
                 time = db.get('time')
-                omiPolicyNumber = ' '.join([policy1,policy2])
-                patientName = ' '.join([lastName,firstName,patronymic])
+                patientName = ' '.join([lastName, firstName, patronymic])
+
                 ticketPatient = ScheduleWSDL().enqueue(
-                    person = {'lastName': unicode(lastName),
-                              'firstName': unicode(firstName),
-                              'patronymic': unicode(patronymic)},
-                    omiPolicyNumber = unicode(omiPolicyNumber),
-                    hospitalUid = hospital_Uid,
-                    doctorUid = time,
-                    timeslotStart = str(date) + 'T' + str(start_time),
-                    hospitalUidFrom = "0",
-                    birthday = unicode('-'.join([yy,mm,dd]))
+                    person={'lastName': unicode(lastName),
+                            'firstName': unicode(firstName),
+                            'patronymic': unicode(patronymic)},
+                    document=document,
+                    sex=request.POST.get('radio', ''),
+                    hospitalUid=hospital_Uid,
+                    doctorUid=time,
+                    timeslotStart=str(date) + 'T' + str(start_time),
+                    hospitalUidFrom="0",
+                    birthday=unicode('-'.join([yy, mm, dd]))
                 )
 
                 # запись на приём произошла успешно:
-                if ticketPatient and ticketPatient.result == True and len(ticketPatient.ticketUid.split('/')[0]) != 0:
+                if ticketPatient and ticketPatient.result is True and len(ticketPatient.ticketUid.split('/')[0]) != 0:
                     db.set({'ticketUid': ticketPatient.ticketUid,
-                             'date': date,
-                             'start_time': start_time,
-                             'finish_time': finish_time,
-                             'omiPolicyNumber': omiPolicyNumber,
-                             'patientName': patientName,
-                             'birthday': '.'.join([dd,mm,yy])})
+                            'date': date,
+                            'start_time': start_time,
+                            'finish_time': finish_time,
+                            'document': document,
+                            'patientName': patientName,
+                            'birthday': '.'.join([dd, mm, yy])})
                     # формирование и отправка письма:
                     if userEmail:
                         emailLPU = db.get('current_lpu_email')
                         plaintext = get_template('email/email.txt')
-                        htmly     = get_template('email/email.html')
+                        htmly = get_template('email/email.html')
 
-                        context = Context({ 'ticketUid': ticketPatient.ticketUid,
-                                            'patientName': db.get('patientName'),
-                                            'birthday': db.get('birthday'),
-                                            'omiPolicyNumber': db.get('omiPolicyNumber'),
-                                            'current_lpu_title': db.get('current_lpu_title'),
-                                            'current_lpu_phone': db.get('current_lpu_phone'),
-                                            'address': db.get('address'),
-                                            'doctor': db.get('doctor'),
-                                            'speciality': db.get('speciality'),
-                                            'date': date,
-                                            'start_time': start_time,
-                                            'finish_time': finish_time })
+                        context = Context({'ticketUid': ticketPatient.ticketUid,
+                                           'patientName': db.get('patientName'),
+                                           'birthday': db.get('birthday'),
+                                           'omiPolicyNumber': db.get('omiPolicyNumber'),
+                                           'current_lpu_title': db.get('current_lpu_title'),
+                                           'current_lpu_phone': db.get('current_lpu_phone'),
+                                           'address': db.get('address'),
+                                           'doctor': db.get('doctor'),
+                                           'speciality': db.get('speciality'),
+                                           'date': date,
+                                           'start_time': start_time,
+                                           'finish_time': finish_time})
 
                         subject, from_email, to = u'Уведомление о записи на приём', emailLPU, userEmail
                         text_content = plaintext.render(context)
                         html_content = htmly.render(context)
                         connection = get_connection(settings.EMAIL_BACKEND, False,
-                            **{'host':config_value('Mail','EMAIL_HOST'),
-                             'port':config_value('Mail','EMAIL_PORT'),
-                             'username':config_value('Mail','EMAIL_HOST_USER'),
-                             'password':config_value('Mail','EMAIL_HOST_PASSWORD'),
-                             'use_tls':config_value('Mail','EMAIL_USE_TLS'),
-                             })
-                        msg = EmailMultiAlternatives(subject, text_content, from_email, [to], connection = connection,)
+                                                    **{'host': config_value('Mail', 'EMAIL_HOST'),
+                                                       'port': config_value('Mail', 'EMAIL_PORT'),
+                                                       'username': config_value('Mail', 'EMAIL_HOST_USER'),
+                                                       'password': config_value('Mail', 'EMAIL_HOST_PASSWORD'),
+                                                       'use_tls': config_value('Mail', 'EMAIL_USE_TLS'),
+                                                       })
+                        msg = EmailMultiAlternatives(subject, text_content, from_email, [to], connection=connection,)
                         msg.attach_alternative(html_content, "text/html")
                         try:
                             msg.send()
                         except:
                             logger.error("Couldn't connect to smtp")
 
-
                     return HttpResponseRedirect(reverse('register'))
                 # ошибка записи на приём:
                 else:
-                    if ticketPatient.result == True:
+                    if ticketPatient.result is True:
                         ticketPatient_err = "Ошибка записи"
                     else:
                         ticketPatient_err = ticketPatient.message
             # ошибка при записи на приём или ошибки в заполненной форме:
             db.set('step', 5)
-            return render_to_response(templateName, {'errors': errors,
-                                                      'ticket': ticket,
-                                                      'date': date,
-                                                      'start_time': start_time,
-                                                      'finish_time': finish_time,
-                                                      'lastName': lastName,
-                                                      'firstName': firstName,
-                                                      'patronymic': patronymic,
-                                                      'dd': dd,
-                                                      'mm': mm,
-                                                      'yy': yy,
-                                                      'policy1': policy1,
-                                                      'policy2': policy2,
-                                                      'userEmail': userEmail,
-                                                      'ticketPatient_err': ticketPatient_err,
-                                                      'captcha': get_captcha_form()['captcha']
-                                                      },
-                                                      context_instance=RequestContext(request))
+            return render_to_response(templateName,
+                                      {'errors': errors,
+                                       'ticket': ticket,
+                                       'date': date,
+                                       'start_time': start_time,
+                                       'finish_time': finish_time,
+                                       'lastName': lastName,
+                                       'firstName': firstName,
+                                       'patronymic': patronymic,
+                                       'dd': dd,
+                                       'mm': mm,
+                                       'yy': yy,
+                                       'document_type': document_type,
+                                       'doc_meta_type': doc_meta_type,
+                                       'series': series,
+                                       'number': number,
+                                       'userEmail': userEmail,
+                                       'ticketPatient_err': ticketPatient_err,
+                                       'captcha': get_captcha_form({})['captcha']},
+                                      context_instance=RequestContext(request))
         # если представление было вызвано нажатием на ячейку таблицы на странице Время:
         db.set('step', 5)
         return render_to_response(templateName, {'errors': errors,
-                                                  'ticket': ticket,
-                                                  'date': date,
-                                                  'start_time': start_time,
-                                                  'finish_time': finish_time,
-                                                  'captcha': get_captcha_form()['captcha']},
-                                                  context_instance=RequestContext(request))
+                                                 'ticket': ticket,
+                                                 'date': date,
+                                                 'start_time': start_time,
+                                                 'finish_time': finish_time,
+                                                 'captcha': get_captcha_form({})['captcha']},
+                                  context_instance=RequestContext(request))
     # обращение к форме через адресную строку:
     else:
         return HttpResponseRedirect(reverse('index'))
+
 
 def registerPage(request, templateName):
     """Логика страницы Запись
@@ -389,16 +417,16 @@ def registerPage(request, templateName):
     """
     db = Redis(request)
     d = db.get('date').split('-')
-    date = datetime.date(int(d[0]),int(d[1]),int(d[2]))
+    date = datetime.date(int(d[0]), int(d[1]), int(d[2]))
     db.set('step', 6)
     return render_to_response(templateName, {'ticketUid': db.get('ticketUid'),
-                                              'date': date,
-                                              'start_time': db.get('start_time'),
-                                              'finish_time': db.get('finish_time'),
-                                              'omiPolicyNumber': db.get('omiPolicyNumber'),
-                                              'patientName': db.get('patientName'),
-                                              'birthday': db.get('birthday')},
-                                              context_instance=RequestContext(request))
+                                             'date': date,
+                                             'start_time': db.get('start_time'),
+                                             'finish_time': db.get('finish_time'),
+                                             'omiPolicyNumber': db.get('omiPolicyNumber'),
+                                             'patientName': db.get('patientName'),
+                                             'birthday': db.get('birthday')},
+                              context_instance=RequestContext(request))
 
 
 ##### Представления, используемые AJAX'ом: #####
@@ -417,8 +445,7 @@ def updatesPage(request):
         spec = request.GET['clickSpec']
         hospital_Uid = '/'.join([db.get('sub'), spec])
         doctors_list = ListWSDL().listDoctors(hospital_Uid)
-        db.set({'address': request.GET['value'],
-                 'spec': spec})
+        db.set({'address': request.GET['value'], 'spec': spec})
         for i in doctors_list:
             if i.hospitalUid == hospital_Uid:
                 data.append(i.speciality)
@@ -429,8 +456,7 @@ def updatesPage(request):
     elif 'clickProf' in request.GET:
         speciality = request.GET['clickProf']
         hospital_Uid = '/'.join([db.get('sub'), db.get('spec')])
-        db.set({'speciality': speciality,
-                 'hospital_Uid': hospital_Uid})
+        db.set({'speciality': speciality, 'hospital_Uid': hospital_Uid})
         doctors_list = ListWSDL().listDoctors(hospital_Uid = hospital_Uid, speciality = speciality)
         for i in doctors_list:
             if i.hospitalUid == hospital_Uid and i.speciality == speciality:

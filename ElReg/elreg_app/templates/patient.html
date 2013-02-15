@@ -40,8 +40,8 @@
 
 <div class="well well-small">
 <form id="patient_form" action="" method="post" name="frm" class="form-horizontal">
-    <input type=hidden name=ticket value="{{ ticket }}" />
-    <input type=hidden name=flag value=True />
+    <input type="hidden" name="ticket" value="{{ ticket }}" />
+    <input type="hidden" name="flag" value="True" />
 
     <legend><big>Данные посетителя</big></legend>
     <div class="control-group">
@@ -76,25 +76,12 @@
     <div class="control-group">
         <label class="control-label" for="radio1">Пол<span class="text-error">*</span></label>
         <div class="controls">
-            <input type="radio" name="radio" id="radio1" value="M"{% if request.POST.radio == 'M' %}checked="checked"{% endif %} /> М
-            <input type="radio" name="radio" id="radio2" value="F"{% if request.POST.radio == 'F' %}checked="checked"{% endif %} /> Ж
+            <input type="radio" name="radio" id="radio1" value="1"{% if request.POST.radio == '1' %}checked="checked"{% endif %} /> М
+            <input type="radio" name="radio" id="radio2" value="2"{% if request.POST.radio == '2' %}checked="checked"{% endif %} /> Ж
         </div>
     </div>
 
-    <div class="control-group">
-        <label class="control-label" for="policy1">Серия полиса</label>
-        <div class="controls">
-            <input type="text" name="policy1" id="policy1" value="{{ policy1 }}" maxlength="10" size="2" autocomplete="on" placeholder="" class="span1" />
-            <span>(необходимо указывать, если есть)</span>
-        </div>
-    </div>
-
-    <div class="control-group">
-        <label class="control-label" for="policy2">Номер полиса<span class="text-error">*</span></label>
-        <div class="controls">
-            <input type="text" class="span3" name="policy2" id="policy2" value="{{ policy2 }}" maxlength="16" size="20" autocomplete="on" placeholder="1234567890123456" />
-        </div>
-    </div>
+    {% include '__documents_select.html' %}
 
     <div class="control-group">
         <div class="controls">
