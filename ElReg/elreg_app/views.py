@@ -323,13 +323,14 @@ def patientPage(request, templateName):
 
                 # запись на приём произошла успешно:
                 if ticketPatient and ticketPatient.result is True and len(ticketPatient.ticketUid.split('/')[0]) != 0:
-                    db.set({'ticketUid': ticketPatient.ticketUid,
-                            'date': date,
-                            'start_time': start_time,
-                            'finish_time': finish_time,
-                            'document': document,
-                            'patientName': patientName,
-                            'birthday': '.'.join([dd, mm, yy])})
+                    db_params = {'ticketUid': ticketPatient.ticketUid,
+                                 'date': date,
+                                 'start_time': start_time,
+                                 'finish_time': finish_time,
+                                 'patientName': patientName,
+                                 'birthday': '.'.join([dd, mm, yy])}
+                    db_params.update(document)
+                    db.set(db_params)
                     # формирование и отправка письма:
                     if userEmail:
                         emailLPU = db.get('current_lpu_email')
@@ -423,7 +424,11 @@ def registerPage(request, templateName):
                                              'date': date,
                                              'start_time': db.get('start_time'),
                                              'finish_time': db.get('finish_time'),
-                                             'omiPolicyNumber': db.get('omiPolicyNumber'),
+                                             'document_code': db.get('document_code'),
+                                             'policy_type': db.get('policy_type'),
+                                             'series': db.get('series'),
+                                             'number': db.get('number'),
+                                             'client_id': db.get('client_id'),
                                              'patientName': db.get('patientName'),
                                              'birthday': db.get('birthday')},
                               context_instance=RequestContext(request))
