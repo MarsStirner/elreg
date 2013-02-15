@@ -323,6 +323,8 @@ def patientPage(request, templateName):
 
                 # запись на приём произошла успешно:
                 if ticketPatient and ticketPatient.result is True and len(ticketPatient.ticketUid.split('/')[0]) != 0:
+                    db.set({'policy_type': False, 'document_code': False, 'client_id': False, 'series': False,
+                            'number': False})
                     db_params = {'ticketUid': ticketPatient.ticketUid,
                                  'date': date,
                                  'start_time': start_time,
