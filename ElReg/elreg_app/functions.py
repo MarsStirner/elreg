@@ -40,6 +40,9 @@ class Redis ():
             for (key, value) in key.items():
                 self.set(key, value)
 
+    def delete(self, *names):
+        self.db.delete(*names)
+
     def get(self, key):
         """
         Получение значения из базы по идентификатору сессии и ключу. Возвращается значение типа string во всех

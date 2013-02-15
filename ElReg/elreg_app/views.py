@@ -323,8 +323,11 @@ def patientPage(request, templateName):
 
                 # запись на приём произошла успешно:
                 if ticketPatient and ticketPatient.result is True and len(ticketPatient.ticketUid.split('/')[0]) != 0:
-                    db.set({'policy_type': False, 'document_code': False, 'client_id': False, 'series': False,
-                            'number': False})
+                    doc_keys = ('policy_type', 'document_code', 'client_id', 'series', 'number')
+                    db.delete(*doc_keys)
+                    for key in doc_keys:
+                        db.set(key, '0')
+
                     db_params = {'ticketUid': ticketPatient.ticketUid,
                                  'date': date,
                                  'start_time': start_time,
@@ -422,17 +425,27 @@ def registerPage(request, templateName):
     d = db.get('date').split('-')
     date = datetime.date(int(d[0]), int(d[1]), int(d[2]))
     db.set('step', 6)
-    return render_to_response(templateName, {'ticketUid': db.get('ticketUid'),
-                                             'date': date,
-                                             'start_time': db.get('start_time'),
-                                             'finish_time': db.get('finish_time'),
-                                             'document_code': db.get('document_code'),
-                                             'policy_type': db.get('policy_type'),
-                                             'series': db.get('series'),
-                                             'number': db.get('number'),
-                                             'client_id': db.get('client_id'),
-                                             'patientName': db.get('patientName'),
-                                             'birthday': db.get('birthday')},
+    doc_values = dict()
+    if db.get('client_id') and int(db.get('client_id')):
+        doc_values = dict(client_id=db.get('client_id'))
+    if db.get('policy_type') and int(db.get('policy_type')):
+        doc_values = {'policy_type': db.get('policy_type'),
+                      'series': db.get('series'),
+                      'number': db.get('number'), }
+    if db.get('document_code') and int(db.get('document_code')):
+        doc_values = {'document_code': db.get('document_code'),
+                      'series': db.get('series'),
+                      'number': db.get('number'), }
+
+    template_parameters = {'ticketUid': db.get('ticketUid'),
+                           'date': date,
+                           'start_time': db.get('start_time'),
+                           'finish_time': db.get('finish_time'),
+                           'patientName': db.get('patientName'),
+                           'birthday': db.get('birthday')}
+    template_parameters.update(doc_values)
+
+    return render_to_response(templateName, template_parameters,
                               context_instance=RequestContext(request))
 
 

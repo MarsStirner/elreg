@@ -82,7 +82,7 @@
 </form>
 </div>
 {% else %}
-<legend>Расписания на текущую неделю нет</legend>
+<legend>Расписания на текущую неделю нет ({{ dates.0|date:"d.m.Y" }} - {{ dates.6|date:"d.m.Y" }})</legend>
 {% endif %}
 <p>
     <a href="{% url subdivision %}" class="btn btn-primary btn-large" title="Назад">Вернуться</a>
