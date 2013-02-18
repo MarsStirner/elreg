@@ -138,7 +138,7 @@ nano /etc/httpd2/conf/sites-available/DOMAIN
 вставить следующее содержимое, подставив вместо USER и DOMAIN имя ранее созданного пользователя и выбранный домен:
 
 ```
-<VirtualHost *:80>
+<VirtualHost *>
 ServerAdmin root@DOMAIN
 ServerName DOMAIN
 
