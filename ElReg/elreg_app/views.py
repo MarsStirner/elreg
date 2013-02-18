@@ -38,7 +38,7 @@ def indexPage(request, templateName):
     """
     db = Redis(request)
     # получение списка регионов:
-    region_list = Region.objects.filter(activation=True)
+    region_list = ListWSDL().listRegions()
     db.set('step', 1)
 
     return render_to_response(templateName,

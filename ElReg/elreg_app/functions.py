@@ -79,6 +79,14 @@ class ListWSDL():
     def __init__(self):
         self.client = Client(IS % "list", cache=None)
 
+    def listRegions(self):
+        """Получение списка регионов из ИС"""
+        try:
+            regions = self.client.service.listRegions().regions
+        except:
+            regions = []
+        return regions
+
     def listHospitals(self, okato=0):
         """
         Метод принимает код ОКАТО и возвращает ЛПУ, удовлетворяющее требованию, или список ЛПУ,
