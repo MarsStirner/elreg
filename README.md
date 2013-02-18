@@ -196,11 +196,6 @@ python elreg/ElReg/manage.py collectstatic
 
 В процессе будет предложено ввести логин/пароль администратора.
 
-**Восстановление дампа БД**
-```
-python elreg/ElReg/manage.py loaddata elreg/ElReg/elreg.json
-```
-
 **Настройка сайта**
 * Зайти в административный интерфейс:
 http://DOMEN/admin/
