@@ -178,8 +178,8 @@ $(document).ready(function () {
         }
         if ( $('#chb').is(':checked') && $email.val()) {
             $('#email').closest('.control-group').removeClass('error').addClass('success');
-            if($('#note7')){
-                $('#note7').remove();
+            if($('#note6')){
+                $('#note6').remove();
             }
             var regex = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
             if(!regex.test($email.val())){
@@ -189,8 +189,8 @@ $(document).ready(function () {
                 return false;
             }
         } else if($('#chb').is(':checked')) {
-            if($('#note7')){
-                $('#note7').remove();
+            if($('#note6')){
+                $('#note6').remove();
             }
             $('<span class="help-inline" id="note6">Не указан email</span>').fadeIn('slow').insertAfter($email);
             $('#email').closest('.control-group').removeClass('success').addClass('error');
