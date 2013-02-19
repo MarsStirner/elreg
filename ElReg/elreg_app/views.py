@@ -7,7 +7,6 @@ from django.template.loader import get_template
 from django.shortcuts import render_to_response
 from django.template import Context, RequestContext
 from functions import *
-from models import Region
 import datetime
 import math
 import pytz
@@ -63,7 +62,7 @@ def medicalInstitutionPage(request, templateName, okato=0):
     if okato != "search":
         db.set('okato', okato)
         hospitals_list = ListWSDL().listHospitals(okato)  # список ЛПУ выбранного региона
-        current_region = Region.objects.get(code=okato)  # название выбранного региона
+        # current_region = Region.objects.get(code=okato)  # название выбранного региона
     db.set('step', 2)
     return render_to_response(templateName, locals(), context_instance=RequestContext(request))
 
@@ -568,7 +567,11 @@ def searchPage(request):
             ### поиск ЛПУ по названию города: ###
             if search_gorod:
                 # формирование списка доступных городов:
-                region_list = Region.objects.filter(activation=True).exclude(region__iendswith=u'район')
+                # region_list = Region.objects.filter(activation=True).exclude(region__iendswith=u'район')
+                region_list = []
+                for region in ListWSDL().listRegions():
+                    if not region.name.find(u'район'):
+                        region_list.append(region)
                 # формирование словаря со значениями, удовлетворяющими поиску,
                 # где ключ - uid ЛПУ, а значение - наименование ЛПУ
                 result = searchMethod(region_list, search_gorod, result)
@@ -576,7 +579,11 @@ def searchPage(request):
             ### поиск ЛПУ по названию района: ###
             if search_rayon:
                 # формирование списка доступных районов:
-                region_list = Region.objects.filter(activation=True, region__iendswith=u'район')
+                # region_list = Region.objects.filter(activation=True, region__iendswith=u'район')
+                region_list = []
+                for region in ListWSDL().listRegions():
+                    if region.name.find(u'район'):
+                        region_list.append(region)
                 # формирование словаря со значениями, удовлетворяющими поиску,
                 # где ключ - uid ЛПУ, а значение - наименование ЛПУ
                 result = searchMethod(region_list, search_rayon, result)
