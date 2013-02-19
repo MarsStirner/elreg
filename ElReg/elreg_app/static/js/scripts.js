@@ -1,7 +1,18 @@
 jQuery.support.cors = true;
 
 $(document).ready(function () {
+
+    var jqXHR = [];
+
+    function abort_ajax(){
+        for (var i in jqXHR){
+            jqXHR[i].abort();
+        }
+    }
+
     function spec_handler() {
+        abort_ajax();
+        $('a.spec').off("click", spec_handler);
         $(this).closest('ul').children('li').removeClass('active');
 //        $('.specActive').removeClass('specActive').addClass('spec');
         $(this).closest('li').addClass('active');
@@ -9,7 +20,7 @@ $(document).ready(function () {
         var $value = $(this).text();
         $('ul.secondTable').html("");
         $('ul.thirdTable').html("");
-        $.ajax({
+        jqXHR.push($.ajax({
             url: '/updates/',
             data: {clickSpec: $clickSpec, value: $value},
             crossDomain: true,
@@ -24,13 +35,15 @@ $(document).ready(function () {
                 $('body,html').animate({
                     scrollTop: 0
                 }, 300);
+                $('a.spec').on("click", spec_handler);
                 $('a.prof').on("click", prof_handler);
             }
-        });
+        }));
     }
     $('a.spec').on("click", spec_handler);
 
     function prof_handler(){
+        abort_ajax();
         $(this).closest('ul').children('li').removeClass('active');
 //        $('.specActive').removeClass('specActive').addClass('spec');
         $(this).closest('li').addClass('active');
@@ -38,7 +51,7 @@ $(document).ready(function () {
         $(this).addClass('profActive');
         var $clickProf = $(this).text();
         $('ul.thirdTable').html("");
-        $.ajax({
+        jqXHR.push($.ajax({
             url: '/updates/',
             data: {clickProf: $clickProf},
             crossDomain: true,
@@ -54,9 +67,8 @@ $(document).ready(function () {
                     scrollTop: 0
                 }, 300);
             }
-        });
+        }));
     }
-    $('a.prof').on("click", prof_handler);
 });
 
 $(document).ready(function () {
