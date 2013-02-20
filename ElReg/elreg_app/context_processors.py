@@ -14,6 +14,7 @@ def globalContext(request):
         'speciality': db.get('speciality'),                 # специальность выбранного врача
         'doctor': db.get('doctor'),                         # ФИО выбранного врача
         'logo': config_value('TZ', 'LOGO_FILE'),
+        'home_link': config_value('TZ', 'HOME_LINK'),
         'site_name': config_value('TZ', 'SITE_NAME'),
         'region_name': config_value('TZ', 'REGION_NAME'),
     }

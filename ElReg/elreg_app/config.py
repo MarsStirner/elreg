@@ -55,6 +55,10 @@ config_register_list(
         help_text=u'Наименование региона в шапку (вторая строка)', default=''),
     ImageValue( TIME_ZONE, 'LOGO_FILE', description=u'Файл логотипа', ordering=3, default='',
         help_text=u'Логотип/герб региона для размещения в шапке страниц'),
+    StringValue(TIME_ZONE, 'HOME_LINK', description=u'Ссылка на главную', ordering=4,
+                help_text=u'''URL-адрес (http://example.ru),
+                на который будет осуществляться переход при клике на Логотип.
+                Если не задан - переход на главную страницу Портала'''),
 )
 
 IS = ConfigurationGroup(
