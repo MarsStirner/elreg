@@ -286,7 +286,7 @@ def patientPage(request, templateName):
                     birthday = unicode('-'.join([yy,mm,dd]))
                 )
                 # запись на приём произошла успешно:
-                if ticketPatient['result'] == 'true' and len(ticketPatient['ticketUid'].split('/')[0]) != 0:
+                if ticketPatient.get('result') == 'true' and len(ticketPatient.get('ticketUid').split('/')[0]) != 0:
                     db.set({'ticketUid': ticketPatient['ticketUid'],
                              'date': date,
                              'start_time': start_time,
