@@ -373,11 +373,14 @@ def patientPage(request, templateName):
 
                     return HttpResponseRedirect(reverse('register'))
                 # ошибка записи на приём:
-                else:
+                elif ticketPatient:
                     if ticketPatient.result is True:
                         ticketPatient_err = "Ошибка записи"
                     else:
                         ticketPatient_err = ticketPatient.message
+                else:
+                    ticketPatient_err = '''Ошибка записи. Не удалось соединиться с сервером. 
+                    Попробуйте отправить запрос ещё раз.'''
             # ошибка при записи на приём или ошибки в заполненной форме:
             db.set('step', 5)
             return render_to_response(templateName,
