@@ -84,7 +84,7 @@ def subdivisionPage(request, templateName, sub=0):
         pass
 
     tmp1_list, subdivision_list = [], []
-    current_lpu = ''
+    current_lpu = None
     try:
         if hospitalUid:
             hospital = InfoWSDL().getHospitalInfo(hospitalUid=hospitalUid)
@@ -129,9 +129,9 @@ def timePage(request, templateName, time=0):
     today = datetime.date.today()
     now = datetime.datetime.now()
     # если попадаем на страницу нажимая кнопку "Назад", "Предыдущая" или "Следующая":
-    if not time or time in ['next','prev']:
+    if not time or time in ['next', 'prev']:
         if not time:
-            firstweekday = today - datetime.timedelta(days=datetime.date.isoweekday(today)-1)
+            firstweekday = today - datetime.timedelta(days=datetime.date.isoweekday(today) - 1)
         elif time == 'next':
             a = db.get('firstweekday').split('-')
             firstweekday = datetime.date(int(a[0]), int(a[1]), int(a[2])) + datetime.timedelta(days=7)
@@ -158,8 +158,8 @@ def timePage(request, templateName, time=0):
             doctor = ' '.join([unicode(i.name.lastName), unicode(i.name.firstName), unicode(i.name.patronymic)]) # ФИО врача
             db.set('doctor', doctor)
 
-    times = [] # Список времен начала записи текущей недели
-    dates = [] # Список дат текущей недели
+    times = []  # Список времен начала записи текущей недели
+    dates = []  # Список дат текущей недели
 
     for i in xrange(7):
         newDay = firstweekday + datetime.timedelta(days=i)
@@ -379,7 +379,7 @@ def patientPage(request, templateName):
                     else:
                         ticketPatient_err = ticketPatient.message
                 else:
-                    ticketPatient_err = '''Ошибка записи. Не удалось соединиться с сервером. 
+                    ticketPatient_err = '''Ошибка записи. Не удалось соединиться с сервером.
                     Попробуйте отправить запрос ещё раз.'''
             # ошибка при записи на приём или ошибки в заполненной форме:
             db.set('step', 5)
@@ -517,7 +517,7 @@ def searchPage(request):
 
         # формирование словаря result со значениями, удовлетворяющими поиску,
         # где ключ - uid ЛПУ, а значение - наименование ЛПУ
-        for (region,code) in tmp_list:
+        for (region, code) in tmp_list:
             flag = True
             for i in search_list:
                 if region.find(i) == -1:
