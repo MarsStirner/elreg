@@ -11,7 +11,11 @@ import settings
 import logging
 if settings.DEBUG:
     logging.basicConfig(level=logging.INFO)
-    logging.getLogger('suds.client').setLevel(logging.DEBUG)
+    logging.getLogger('suds.client').setLevel(logging.CRITICAL)
+else:
+    logging.basicConfig(level=logging.CRITICAL)
+    logging.getLogger('suds.client').setLevel(logging.CRITICAL)
+
 
 IS = config_value('IS', 'URL')
 
@@ -77,7 +81,10 @@ class ListWSDL():
 
     """
     def __init__(self):
-        self.client = Client(IS % "list", cache=None)
+        if settings.DEBUG:
+            self.client = Client(IS % "list", cache=None)
+        else:
+            self.client = Client(IS % "list")
 
     def listRegions(self):
         """Получение списка регионов из ИС"""
@@ -128,7 +135,10 @@ class InfoWSDL():
 
     """
     def __init__(self):
-        self.client = Client(IS % "info", cache=None)
+        if settings.DEBUG:
+            self.client = Client(IS % "info", cache=None)
+        else:
+            self.client = Client(IS % "info")
 
     def getHospitalInfo(self, hospitalUid=0):
         """
@@ -151,7 +161,10 @@ class ScheduleWSDL():
 
     """
     def __init__(self):
-        self.client = Client(IS % "schedule", cache=None)
+        if settings.DEBUG:
+            self.client = Client(IS % "schedule", cache=None)
+        else:
+            self.client = Client(IS % "schedule")
 
     def getScheduleInfo(self, hospitalUid=0, doctorUid=0):
         """
