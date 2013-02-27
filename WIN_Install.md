@@ -90,6 +90,7 @@ pip install -r code\requirements.txt
 ```
 <VirtualHost %SERVER_HOST%:%SERVER_PORT%>
   ServerName %SERVER_HOST%:%SERVER_PORT%
+  DocumentRoot "%PROJECT_CODE_ROOT%"
   
   Alias /site_media/ %PROJECT_CODE_ROOT%/ElReg/elreg_app/media/
   Alias /static_admin/ %PROJECT_ROOT%/venv/lib/python2.7/site-packages/django/contrib/admin/static/
