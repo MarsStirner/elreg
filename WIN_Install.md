@@ -58,7 +58,7 @@ cd D:\projects\elreg
 
 ```
 pip install virtualenv
-virtualenv venv
+virtualenv --system-site-packages venv
 venv\Scripts\activate
 ```
 
