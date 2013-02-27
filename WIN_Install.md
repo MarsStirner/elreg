@@ -80,4 +80,58 @@ pip install -r code\requirements.txt
 Настройка серверного окружения
 -----------
 
-* Конфигурирование виртуальных хостов Apache (Apache2.2/conf/extra/httpd-vhosts.conf), секция Virtual Hosts, добавить следующие конфигурации:
+* Конфигурирование виртуальных хостов Apache (Apache2.2/conf/extra/httpd-vhosts.conf), секция Virtual Hosts, добавить следующую конфигурацию:
+
+```
+Listen %SOAP_SERVER_HOST%:%SOAP_SERVER_PORT%
+<VirtualHost %SOAP_SERVER_HOST%:%SOAP_SERVER_PORT%>
+    ServerName %SOAP_SERVER_HOST%:%SOAP_SERVER_PORT%
+    DocumentRoot "%PROJECT_ROOT%"
+
+    ErrorLog logs/%PROJECT_NAME%-error.log
+    CustomLog logs/%PROJECT_NAME%-access.log common
+    LogLevel warn
+
+    WSGIScriptAlias / "%PROJECT_CODE_ROOT%/wsgi.py"
+
+    <Directory "%PROJECT_ROOT%/">
+        AllowOverride All
+        Options None
+        Order allow,deny
+        Allow from all
+    </Directory>
+</VirtualHost>
+
+<VirtualHost %SOAP_SERVER_HOST%:%SOAP_SERVER_PORT%>
+  ServerName %SOAP_SERVER_HOST%:%SOAP_SERVER_PORT%
+  
+  Alias /site_media/ %PROJECT_CODE_ROOT%/ElReg/elreg_app/media/
+  Alias /static_admin/ %PROJECT_ROOT%/venv/lib/python2.7/site-packages/django/contrib/admin/static/
+  Alias /static/ %PROJECT_CODE_ROOT%/ElReg/elreg_app/static/
+#  Alias /robots.txt %PROJECT_ROOT%/app/webapp/site_media/robots.txt
+  Alias /favicon.ico %PROJECT_CODE_ROOT%/ElReg/elreg_app/static/images/favicon.ico
+  
+  CustomLog logs/%PROJECT_NAME%-access.log combined
+  ErrorLog logs/%PROJECT_NAME%-error.log
+  LogLevel warn
+  
+  WSGIScriptAlias / %PROJECT_CODE_ROOT%/ElReg/wsgi.py
+  
+  <Directory %PROJECT_CODE_ROOT%/ElReg/elreg_app/media>
+    Order deny,allow
+    Allow from all
+    Options -Indexes FollowSymLinks
+  </Directory>
+
+</VirtualHost>
+```
+
+где
+
+```
+%SOAP_SERVER_HOST% - хост, по которому будет вестись обращение к ИС (как вариант - IP сервера)
+%SOAP_SERVER_PORT% - порт, по которому будет вестись обращение к ИС (например, 80)
+%PROJECT_ROOT% - директория, где располагаются файлы проекта (в нашем примере, D:/projects/elreg)
+%PROJECT_NAME% - название проекта (например, elreg)
+%PROJECT_CODE_ROOT% - директория, где располагается код проекта (в нашем примере, D:/projects/elreg/code)
+```
