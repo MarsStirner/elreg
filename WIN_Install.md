@@ -68,7 +68,12 @@ venv\Scripts\activate
  easy_install MySQL-python
 ```
 
-* Установить PIL (http://www.pythonware.com/products/pil/)
+* Установить PIL 
+
+```
+ easy_install PIL
+```
+
 * Клонировать репозиторий из git, для этого в директории проекта вызвать из контекстного меню Git Bash и выполнить команду:
 
 ```
