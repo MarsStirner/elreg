@@ -8,12 +8,12 @@
 -----------
 
 * Python 2.7 (http://www.python.org/download/)
-* PIL (http://www.pythonware.com/products/pil/)
 * MySQL 5 (http://dev.mysql.com/downloads/installer/)
+* Redis (https://github.com/rgl/redis/downloads)
 * Web-Server Apache2.2 (http://www.sai.msu.su/apache/dist/httpd/binaries/win32/) + mod_wsgi (http://code.google.com/p/modwsgi/wiki/DownloadTheSoftware)
 * git (http://git-scm.com/download/win)
 
-Под windows используются только 32-bit версии
+Под windows используются только 32-bit версии Python, Apache2.2, mod_wsgi
 
 Установка
 -----------
@@ -33,6 +33,7 @@ lower_case_table_names=2
 LoadModule mod_wsgi modules/mod_wsgi.so
 ```
 
+* Установить Redis (https://github.com/rgl/redis/downloads). Запустить в службах (возможно, понадобиться изменить в настройке службы пользователя, из-под которого запускать на системного)
 * Установить Python и прописать его в системный путь (например, через cmd):
 
 ```
@@ -68,10 +69,10 @@ venv\Scripts\activate
  easy_install MySQL-python
 ```
 
-* Установить PIL 
+* Установить pillow 
 
 ```
- easy_install PIL
+ easy_install pillow
 ```
 
 * Клонировать репозиторий из git, для этого в директории проекта вызвать из контекстного меню Git Bash и выполнить команду:
