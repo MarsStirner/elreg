@@ -36,7 +36,8 @@ LoadModule mod_wsgi modules/mod_wsgi.so
 * Установить Python и прописать его в системный путь (например, через cmd):
 
 ```
-set PATH=%PATH%;D:\Python27;D:\Python27\Scripts
+set PYTHONPATH=%PYTHONPATH%;D:\Python27;D:\Python27\Scripts
+set PATH=%PATH%;%PYTHONPATH%
 ```
 
 * Установить setup_tools (https://pypi.python.org/pypi/setuptools/0.6c11#downloads)
@@ -87,27 +88,8 @@ pip install -r code\requirements.txt
 * Конфигурирование виртуальных хостов Apache (Apache2.2/conf/extra/httpd-vhosts.conf), секция Virtual Hosts, добавить следующую конфигурацию:
 
 ```
-Listen %SOAP_SERVER_HOST%:%SOAP_SERVER_PORT%
-<VirtualHost %SOAP_SERVER_HOST%:%SOAP_SERVER_PORT%>
-    ServerName %SOAP_SERVER_HOST%:%SOAP_SERVER_PORT%
-    DocumentRoot "%PROJECT_ROOT%"
-
-    ErrorLog logs/%PROJECT_NAME%-error.log
-    CustomLog logs/%PROJECT_NAME%-access.log common
-    LogLevel warn
-
-    WSGIScriptAlias / "%PROJECT_CODE_ROOT%/wsgi.py"
-
-    <Directory "%PROJECT_ROOT%/">
-        AllowOverride All
-        Options None
-        Order allow,deny
-        Allow from all
-    </Directory>
-</VirtualHost>
-
-<VirtualHost %SOAP_SERVER_HOST%:%SOAP_SERVER_PORT%>
-  ServerName %SOAP_SERVER_HOST%:%SOAP_SERVER_PORT%
+<VirtualHost %SERVER_HOST%:%SERVER_PORT%>
+  ServerName %SERVER_HOST%:%SERVER_PORT%
   
   Alias /site_media/ %PROJECT_CODE_ROOT%/ElReg/elreg_app/media/
   Alias /static_admin/ %PROJECT_ROOT%/venv/lib/python2.7/site-packages/django/contrib/admin/static/
@@ -133,8 +115,8 @@ Listen %SOAP_SERVER_HOST%:%SOAP_SERVER_PORT%
 где
 
 ```
-%SOAP_SERVER_HOST% - хост, по которому будет вестись обращение к ИС (как вариант - IP сервера)
-%SOAP_SERVER_PORT% - порт, по которому будет вестись обращение к ИС (например, 80)
+%SERVER_HOST% - хост, по которому будет вестись обращение к ИС (как вариант - IP сервера)
+%SERVER_PORT% - порт, по которому будет вестись обращение к ИС (например, 80)
 %PROJECT_ROOT% - директория, где располагаются файлы проекта (в нашем примере, D:/projects/elreg)
 %PROJECT_NAME% - название проекта (например, elreg)
 %PROJECT_CODE_ROOT% - директория, где располагается код проекта (в нашем примере, D:/projects/elreg/code)
@@ -162,3 +144,8 @@ python code\ElReg\manage.py collectstatic
 activate_this = '%PROJECT_ROOT%/venv/Scripts/activate_this.py'
 execfile(activate_this, dict(__file__=activate_this))
 ```
+
+* Зайти в административный интерфейс: http://%SERVER_HOST%:%SERVER_PORT%/admin/
+* Ввести логин/пароль администратора
+* Перейти в интерфес настроек сайта: http://%SERVER_HOST%:%SERVER_PORT%/admin/settings/
+* Заполнить необходимую информацию о текущем сайте, почтовом сервере, часовом поясе
