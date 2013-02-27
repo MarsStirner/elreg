@@ -135,3 +135,26 @@ Listen %SOAP_SERVER_HOST%:%SOAP_SERVER_PORT%
 %PROJECT_NAME% - название проекта (например, elreg)
 %PROJECT_CODE_ROOT% - директория, где располагается код проекта (в нашем примере, D:/projects/elreg/code)
 ```
+
+* Перезапустить Apache
+
+* Настройка сайта
+
+Для первоначальной настройки сайта необходимо прописать параметры подключение к БД в файле %PROJECT_CODE_ROOT%/ElReg/settings_local.py 
+Затем выполнить команду для создания таблиц в БД:
+
+```
+python code/ElReg/manage.py syncdb
+python code/ElReg/manage.py migrate
+```
+
+```
+python code/ElReg/manage.py collectstatic
+```
+
+Добавить активацию виртуального окружения в начало файла code\ElReg\wsgi.py:
+
+```
+activate_this = '%PROJECT_ROOT%/venv/Scripts/activate_this.py'
+execfile(activate_this, dict(__file__=activate_this))
+```
