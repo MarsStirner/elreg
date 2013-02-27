@@ -81,4 +81,3 @@ pip install -r code\requirements.txt
 -----------
 
 * Конфигурирование виртуальных хостов Apache (Apache2.2/conf/extra/httpd-vhosts.conf), секция Virtual Hosts, добавить следующие конфигурации:
-
