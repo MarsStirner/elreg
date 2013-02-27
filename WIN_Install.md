@@ -144,12 +144,12 @@ Listen %SOAP_SERVER_HOST%:%SOAP_SERVER_PORT%
 Затем выполнить команду для создания таблиц в БД:
 
 ```
-python code/ElReg/manage.py syncdb
-python code/ElReg/manage.py migrate
+python code\ElReg\manage.py syncdb
+python code\ElReg\manage.py migrate
 ```
 
 ```
-python code/ElReg/manage.py collectstatic
+python code\ElReg\manage.py collectstatic
 ```
 
 Добавить активацию виртуального окружения в начало файла code\ElReg\wsgi.py:
