@@ -155,5 +155,5 @@ execfile(activate_this, dict(__file__=activate_this))
 
 * Зайти в административный интерфейс: http://%SERVER_HOST%:%SERVER_PORT%/admin/
 * Ввести логин/пароль администратора
-* Перейти в интерфес настроек сайта: http://%SERVER_HOST%:%SERVER_PORT%/admin/settings/
+* Перейти в интерфейс настроек сайта: http://%SERVER_HOST%:%SERVER_PORT%/admin/settings/
 * Заполнить необходимую информацию о текущем сайте, почтовом сервере, часовом поясе
