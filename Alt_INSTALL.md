@@ -84,6 +84,9 @@ chsh -s /bin/bash USERNAME
 ```
 git clone https://github.com/KorusConsulting/elreg.git
 ```
+
+В том случае, когда отсутствует доступ к git-репозиторию, распаковать полученный архив с исходным кодом в директорию проекта.
+
 Переключиться на ветку "AltLinux" и сделать pull изменений:
 ```
 cd elreg
