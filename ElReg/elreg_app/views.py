@@ -397,7 +397,7 @@ def patientPage(request, templateName):
                                        'yy': yy,
                                        'document_type': document_type,
                                        'doc_meta_type': doc_meta_type,
-                                       'series': series,
+                                       'series': series if series != '0' else '',
                                        'number': number,
                                        'userEmail': userEmail,
                                        'ticketPatient_err': ticketPatient_err,
