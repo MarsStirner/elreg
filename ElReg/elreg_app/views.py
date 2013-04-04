@@ -513,7 +513,7 @@ def searchPage(request):
 
         # формирование временного списка кортежей [(регион, код ОКАТО), ...]
         for i in region_list:
-            tmp_list.append((i.region.lower(), i.code))
+            tmp_list.append((i.name.lower(), i.code))
 
         # формирование словаря result со значениями, удовлетворяющими поиску,
         # где ключ - uid ЛПУ, а значение - наименование ЛПУ
@@ -573,7 +573,7 @@ def searchPage(request):
                 # region_list = Region.objects.filter(activation=True).exclude(region__iendswith=u'район')
                 region_list = []
                 for region in ListWSDL().listRegions():
-                    if not region.name.find(u'район'):
+                    if region.name.find(u'район') == -1:
                         region_list.append(region)
                 # формирование словаря со значениями, удовлетворяющими поиску,
                 # где ключ - uid ЛПУ, а значение - наименование ЛПУ
@@ -585,7 +585,7 @@ def searchPage(request):
                 # region_list = Region.objects.filter(activation=True, region__iendswith=u'район')
                 region_list = []
                 for region in ListWSDL().listRegions():
-                    if region.name.find(u'район'):
+                    if region.name.find(u'район') > 0:
                         region_list.append(region)
                 # формирование словаря со значениями, удовлетворяющими поиску,
                 # где ключ - uid ЛПУ, а значение - наименование ЛПУ
