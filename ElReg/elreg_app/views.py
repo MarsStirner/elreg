@@ -327,6 +327,9 @@ def patientPage(request, templateName):
                     for key in doc_keys:
                         db.set(key, '0')
 
+                    start_time = start_time.strftime('%H:%M')
+                    finish_time = finish_time.strftime('%H:%M')
+
                     db_params = {'ticketUid': ticketPatient.ticketUid,
                                  'date': date,
                                  'start_time': start_time,
