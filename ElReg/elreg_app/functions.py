@@ -3,6 +3,7 @@
 from django.contrib.sessions.backends.db import SessionStore
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
+import config
 from livesettings import config_value
 from suds.client import Client
 import redis
