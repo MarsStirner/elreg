@@ -7,10 +7,6 @@ IS = "http://127.0.0.1:9910/%s/?wsdl"
 
 DEBUG = True
 
-DEBUG_SECURE = DEBUG
-
-TEMPLATE_DEBUG = DEBUG
-
 ADMINS = (
     # ('Your Name', 'your_email@example.com'),
 )
@@ -225,3 +221,7 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
 # Импортируем настройки из локального конфига
 from settings_local import *
+
+DEBUG_SECURE = DEBUG
+
+TEMPLATE_DEBUG = DEBUG

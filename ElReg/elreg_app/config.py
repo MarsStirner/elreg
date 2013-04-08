@@ -61,12 +61,12 @@ config_register_list(
                 Если не задан - переход на главную страницу Портала'''),
 )
 
-IS = ConfigurationGroup(
+IS_GROUP = ConfigurationGroup(
     'IS',               # key: internal name of the group to be created
     u'Интеграционный сервис',  # name: verbose name which can be automatically translated
     ordering=2             # ordering: order of group in the list (default is 1)
 )
 config_register(
-    StringValue(IS, 'URL',  description=u'Адрес интеграционного сервиса',
+    StringValue(IS_GROUP, 'URL',  description=u'Адрес интеграционного сервиса',
                 help_text=u'Адрес интеграционного сервиса', default="http://127.0.0.1:9910/%s/?wsdl"),
 )
