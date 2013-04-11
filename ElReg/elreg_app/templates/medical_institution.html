@@ -36,10 +36,24 @@
         <ul id="search_table" class="nav nav-tabs nav-stacked upper_case">
         {% if hospitals_list %}
             {% for hospital in hospitals_list %}
-            <li><a href="{% url subdivision %}{{ hospital.uid|slice:":2"|cut:"/" }}/">{{ hospital.name }}</a></li>
+                {% if hospital.uid == '5/0' %}
+                <li><a href="javascript:void(0);" onclick="$('#myModal').modal();">{{ hospital.name }}</a></li>
+                {% else %}
+                <li><a href="{% url subdivision %}{{ hospital.uid|slice:":2"|cut:"/" }}/">{{ hospital.name }}</a></li>
+                {% endif %}
             {% endfor %}
         {% endif %}
         </ul>
+    </div>
+</div>
+<!-- Modal -->
+<div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="myModalLabel">Запись online невозможна</h3>
+    </div>
+    <div class="modal-body">
+        <p>Запись к специалистам ПОКБ им. Н.Н. Бурденко осуществляется врачами в ЛПУ по месту жительства.</p>
     </div>
 </div>
 <a href="{% url index %}" class="btn btn-primary btn-large">Вернуться</a>
@@ -56,7 +70,11 @@
             $.getJSON("/search/", {search_lpu: search_lpu, search_gorod: search_gorod, search_rayon: search_rayon}, function(data) {
                 var $items = [];
                 $.each(data, function(key, val) {
-                    $items.push('<li><a href="{% url subdivision %}' + key + '/">' + val + '</a></li>');
+                    if (key == '5'){
+                        $items.push('<li><a href="javascript:void(0);" onclick="$(\'#myModal\').modal();">' + val + '</a></li>');
+                    }else{
+                        $items.push('<li><a href="{% url subdivision %}' + key + '/">' + val + '</a></li>');
+                    }
                 });
                 $("#search_table").html($items.join('')).fadeIn('fast');
             });
@@ -73,7 +91,11 @@
             $.getJSON("/search/", {search_lpu: search_lpu, search_gorod: search_gorod, search_rayon: search_rayon}, function(data) {
                 var $items = [];
                 $.each(data, function(key, val) {
-                    $items.push('<li><a href="{% url subdivision %}' + key + '/">' + val + '</a></li>');
+                    if (key == '5'){
+                        $items.push('<li><a href="javascript:void(0);" onclick="$(\'#myModal\').modal();">' + val + '</a></li>');
+                    }else{
+                        $items.push('<li><a href="{% url subdivision %}' + key + '/">' + val + '</a></li>');
+                    }
                 });
                 $("#search_table").html($items.join('')).fadeIn('fast');
             });
