@@ -5,8 +5,8 @@
 <blockquote>
     <dl class="dl-horizontal">
         <dt>Лечебное учреждение:</dt><dd>{{ current_lpu_title }}</dd>
-        <dd>{{ address }}</dd>
-        <dt>Телефон:</dt><dd>{{ current_lpu_phone }}</dd>
+        {% if address %}<dd>{{ address }}</dd>{% endif %}
+        {% if current_lpu_phone %}<dt>Телефон:</dt><dd>{{ current_lpu_phone }}</dd>{% endif %}
         <dt>Специализация:</dt><dd>{{ speciality }}</dd>
         <dt>Врач:</dt><dd>{{ doctor }}</dd>
         {% if ticketTable %}

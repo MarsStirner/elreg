@@ -154,7 +154,7 @@ def timePage(request, templateName, time=0):
     doctors = ListWSDL().listDoctors(hospital_Uid)
 
     for i in doctors:
-        if i.uid == int(time):
+        if time and i.uid == int(time):
             doctor = ' '.join([unicode(i.name.lastName), unicode(i.name.firstName), unicode(i.name.patronymic)]) # ФИО врача
             db.set('doctor', doctor)
 
