@@ -55,7 +55,7 @@
                                 <button type="submit" class="btn btn-block btn-success" name=ticket value="{{ cell.start.date|date:"d:m:Y" }}-{{ cell.start.time }}-{{ cell.finish.time }}">
                                     {{ cell.start.time|time:"H:i" }}
                                 </button>
-                            {% elif cell.status == 'locked' %}
+                            {% elif cell.status == 'locked' or cell.status == 'disabled' %}
                                 <button type="button" class="btn btn-block btn-danger disabled" name=ticket value="{{ cell.start.date|date:"d:m:Y" }}-{{ cell.start.time }}-{{ cell.finish.time }}">
                                     {{ cell.start.time|time:"H:i" }}
                                 </button>
