@@ -184,7 +184,7 @@ def timePage(request, templateName, time=0):
             for j in currentTicketList:
                 if j.start.time() == i:
                     tmp_list[dates.index(j.start.date())] = j
-                    if j.start>now and j.status in ('free', 'locked'):
+                    if j.start>now and j.status in ('free', 'locked', 'disabled'):
                         add_to_table = True
 
             if add_to_table:
