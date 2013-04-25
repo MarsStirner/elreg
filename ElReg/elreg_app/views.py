@@ -378,7 +378,7 @@ def patientPage(request, templateName):
                 # ошибка записи на приём:
                 elif ticketPatient:
                     if ticketPatient.result is True:
-                        ticketPatient_err = "Ошибка записи"
+                        ticketPatient_err = u"Ошибка записи"
                     else:
                         ticketPatient_err = ticketPatient.message
                 else:
