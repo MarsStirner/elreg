@@ -382,7 +382,7 @@ def patientPage(request, templateName):
                     else:
                         ticketPatient_err = ticketPatient.message
                 else:
-                    ticketPatient_err = '''Ошибка записи. Не удалось соединиться с сервером.
+                    ticketPatient_err = '''Не удалось соединиться с сервером.
                     Попробуйте отправить запрос ещё раз.'''
             # ошибка при записи на приём или ошибки в заполненной форме:
             db.set('step', 5)
