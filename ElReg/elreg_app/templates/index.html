@@ -15,7 +15,7 @@
         {% endif %}
                 <li>
                     <a href ="{% url medical_institution %}{{ region.code }}/">
-                        <h4>{{ region.region }}</h4>
+                        <h4>{{ region.name }}</h4>
                     </a>
                 </li>
         {% if forloop.last %}
