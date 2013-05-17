@@ -7,17 +7,16 @@
 Системные требования
 -----------
 
-* Серверная ОС семейства Linux
+* ОС AltLinux
+
+### Необходимое ПО, поставляемое с дистрибутивом AltLinux
+
 * Python 2.6 и выше
-* MySQL 5, libmysqlclient-devel
-* Web-Server Apache + mod_wsgi
-* git
-* zlib, zlib-devel
+* Web-Server Apache2 + apache2-mod_wsgi
+* zlib
+* redis
 
-Установка
------------
-
-Описанная ниже установка и настройка ПО производится из консоли Linux. Используется root-доступ.
+### Устанавливаемое ПО
 
 **Update системы**
 
@@ -26,12 +25,74 @@ apt-get update
 apt-get upgrade
 ```
 
-**Установка виртуального окружения и инструмента работы с пакетами Python**
+* C-compiler (gcc) ```apt-get install gcc4.4``` (установить подходящую версию, в данном случае 4.4)
+ * binutils
+ * cpp4.4
+ * gcc-common
+ * glibc
+ * glibc-devel
+ * glibc-kernheaders
+ * glibc-timezones
+ * kernel-headers-common
+ * libmprf
+ * tzdata
+* MySQL 5 (MySQL-server, MySQL-client) ```apt-get install MySQL-server``` ```apt-get install MySQL-client```
+* python-module-MySQLdb ```apt-get install python-module-MySQLdb```
+* libxml2-devel ```apt-get install libxml2-devel```
+* libxslt-devel ```apt-get install libxslt-devel```
+ * libxslt
+* libmysqlclient-devel ```apt-get install libmysqlclient-devel```
+* zlib-devel ```apt-get install zlib-devel```
+* libjpeg ```apt-get install libjpeg```
+* libjpeg-devel ```apt-get install libjpeg-devel```
+* libfreetype ```apt-get install libfreetype```
+* libfreetype-devel ```apt-get install libfreetype-devel```
+
+**Во вложенных пунктах указаны зависимости, которые потребуется разрешить**
+
+Установка
+-----------
+
+Описанная ниже установка и настройка ПО производится из консоли Linux. Используется root-доступ.
+
+### Установка и настройка виртуального окружения, библиотек Python
 
 ```
-apt-get -y install python python-dev python-module-setuptools
-easy_install virtualenv pip
+apt-get install python-module-virtualenv
 ```
+
+Используем директорию /srv/ для обеспечения защищенной установки ИС. Вместо /srv можно использовать любую удобную директорию на сервере (например, /var/www/webapps).
+
+При этом, следуя инструкции, необходимо подразумевать, что вместо /srv необходимо указывать Вашу директорию.
+
+В качестве имени проекта (my_project) можно использовать произвольное.
+
+```
+cd /srv/my_project
+```
+
+#### Установка python-модулей в виртуальное окружение
+
+**Создание и активация виртуального окружения**
+
+```
+virtualenv .virtualenv
+source .virtualenv/bin/activate
+```
+
+**Общий принцип установки python-модулей**
+
+* Заливаем во временную директорию (например /srv/my_project/tmp) архив модуля, скаченный с https://pypi.python.org/
+* Распаковываем архив и переходим в директорию модуля 
+ * ```tar xvfz *.tar.gz``` или ```unzip *.zip```
+ * ```cd unpacked_module_dir```
+* Выполняем ```python setup.py install```
+
+**Перечень модулей для установки**
+* Django==1.4 (https://pypi.python.org/pypi/Django/1.4.5)
+* pillow (https://pypi.python.org/pypi/Pillow/, https://pypi.python.org/packages/source/P/Pillow/Pillow-2.0.0.zip)
+* redis (https://pypi.python.org/pypi/redis/)
+
 
 **Конфигурирование MySQL**
 
@@ -62,13 +123,6 @@ mkdir -p my_project/app my_project/app/conf/apache
 mkdir -p my_project/logs my_project/run/eggs
 ```
 
-**Создаём и активируем виртульное окружение для проекта**
-
-```
-virtualenv my_project/venv
-source my_project/venv/bin/activate
-```
-
 **Создаём системного пользователя**
 
 Пользователь, из-под которого будет работать mod_wsgi процесс.
@@ -78,55 +132,14 @@ source my_project/venv/bin/activate
 chsh -s /bin/bash USERNAME
 ```
 
-**Клонирование github репозитория**
+#### Перенос исходников на сервер
 
-Перейти в корневую директорию проекта (в нашем примере: /var/www/webapps/my_project) и выполнить команду:
-```
-git clone https://github.com/KorusConsulting/elreg.git
-```
-Переключиться на ветку "AltLinux" и сделать pull изменений:
-```
-cd elreg
-git checkout AltLinux
-git pull
-```
-при этом необходимо наличие github аккаунта с правами доступа в корпоративный репозиторий
+Распаковать архив https://github.com/KorusConsulting/elreg/archive/AltLinux.zip в директорию проекта (в нашем примере: /var/www/webapps/my_project)
 
-
-**Установка библиотек и приложений**
-
-Устанавливаем ПО для разрешения зависимостей
-
-* Для mysql-python:
-
+для сокращения имени переименоуем elreg-AltLinux в elreg:
 ```
-apt-get install python-module-MySQLdb
+mv elreg-AltLinux elreg
 ```
-* Для PIL (установка модулей и настройка путей к библиотекам):
-
-```
-apt-get install libjpeg libjpeg-devel libfreetype libfreetype-devel zlib zlib-devel
-```
-
-**Устанавливаем django и используемые модули**
-
-```
-apt-get install ftp://ftp.altlinux.org/pub/distributions/ALTLinux/Sisyphus/files/SRPMS/python-module-django-1.4-alt1.src.rpm
-```
-в случае возникновения проблем установки django из rpm, исполльзовать следующий способ:
-```
-pip install -r ElReg/requirements.txt
-```
-Дополнительные модули:
-```
-apt-get install ftp://ftp.altlinux.org/pub/distributions/ALTLinux/Sisyphus/files/x86_64/RPMS/redis-2.4.7-alt2.x86_64.rpm
-apt-get install python-module-imaging
-pip install redis --upgrade
-service redis-server start
-```
-
-При получении сообщений об ошибках необходимо разрешить необходимые зависимости и повторно выполнить установку из requirements.txt. В конечном результате все пакеты должны установиться без уведомления об ошибках.
-
 
 **Настройка Apache**
 
@@ -138,7 +151,7 @@ nano /etc/httpd2/conf/sites-available/DOMAIN
 вставить следующее содержимое, подставив вместо USER и DOMAIN имя ранее созданного пользователя и выбранный домен:
 
 ```
-<VirtualHost *:80>
+<VirtualHost *>
 ServerAdmin root@DOMAIN
 ServerName DOMAIN
 
