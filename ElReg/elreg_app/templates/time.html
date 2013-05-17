@@ -5,8 +5,8 @@
 <blockquote>
     <dl class="dl-horizontal">
         <dt>Лечебное учреждение:</dt><dd>{{ current_lpu_title }}</dd>
-        <dd>{{ address }}</dd>
-        <dt>Телефон:</dt><dd>{{ current_lpu_phone }}</dd>
+        {% if address %}<dd>{{ address }}</dd>{% endif %}
+        {% if current_lpu_phone %}<dt>Телефон:</dt><dd>{{ current_lpu_phone }}</dd>{% endif %}
         <dt>Специализация:</dt><dd>{{ speciality }}</dd>
         <dt>Врач:</dt><dd>{{ doctor }}</dd>
         {% if ticketTable %}
@@ -55,12 +55,14 @@
                                 <button type="submit" class="btn btn-block btn-success" name=ticket value="{{ cell.start.date|date:"d:m:Y" }}-{{ cell.start.time }}-{{ cell.finish.time }}">
                                     {{ cell.start.time|time:"H:i" }}
                                 </button>
-                            {% elif cell.status == 'locked' %}
+                            {% elif cell.status == 'locked' or cell.status == 'disabled' %}
                                 <button type="button" class="btn btn-block btn-danger disabled" name=ticket value="{{ cell.start.date|date:"d:m:Y" }}-{{ cell.start.time }}-{{ cell.finish.time }}">
                                     {{ cell.start.time|time:"H:i" }}
                                 </button>
-                            {% endif %}
                             {% else %}
+                                <button type="button" class="btn btn-block disabled" name=ticket value="{{ cell.start.date|date:"d:m:Y" }}-{{ cell.start.time }}-{{ cell.finish.time }}">&nbsp;</button>
+                            {% endif %}
+                    {% else %}
                         <td align="center">
                         <button type="button" class="btn btn-block disabled" name=ticket value="{{ cell.start.date|date:"d:m:Y" }}-{{ cell.start.time }}-{{ cell.finish.time }}">&nbsp;</button>
                     {% endif %}
@@ -80,7 +82,7 @@
 </form>
 </div>
 {% else %}
-<legend>Расписания на текущую неделю нет</legend>
+<legend>Расписания на текущую неделю нет ({{ dates.0|date:"d.m.Y" }} - {{ dates.6|date:"d.m.Y" }})</legend>
 {% endif %}
 <p>
     <a href="{% url subdivision %}" class="btn btn-primary btn-large" title="Назад">Вернуться</a>

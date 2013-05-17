@@ -3,9 +3,20 @@
 from django.contrib.sessions.backends.db import SessionStore
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
+import config
 from livesettings import config_value
 from suds.client import Client
 import redis
+import settings
+
+import logging
+if settings.DEBUG:
+    logging.basicConfig(level=logging.INFO)
+    logging.getLogger('suds.client').setLevel(logging.CRITICAL)
+else:
+    logging.basicConfig(level=logging.CRITICAL)
+    logging.getLogger('suds.client').setLevel(logging.CRITICAL)
+
 
 IS = config_value('IS', 'URL')
 
@@ -33,6 +44,9 @@ class Redis ():
         elif isinstance(key, dict):
             for (key, value) in key.items():
                 self.set(key, value)
+
+    def delete(self, *names):
+        self.db.delete(*names)
 
     def get(self, key):
         """
@@ -68,7 +82,18 @@ class ListWSDL():
 
     """
     def __init__(self):
-        self.client = Client(IS + "list")
+        if settings.DEBUG:
+            self.client = Client(IS % "list", cache=None)
+        else:
+            self.client = Client(IS % "list")
+
+    def listRegions(self):
+        """Получение списка регионов из ИС"""
+        try:
+            regions = self.client.service.listRegions().regions
+        except:
+            regions = []
+        return regions
 
     def listHospitals(self, okato=0):
         """
@@ -78,7 +103,7 @@ class ListWSDL():
         """
         try:
             if okato:
-                hospitals = self.client.service.listHospitals(ocatoCode=okato).hospitals
+                hospitals = self.client.service.listHospitals({'ocatoCode': okato}).hospitals
             else:
                 hospitals = self.client.service.listHospitals().hospitals
         except:
@@ -93,12 +118,11 @@ class ListWSDL():
         try:
             if hospital_Uid:
                 if speciality:
-                    doctors = self.client.service.listDoctors(
-                        searchScope = {'hospitalUid': hospital_Uid, }, speciality = speciality
-                    ).doctors
+                    doctors = self.client.service.listDoctors({
+                        'searchScope': {'hospitalUid': hospital_Uid, }, 'speciality': speciality
+                    }).doctors
                 else:
-                    doctors = self.client.service.listDoctors(searchScope = {'hospitalUid': hospital_Uid, }).doctors
-
+                    doctors = self.client.service.listDoctors({'searchScope': {'hospitalUid': hospital_Uid, }}).doctors
             else:
                 doctors = self.client.service.listDoctors().doctors
         except:
@@ -112,7 +136,10 @@ class InfoWSDL():
 
     """
     def __init__(self):
-        self.client = Client(IS + "info")
+        if settings.DEBUG:
+            self.client = Client(IS % "info", cache=None)
+        else:
+            self.client = Client(IS % "info")
 
     def getHospitalInfo(self, hospitalUid=0):
         """
@@ -121,9 +148,9 @@ class InfoWSDL():
         """
         try:
             if hospitalUid:
-                info_list = self.client.service.getHospitalInfo(hospitalUid=hospitalUid)
+                info_list = self.client.service.getHospitalInfo({'hospitalUid': hospitalUid}).info
             else:
-                info_list = self.client.service.getHospitalInfo()
+                info_list = self.client.service.getHospitalInfo().info
         except:
             info_list = []
         return info_list
@@ -135,7 +162,10 @@ class ScheduleWSDL():
 
     """
     def __init__(self):
-        self.client = Client(IS + "schedule")
+        if settings.DEBUG:
+            self.client = Client(IS % "schedule", cache=None)
+        else:
+            self.client = Client(IS % "schedule")
 
     def getScheduleInfo(self, hospitalUid=0, doctorUid=0):
         """
@@ -143,7 +173,7 @@ class ScheduleWSDL():
 
         """
         try:
-            ticket = self.client.service.getScheduleInfo(hospitalUid=hospitalUid, doctorUid=doctorUid)
+            ticket = self.client.service.getScheduleInfo({'hospitalUid': hospitalUid, 'doctorUid': doctorUid}).timeslots
         except:
             ticket = []
         return ticket
@@ -154,24 +184,27 @@ class ScheduleWSDL():
 
         """
         try:
-            ticket = self.client.service.getTicketStatus(hospitalUid=hospitalUid, ticketUid=ticketUid)[0]
+            ticket = self.client.service.getTicketStatus({'hospitalUid': hospitalUid, 'ticketUid': ticketUid})
         except:
             ticket = []
         return ticket
 
-    def enqueue(self, person, omiPolicyNumber, hospitalUid, doctorUid, timeslotStart, hospitalUidFrom, birthday):
+    def enqueue(self, person, document, hospitalUid, doctorUid, timeslotStart, hospitalUidFrom, birthday, sex):
         """
         Метод принимает данные о пациенте и возвращает номер талона и результат записи на приём.
 
         """
         try:
-            ticket = self.client.service.enqueue(person=person,
-                                                omiPolicyNumber=omiPolicyNumber,
-                                                hospitalUid=hospitalUid,
-                                                doctorUid=doctorUid,
-                                                timeslotStart=timeslotStart,
-                                                hospitalUidFrom=hospitalUidFrom,
-                                                birthday=birthday)
+            ticket = self.client.service.enqueue({
+                'person': person,
+                'document': document,
+                'hospitalUid': hospitalUid,
+                'doctorUid': doctorUid,
+                'timeslotStart': timeslotStart,
+                'hospitalUidFrom': hospitalUidFrom,
+                'birthday': birthday,
+                'sex': sex
+            })
         except:
             ticket = []
         return ticket

@@ -8,5 +8,5 @@ pytz
 suds==0.4
 south
 django-simple-captcha
--e hg+http://bitbucket.org/bkroeze/django-livesettings/#egg=django-livesettings
--e hg+http://bitbucket.org/bkroeze/django-keyedcache/#egg=django-keyedcache
+django-livesettings
+django-keyedcache
