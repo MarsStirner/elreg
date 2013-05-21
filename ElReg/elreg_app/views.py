@@ -237,27 +237,27 @@ def patientPage(request, templateName):
         if request.POST.get('flag', ''):
             # Проверка на заполненность формы пользователем и ее корректность:
             # фамилия
-            lastName = request.POST.get('lastName', '')
+            lastName = request.POST.get('lastName', '').strip()
             if not lastName:
                 errors.append(u"Введите фамилию")
             elif not stringValidation(lastName):
                 errors.append(u'Введите корректно фамилию')
             # имя
-            firstName = request.POST.get('firstName', '')
+            firstName = request.POST.get('firstName', '').strip()
             if not firstName:
                 errors.append(u"Введите имя")
             elif not stringValidation(firstName):
                 errors.append(u'Введите корректно имя')
             # отчество
-            patronymic = request.POST.get('patronymic', '')
+            patronymic = request.POST.get('patronymic', '').strip()
             if not patronymic:
                 errors.append(u"Введите отчество")
             elif not stringValidation(patronymic):
                 errors.append(u'Введите корректно отчество')
             # день рождения
-            dd = request.POST.get('dd', '')
-            mm = request.POST.get('mm', '')
-            yy = request.POST.get('yy', '')
+            dd = request.POST.get('dd', '').strip()
+            mm = request.POST.get('mm', '').strip()
+            yy = request.POST.get('yy', '').strip()
             if not dd or not mm or not yy:
                 errors.append(u'Введите дату рождения')
             # документ
@@ -292,7 +292,7 @@ def patientPage(request, templateName):
                     errors.append(u"Введите номер документа")
 
             # электронная почта
-            userEmail = request.POST.get('email', '')
+            userEmail = request.POST.get('email', '').strip()
             if userEmail and not emailValidation(userEmail):
                 errors.append(u'Введите корректно адрес электронной почты')
 
