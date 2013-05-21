@@ -1,5 +1,7 @@
 django==1.4.1
 redis==2.7.1
+mysql-python
+pillow
 
 simplejson==2.6.2
 pytz
@@ -8,5 +10,3 @@ south
 django-simple-captcha
 django-livesettings
 django-keyedcache
-PIL #http://obroll.com/install-python-pil-python-image-library-on-ubuntu-11-10-oneiric/
-mysql-python
