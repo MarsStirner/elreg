@@ -344,18 +344,19 @@ def patientPage(request, templateName):
                         plaintext = get_template('email/email.txt')
                         htmly = get_template('email/email.html')
 
-                        context = Context({'ticketUid': ticketPatient.ticketUid,
-                                           'patientName': db.get('patientName'),
-                                           'birthday': db.get('birthday'),
-                                           'omiPolicyNumber': db.get('omiPolicyNumber'),
-                                           'current_lpu_title': db.get('current_lpu_title'),
-                                           'current_lpu_phone': db.get('current_lpu_phone'),
-                                           'address': db.get('address'),
-                                           'doctor': db.get('doctor'),
-                                           'speciality': db.get('speciality'),
-                                           'date': date,
-                                           'start_time': start_time,
-                                           'finish_time': finish_time}.update(document))
+                        context_parameters = {'ticketUid': ticketPatient.ticketUid,
+                                               'patientName': db.get('patientName'),
+                                               'birthday': db.get('birthday'),
+                                               'omiPolicyNumber': db.get('omiPolicyNumber'),
+                                               'current_lpu_title': db.get('current_lpu_title'),
+                                               'current_lpu_phone': db.get('current_lpu_phone'),
+                                               'address': db.get('address'),
+                                               'doctor': db.get('doctor'),
+                                               'speciality': db.get('speciality'),
+                                               'date': date,
+                                               'start_time': start_time,
+                                               'finish_time': finish_time}
+                        context = Context(context_parameters.update(document))
 
                         subject, from_email, to = u'Уведомление о записи на приём', emailLPU, userEmail
                         text_content = plaintext.render(context)
