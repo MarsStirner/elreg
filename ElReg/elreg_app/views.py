@@ -355,7 +355,7 @@ def patientPage(request, templateName):
                                            'speciality': db.get('speciality'),
                                            'date': date,
                                            'start_time': start_time,
-                                           'finish_time': finish_time})
+                                           'finish_time': finish_time}.update(document))
 
                         subject, from_email, to = u'Уведомление о записи на приём', emailLPU, userEmail
                         text_content = plaintext.render(context)
@@ -379,11 +379,11 @@ def patientPage(request, templateName):
                 # ошибка записи на приём:
                 elif ticketPatient:
                     if ticketPatient.result is True:
-                        ticketPatient_err = "Ошибка записи"
+                        ticketPatient_err = u"Ошибка записи"
                     else:
                         ticketPatient_err = ticketPatient.message
                 else:
-                    ticketPatient_err = '''Ошибка записи. Не удалось соединиться с сервером.
+                    ticketPatient_err = '''Не удалось соединиться с сервером.
                     Попробуйте отправить запрос ещё раз.'''
             # ошибка при записи на приём или ошибки в заполненной форме:
             db.set('step', 5)
