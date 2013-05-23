@@ -344,45 +344,47 @@ def patientPage(request, templateName):
                         plaintext = get_template('email/email.txt')
                         htmly = get_template('email/email.html')
 
-                        context = Context({'ticketUid': ticketPatient.ticketUid,
-                                           'patientName': db.get('patientName'),
-                                           'birthday': db.get('birthday'),
-                                           'omiPolicyNumber': db.get('omiPolicyNumber'),
-                                           'current_lpu_title': db.get('current_lpu_title'),
-                                           'current_lpu_phone': db.get('current_lpu_phone'),
-                                           'address': db.get('address'),
-                                           'doctor': db.get('doctor'),
-                                           'speciality': db.get('speciality'),
-                                           'date': date,
-                                           'start_time': start_time,
-                                           'finish_time': finish_time})
+                        context_parameters = {'ticketUid': ticketPatient.ticketUid,
+                                               'patientName': db.get('patientName'),
+                                               'birthday': db.get('birthday'),
+                                               'current_lpu_title': db.get('current_lpu_title'),
+                                               'current_lpu_phone': db.get('current_lpu_phone'),
+                                               'address': db.get('address'),
+                                               'doctor': db.get('doctor'),
+                                               'speciality': db.get('speciality'),
+                                               'date': date,
+                                               'start_time': start_time,
+                                               'finish_time': finish_time}
+                        context_parameters.update(document)
+                        context = Context(context_parameters)
 
                         subject, from_email, to = u'Уведомление о записи на приём', emailLPU, userEmail
                         text_content = plaintext.render(context)
                         html_content = htmly.render(context)
                         connection = get_connection(settings.EMAIL_BACKEND, False,
-                                                    **{'host': config_value('Mail', 'EMAIL_HOST'),
+                                                    **{'host': str(config_value('Mail', 'EMAIL_HOST')),
                                                        'port': config_value('Mail', 'EMAIL_PORT'),
-                                                       'username': config_value('Mail', 'EMAIL_HOST_USER'),
-                                                       'password': config_value('Mail', 'EMAIL_HOST_PASSWORD'),
+                                                       'username': str(config_value('Mail', 'EMAIL_HOST_USER')),
+                                                       'password': str(config_value('Mail', 'EMAIL_HOST_PASSWORD')),
                                                        'use_tls': config_value('Mail', 'EMAIL_USE_TLS'),
                                                        })
                         msg = EmailMultiAlternatives(subject, text_content, from_email, [to], connection=connection,)
                         msg.attach_alternative(html_content, "text/html")
                         try:
                             msg.send()
-                        except:
-                            logger.error("Couldn't connect to smtp")
+                        except Exception, e:
+                            print e
+                            logger.error(e)
 
                     return HttpResponseRedirect(reverse('register'))
                 # ошибка записи на приём:
                 elif ticketPatient:
                     if ticketPatient.result is True:
-                        ticketPatient_err = "Ошибка записи"
+                        ticketPatient_err = u"Ошибка записи"
                     else:
                         ticketPatient_err = ticketPatient.message
                 else:
-                    ticketPatient_err = '''Ошибка записи. Не удалось соединиться с сервером.
+                    ticketPatient_err = '''Не удалось соединиться с сервером.
                     Попробуйте отправить запрос ещё раз.'''
             # ошибка при записи на приём или ошибки в заполненной форме:
             db.set('step', 5)
