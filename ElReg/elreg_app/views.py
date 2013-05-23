@@ -355,7 +355,7 @@ def patientPage(request, templateName):
                                            'speciality': db.get('speciality'),
                                            'date': date,
                                            'start_time': start_time,
-                                           'finish_time': finish_time})
+                                           'finish_time': finish_time}.update(document))
 
                         subject, from_email, to = u'Уведомление о записи на приём', emailLPU, userEmail
                         text_content = plaintext.render(context)

@@ -1,7 +1,22 @@
 УВЕДОМЛЕНИЕ О ЗАПИСИ НА ПРИЕМ №{{ ticketUid }}
 ФИО (Пациент): {{ patientName }}
 Дата рождения: {{ birthday }} г.
-Полис ОМС: {{ omiPolicyNumber }}
+{% if client_id %}
+№ Амбулаторной карты: {{ client_id }}
+{% else %}
+{% if policy_type == '2' or policy_type == '4' %}
+Полис ОМС: {% if series %}{{ series }} {% endif %}{{ number }}
+{% endif %}
+{% if policy_type == '3' %}
+Полис ДМС: {% if series %}{{ series }} {% endif %}{{ number }}
+{% endif %}
+{% if document_code == '7' %}
+Военный билет: {% if series %}{{ series }} {% endif %}{{ number }}
+{% endif %}
+{% if document_code == '4' %}
+Удостоверение личности офицера: {% if series %}{{ series }} {% endif %}{{ number }}
+{% endif %}
+{% endif %}
 ВЫ ЗАПИСАНЫ НА ПРИЕМ:
 Лечебное учреждение: {{ current_lpu_title }}, {{ address }}, телефон: {{ current_lpu_phone }}
 Врач: {{ doctor }} ({{ speciality }})
