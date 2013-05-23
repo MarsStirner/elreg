@@ -347,7 +347,6 @@ def patientPage(request, templateName):
                         context_parameters = {'ticketUid': ticketPatient.ticketUid,
                                                'patientName': db.get('patientName'),
                                                'birthday': db.get('birthday'),
-                                               'omiPolicyNumber': db.get('omiPolicyNumber'),
                                                'current_lpu_title': db.get('current_lpu_title'),
                                                'current_lpu_phone': db.get('current_lpu_phone'),
                                                'address': db.get('address'),
