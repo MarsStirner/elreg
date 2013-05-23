@@ -361,18 +361,19 @@ def patientPage(request, templateName):
                         text_content = plaintext.render(context)
                         html_content = htmly.render(context)
                         connection = get_connection(settings.EMAIL_BACKEND, False,
-                                                    **{'host': config_value('Mail', 'EMAIL_HOST'),
+                                                    **{'host': str(config_value('Mail', 'EMAIL_HOST')),
                                                        'port': config_value('Mail', 'EMAIL_PORT'),
-                                                       'username': config_value('Mail', 'EMAIL_HOST_USER'),
-                                                       'password': config_value('Mail', 'EMAIL_HOST_PASSWORD'),
+                                                       'username': str(config_value('Mail', 'EMAIL_HOST_USER')),
+                                                       'password': str(config_value('Mail', 'EMAIL_HOST_PASSWORD')),
                                                        'use_tls': config_value('Mail', 'EMAIL_USE_TLS'),
                                                        })
                         msg = EmailMultiAlternatives(subject, text_content, from_email, [to], connection=connection,)
                         msg.attach_alternative(html_content, "text/html")
                         try:
                             msg.send()
-                        except:
-                            logger.error("Couldn't connect to smtp")
+                        except Exception, e:
+                            print e
+                            logger.error(e)
 
                     return HttpResponseRedirect(reverse('register'))
                 # ошибка записи на приём:
