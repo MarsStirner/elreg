@@ -16,16 +16,16 @@
             {% if client_id %}
             <tr><td>№ Амбулаторной карты:</td><td colspan="2">{{ client_id }}</td></tr>
             {% else %}
-            {% if policy_type == '2' or policy_type == '4' %}
+            {% if policy_type == 2 or policy_type == 4 %}
             <tr><td>Полис ОМС:</td><td colspan="2">{% if series %}{{ series }} {% endif %}{{ number }}</td></tr>
             {% endif %}
-            {% if policy_type == '3' %}
+            {% if policy_type == 3 %}
             <tr><td>Полис ДМС:</td><td colspan="2">{% if series %}{{ series }} {% endif %}{{ number }}</td></tr>
             {% endif %}
-            {% if document_code == '7' %}
+            {% if document_code == 7 %}
             <tr><td>Военный билет:</td><td colspan="2">{% if series %}{{ series }} {% endif %}{{ number }}</td></tr>
             {% endif %}
-            {% if document_code == '4' %}
+            {% if document_code == 4 %}
             <tr><td>Удостоверение личности офицера:</td><td colspan="2">{% if series %}{{ series }} {% endif %}{{ number }}</td></tr>
             {% endif %}
             {% endif %}
