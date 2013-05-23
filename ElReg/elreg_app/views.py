@@ -356,7 +356,8 @@ def patientPage(request, templateName):
                                                'date': date,
                                                'start_time': start_time,
                                                'finish_time': finish_time}
-                        context = Context(context_parameters.update(document))
+                        context_parameters.update(document)
+                        context = Context(context_parameters)
 
                         subject, from_email, to = u'Уведомление о записи на приём', emailLPU, userEmail
                         text_content = plaintext.render(context)
