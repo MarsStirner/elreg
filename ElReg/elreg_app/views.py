@@ -237,27 +237,27 @@ def patientPage(request, templateName):
         if request.POST.get('flag', ''):
             # Проверка на заполненность формы пользователем и ее корректность:
             # фамилия
-            lastName = request.POST.get('lastName', '')
+            lastName = request.POST.get('lastName', '').strip()
             if not lastName:
                 errors.append(u"Введите фамилию")
             elif not stringValidation(lastName):
                 errors.append(u'Введите корректно фамилию')
             # имя
-            firstName = request.POST.get('firstName', '')
+            firstName = request.POST.get('firstName', '').strip()
             if not firstName:
                 errors.append(u"Введите имя")
             elif not stringValidation(firstName):
                 errors.append(u'Введите корректно имя')
             # отчество
-            patronymic = request.POST.get('patronymic', '')
+            patronymic = request.POST.get('patronymic', '').strip()
             if not patronymic:
                 errors.append(u"Введите отчество")
             elif not stringValidation(patronymic):
                 errors.append(u'Введите корректно отчество')
             # день рождения
-            dd = request.POST.get('dd', '')
-            mm = request.POST.get('mm', '')
-            yy = request.POST.get('yy', '')
+            dd = request.POST.get('dd', '').strip()
+            mm = request.POST.get('mm', '').strip()
+            yy = request.POST.get('yy', '').strip()
             if not dd or not mm or not yy:
                 errors.append(u'Введите дату рождения')
             # документ
@@ -292,13 +292,13 @@ def patientPage(request, templateName):
                     errors.append(u"Введите номер документа")
 
             # электронная почта
-            userEmail = request.POST.get('email', '')
+            userEmail = request.POST.get('email', '').strip()
             if userEmail and not emailValidation(userEmail):
                 errors.append(u'Введите корректно адрес электронной почты')
 
             form = get_captcha_form(request.POST)
             if not form.is_valid():
-                errors.append(u'Введёно неверное значение проверочного выражения или истекло время отведенное для его ввода')
+                errors.append(u'Введено неверное значение проверочного выражения или истекло время, отведенное для его ввода')
 
             ticketPatient_err = ''
             # если ошибок в форме нет
@@ -344,45 +344,47 @@ def patientPage(request, templateName):
                         plaintext = get_template('email/email.txt')
                         htmly = get_template('email/email.html')
 
-                        context = Context({'ticketUid': ticketPatient.ticketUid,
-                                           'patientName': db.get('patientName'),
-                                           'birthday': db.get('birthday'),
-                                           'omiPolicyNumber': db.get('omiPolicyNumber'),
-                                           'current_lpu_title': db.get('current_lpu_title'),
-                                           'current_lpu_phone': db.get('current_lpu_phone'),
-                                           'address': db.get('address'),
-                                           'doctor': db.get('doctor'),
-                                           'speciality': db.get('speciality'),
-                                           'date': date,
-                                           'start_time': start_time,
-                                           'finish_time': finish_time})
+                        context_parameters = {'ticketUid': ticketPatient.ticketUid,
+                                               'patientName': db.get('patientName'),
+                                               'birthday': db.get('birthday'),
+                                               'current_lpu_title': db.get('current_lpu_title'),
+                                               'current_lpu_phone': db.get('current_lpu_phone'),
+                                               'address': db.get('address'),
+                                               'doctor': db.get('doctor'),
+                                               'speciality': db.get('speciality'),
+                                               'date': date,
+                                               'start_time': start_time,
+                                               'finish_time': finish_time}
+                        context_parameters.update(document)
+                        context = Context(context_parameters)
 
                         subject, from_email, to = u'Уведомление о записи на приём', emailLPU, userEmail
                         text_content = plaintext.render(context)
                         html_content = htmly.render(context)
                         connection = get_connection(settings.EMAIL_BACKEND, False,
-                                                    **{'host': config_value('Mail', 'EMAIL_HOST'),
+                                                    **{'host': str(config_value('Mail', 'EMAIL_HOST')),
                                                        'port': config_value('Mail', 'EMAIL_PORT'),
-                                                       'username': config_value('Mail', 'EMAIL_HOST_USER'),
-                                                       'password': config_value('Mail', 'EMAIL_HOST_PASSWORD'),
+                                                       'username': str(config_value('Mail', 'EMAIL_HOST_USER')),
+                                                       'password': str(config_value('Mail', 'EMAIL_HOST_PASSWORD')),
                                                        'use_tls': config_value('Mail', 'EMAIL_USE_TLS'),
                                                        })
                         msg = EmailMultiAlternatives(subject, text_content, from_email, [to], connection=connection,)
                         msg.attach_alternative(html_content, "text/html")
                         try:
                             msg.send()
-                        except:
-                            logger.error("Couldn't connect to smtp")
+                        except Exception, e:
+                            print e
+                            logger.error(e)
 
                     return HttpResponseRedirect(reverse('register'))
                 # ошибка записи на приём:
                 elif ticketPatient:
                     if ticketPatient.result is True:
-                        ticketPatient_err = "Ошибка записи"
+                        ticketPatient_err = u"Ошибка записи"
                     else:
                         ticketPatient_err = ticketPatient.message
                 else:
-                    ticketPatient_err = '''Ошибка записи. Не удалось соединиться с сервером.
+                    ticketPatient_err = '''Не удалось соединиться с сервером.
                     Попробуйте отправить запрос ещё раз.'''
             # ошибка при записи на приём или ошибки в заполненной форме:
             db.set('step', 5)
