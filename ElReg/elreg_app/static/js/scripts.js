@@ -252,7 +252,7 @@ $(document).ready(function () {
                 if($('#note' + i)){
                     $('#note' + i).remove();
                 }
-                if(!$(this).val()/* || ($(this).attr('name')=='number' && !regex.test($(this).val()))*/){
+                if($(this).closest('.control-group').find('.text-error')[0] && $(this).closest('.control-group').find('.text-error')[0].innerText=='*' && !$(this).val()/* || ($(this).attr('name')=='number' && !regex.test($(this).val()))*/){
                     $(this).closest('.control-group').removeClass('success').addClass('error');
                     $('<span class="help-inline" id="note' + i + '">Введите '+ comment[$(this).attr('name')] +'</span>').fadeIn('slow').insertAfter($(this));
                     is_valid = false;

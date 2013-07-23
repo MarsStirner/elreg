@@ -15,7 +15,7 @@
 
 <div class="{% if doc_meta_type != 'oms_dms' %}hidden{% endif %} doc_div policy_type_2 policy_type_3">
     <div class="control-group">
-        <label class="control-label" for="series">Серия полиса<span class="text-error">*</span></label>
+        <label class="control-label" for="series">Серия полиса</label>
         <div class="controls">
             <input type="text" name="series" id="series" value="{% if doc_meta_type == 'oms_dms' %}{{ series }}{% endif %}" {% if doc_meta_type != 'oms_dms' %}disabled{% endif %} maxlength="10" size="2" autocomplete="on" placeholder="" class="span1" />
         </div>
