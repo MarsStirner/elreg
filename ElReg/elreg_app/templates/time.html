@@ -30,9 +30,9 @@
             <div class="row-fluid">
                 <div class="span3"><p class="lead"><big>Расписание врача:</big></p></div>
                 <div class="span3 offset6">
-                    <span class="label label-success">Свободно</span>
-                    <span class="label label-important">Занято</span>
-                    <span class="label">Приёма нет</span>
+                    <button type="submit" class="btn btn-mini btn-success">Свободно</button>
+                    <button type="submit" class="btn btn-mini btn-danger disabled">Занято</button>
+                    <button type="submit" class="btn btn-mini btn-inverse disabled">Приём окончен</button>
                 </div>
             </div>
         </caption>
@@ -46,7 +46,7 @@
         </tr>
         </thead>
         <tbody>
-        {% for row in ticketTable %}
+                {% for row in ticketTable %}
             <tr>
                 {% for cell in row %}
                     {% if cell.start > now %}
@@ -60,11 +60,11 @@
                                     {{ cell.start.time|time:"H:i" }}
                                 </button>
                             {% else %}
-                                <button type="button" class="btn btn-block disabled" name=ticket value="{{ cell.start.date|date:"d:m:Y" }}-{{ cell.start.time }}-{{ cell.finish.time }}">&nbsp;</button>
+                                <button type="button" class="btn btn-block disabled{% if cell.start.time %} btn-inverse{% endif %}" name=ticket value="{{ cell.start.date|date:"d:m:Y" }}-{{ cell.start.time }}-{{ cell.finish.time }}">{{ cell.start.time|time:"H:i"|default:"&nbsp;" }}</button>
                             {% endif %}
                     {% else %}
                         <td align="center">
-                        <button type="button" class="btn btn-block disabled" name=ticket value="{{ cell.start.date|date:"d:m:Y" }}-{{ cell.start.time }}-{{ cell.finish.time }}">&nbsp;</button>
+                        <button type="button" class="btn btn-block disabled{% if cell.start.time %} btn-inverse{% endif %}" name=ticket value="{{ cell.start.date|date:"d:m:Y" }}-{{ cell.start.time }}-{{ cell.finish.time }}">{{ cell.start.time|time:"H:i"|default:"&nbsp;" }}</button>
                     {% endif %}
                 </td>
                 {% endfor %}
