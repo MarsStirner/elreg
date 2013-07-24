@@ -173,6 +173,14 @@ $(document).ready(function () {
             $('<span class="help-inline" id="note4">Введите полностью дату рождения</span>').fadeIn('slow').insertAfter($yy);
             $dd.focus();
             return false;
+        } else if ($yy.val().length<4) {
+            $('#dd').closest('.control-group').removeClass('success').addClass('error');
+            if($('#note4')){
+                $('#note4').remove();
+            }
+            $('<span class="help-inline" id="note4">Введите четырёхзначное значение года рождения</span>').fadeIn('slow').insertAfter($yy);
+            $dd.focus();
+            return false;
         }
         else {
             if($('#note4')){
