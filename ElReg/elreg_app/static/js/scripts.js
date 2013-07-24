@@ -179,7 +179,7 @@ $(document).ready(function () {
                 $('#note4').remove();
             }
             $('<span class="help-inline" id="note4">Введите четырёхзначное значение года рождения</span>').fadeIn('slow').insertAfter($yy);
-            $dd.focus();
+            $yy.focus();
             return false;
         }
         else {
