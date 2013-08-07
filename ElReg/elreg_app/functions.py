@@ -44,6 +44,9 @@ class Redis ():
         elif isinstance(key, dict):
             for (key, value) in key.items():
                 self.set(key, value)
+        else:
+            self.db.hset(self.id, key, "")
+            self.delete([key])
 
     def delete(self, *names):
         self.db.delete(*names)
