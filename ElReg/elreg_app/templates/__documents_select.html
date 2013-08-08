@@ -3,7 +3,7 @@
     <div class="controls">
         <select name="document_type" id="doc_type_selector" class="span3">
             <option value="">- укажите тип документа -</option>
-            <option value="client_id"{% if document_type == 'client_id' %} selected{% endif %}>Амбулаторная карта</option>
+            <option value="client_id"{% if document_type == 'client_id' %} selected{% endif %}>Электронная амбулаторная карта</option>
             <option value="doc_type_7"{% if document_type == 'doc_type_7' %} selected{% endif %}>Военный билет</option>
             <option value="policy_type_3"{% if document_type == 'policy_type_3' %} selected{% endif %}>Полис ДМС</option>
             <option value="policy_type_2"{% if document_type == 'policy_type_2' %} selected{% endif %}>Полис ОМС (старого образца)</option>
@@ -40,7 +40,7 @@
 
 <div class="{% if doc_meta_type != 'amb' %}hidden{% endif %} doc_div client_id">
     <div class="control-group">
-        <label class="control-label" for="client_id">№ амбулаторной карты<span class="text-error">*</span></label>
+        <label class="control-label" for="client_id">Электронная амбулаторная карта<span class="text-error">*</span></label>
         <div class="controls">
             <input type="text" class="span3" name="number" id="client_id" value="{% if doc_meta_type == 'amb' %}{{ number }}{% endif %}" {% if doc_meta_type != 'amb' %}disabled{% endif %} maxlength="16" size="20" autocomplete="on" placeholder="1234567890123456" />
         </div>

@@ -201,10 +201,11 @@ CACHE_PREFIX = 'elreg'
 CACHE_TIMEOUT = 300
 
 # Конфигурация CAPTCHA
-CAPTCHA_CHALLENGE_FUNCT = 'captcha.helpers.math_challenge'
+CAPTCHA_CHALLENGE_FUNCT = 'custom_captcha.helpers.math_challenge'
 CAPTCHA_NOISE_FUNCTIONS = ()
 CAPTCHA_LETTER_ROTATION = (-10, 10)
 CAPTCHA_FOREGROUND_COLOR = '#000'
+CAPTCHA_TIMEOUT = 1440
 
 # Конфигурация электронной почты:
 

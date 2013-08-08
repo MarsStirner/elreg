@@ -108,6 +108,11 @@ $(document).ready(function () {
             event.preventDefault();
         }
     });
+    $('#captcha_1').keypress(function(event) {
+        if (event.which && (event.which < 48 || event.which > 57) && (event.which != 8)) {
+            event.preventDefault();
+        }
+    });
     $('#chb').click(function() {
         document.getElementById('email').disabled=(this.checked!=true);
         document.getElementById('email').value='';
