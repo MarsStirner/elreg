@@ -94,7 +94,8 @@ class ListWSDL():
         """Получение списка регионов из ИС"""
         try:
             regions = self.client.service.listRegions().regions
-        except:
+        except Exception, e:
+            print e
             regions = []
         return regions
 
@@ -109,7 +110,8 @@ class ListWSDL():
                 hospitals = self.client.service.listHospitals({'ocatoCode': okato}).hospitals
             else:
                 hospitals = self.client.service.listHospitals().hospitals
-        except:
+        except Exception, e:
+            print e
             hospitals = []
         return hospitals
 
@@ -128,7 +130,8 @@ class ListWSDL():
                     doctors = self.client.service.listDoctors({'searchScope': {'hospitalUid': hospital_Uid, }}).doctors
             else:
                 doctors = self.client.service.listDoctors().doctors
-        except:
+        except Exception, e:
+            print e
             doctors = []
         return doctors
 
@@ -154,7 +157,8 @@ class InfoWSDL():
                 info_list = self.client.service.getHospitalInfo({'hospitalUid': hospitalUid}).info
             else:
                 info_list = self.client.service.getHospitalInfo().info
-        except:
+        except Exception, e:
+            print e
             info_list = []
         return info_list
 
@@ -177,7 +181,8 @@ class ScheduleWSDL():
         """
         try:
             ticket = self.client.service.getScheduleInfo({'hospitalUid': hospitalUid, 'doctorUid': doctorUid}).timeslots
-        except:
+        except Exception, e:
+            print e
             ticket = []
         return ticket
 
@@ -188,7 +193,8 @@ class ScheduleWSDL():
         """
         try:
             ticket = self.client.service.getTicketStatus({'hospitalUid': hospitalUid, 'ticketUid': ticketUid})
-        except:
+        except Exception, e:
+            print e
             ticket = []
         return ticket
 
@@ -208,7 +214,8 @@ class ScheduleWSDL():
                 'birthday': birthday,
                 'sex': sex
             })
-        except:
+        except Exception, e:
+            print e
             ticket = []
         return ticket
 
