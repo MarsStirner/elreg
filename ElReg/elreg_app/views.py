@@ -301,6 +301,22 @@ def patientPage(request, templateName):
                 errors.append(u'Введено неверное значение проверочного выражения или истекло время, отведенное для его ввода')
 
             ticketPatient_err = ''
+
+            _remember_user(request,
+                           {'lastName': lastName,
+                            'firstName': firstName,
+                            'patronymic': patronymic,
+                            'dd': dd,
+                            'mm': mm,
+                            'yy': yy,
+                            'document_type': document_type,
+                            'doc_meta_type': doc_meta_type,
+                            'series': series if series != '0' else '',
+                            'number': number,
+                            'userEmail': userEmail,
+                            'sex': request.POST.get('radio', ''),
+                            'send_email': request.POST.get('send_email', '')})
+
             # если ошибок в форме нет
             if not errors:
                 hospital_Uid = db.get('hospital_Uid')
@@ -415,11 +431,29 @@ def patientPage(request, templateName):
                                                  'date': date,
                                                  'start_time': start_time,
                                                  'finish_time': finish_time,
+                                                 'lastName': db.get('lastName'),
+                                                 'firstName': db.get('firstName'),
+                                                 'patronymic': db.get('patronymic'),
+                                                 'dd': db.get('dd'),
+                                                 'mm': db.get('mm'),
+                                                 'yy': db.get('yy'),
+                                                 'document_type': db.get('document_type'),
+                                                 'doc_meta_type': db.get('doc_meta_type'),
+                                                 'series': db.get('series') if db.get('series') != '0' else '',
+                                                 'number': db.get('number'),
+                                                 'userEmail': db.get('userEmail'),
+                                                 'sex': db.get('sex'),
+                                                 'send_email': db.get('send_email'),
                                                  'captcha': get_captcha_form({})['captcha']},
                                   context_instance=RequestContext(request))
     # обращение к форме через адресную строку:
     else:
         return HttpResponseRedirect(reverse('index'))
+
+
+def _remember_user(request, data):
+    db = Redis(request)
+    db.set(data)
 
 
 def registerPage(request, templateName):
