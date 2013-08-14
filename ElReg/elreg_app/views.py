@@ -301,6 +301,22 @@ def patientPage(request, templateName):
                 errors.append(u'Введено неверное значение проверочного выражения или истекло время, отведенное для его ввода')
 
             ticketPatient_err = ''
+
+            _remember_user(request,
+                           {'lastName': lastName,
+                            'firstName': firstName,
+                            'patronymic': patronymic,
+                            'dd': dd,
+                            'mm': mm,
+                            'yy': yy,
+                            'document_type': document_type,
+                            'doc_meta_type': doc_meta_type,
+                            'series': series if series != '0' else '',
+                            'number': number,
+                            'userEmail': userEmail,
+                            'sex': request.POST.get('radio', ''),
+                            'send_email': request.POST.get('send_email', '')})
+
             # если ошибок в форме нет
             if not errors:
                 hospital_Uid = db.get('hospital_Uid')
@@ -379,39 +395,11 @@ def patientPage(request, templateName):
                     return HttpResponseRedirect(reverse('register'))
                 # ошибка записи на приём:
                 elif ticketPatient:
-                    _remember_user(request,
-                                   {'lastName': lastName,
-                                    'firstName': firstName,
-                                    'patronymic': patronymic,
-                                    'dd': dd,
-                                    'mm': mm,
-                                    'yy': yy,
-                                    'document_type': document_type,
-                                    'doc_meta_type': doc_meta_type,
-                                    'series': series if series != '0' else '',
-                                    'number': number,
-                                    'userEmail': userEmail,
-                                    'sex': request.POST.get('radio', ''),
-                                    'send_email': request.POST.get('send_email', '')})
                     if ticketPatient.result is True:
                         ticketPatient_err = u"Ошибка записи"
                     else:
                         ticketPatient_err = ticketPatient.message
                 else:
-                    _remember_user(request,
-                                   {'lastName': lastName,
-                                    'firstName': firstName,
-                                    'patronymic': patronymic,
-                                    'dd': dd,
-                                    'mm': mm,
-                                    'yy': yy,
-                                    'document_type': document_type,
-                                    'doc_meta_type': doc_meta_type,
-                                    'series': series if series != '0' else '',
-                                    'number': number,
-                                    'userEmail': userEmail,
-                                    'sex': request.POST.get('radio', ''),
-                                    'send_email': request.POST.get('send_email', '')})
                     ticketPatient_err = '''Не удалось соединиться с сервером.
                     Попробуйте отправить запрос ещё раз.'''
             # ошибка при записи на приём или ошибки в заполненной форме:
