@@ -17,14 +17,14 @@
     <div class="control-group">
         <label class="control-label" for="series">Серия полиса</label>
         <div class="controls">
-            <input type="text" name="series" id="series" value="{% if doc_meta_type == 'oms_dms' %}{{ series }}{% endif %}" {% if doc_meta_type != 'oms_dms' %}disabled{% endif %} maxlength="10" size="2" autocomplete="on" placeholder="" class="span1" />
+            <input type="text" name="series" id="series" value="{% if doc_meta_type == 'oms_dms' %}{{ series|default_if_none:"" }}{% endif %}" {% if doc_meta_type != 'oms_dms' %}disabled{% endif %} maxlength="10" size="2" autocomplete="on" placeholder="" class="span1" />
         </div>
     </div>
 
     <div class="control-group">
         <label class="control-label" for="number">Номер полиса<span class="text-error">*</span></label>
         <div class="controls">
-            <input type="text" class="span3" name="number" id="number" value="{% if doc_meta_type == 'oms_dms' %}{{ number }}{% endif %}" {% if doc_meta_type != 'oms_dms' %}disabled{% endif %} maxlength="16" size="20" autocomplete="on" placeholder="1234567890123456" />
+            <input type="text" class="span3" name="number" id="number" value="{% if doc_meta_type == 'oms_dms' %}{{ number|default_if_none:"" }}{% endif %}" {% if doc_meta_type != 'oms_dms' %}disabled{% endif %} maxlength="16" size="20" autocomplete="on" placeholder="1234567890123456" />
         </div>
     </div>
 </div>
@@ -33,7 +33,7 @@
     <div class="control-group">
         <label class="control-label" for="policy_number">Номер полиса<span class="text-error">*</span></label>
         <div class="controls">
-            <input type="text" class="span3" name="number" id="policy_number" value="{% if doc_meta_type == 'new_oms' %}{{ number }}{% endif %}" {% if doc_meta_type != 'new_oms' %}disabled{% endif %} maxlength="16" size="20" autocomplete="on" placeholder="1234567890123456" />
+            <input type="text" class="span3" name="number" id="policy_number" value="{% if doc_meta_type == 'new_oms' %}{{ number|default_if_none:"" }}{% endif %}" {% if doc_meta_type != 'new_oms' %}disabled{% endif %} maxlength="16" size="20" autocomplete="on" placeholder="1234567890123456" />
         </div>
     </div>
 </div>
@@ -42,7 +42,7 @@
     <div class="control-group">
         <label class="control-label" for="client_id">Электронная амбулаторная карта<span class="text-error">*</span></label>
         <div class="controls">
-            <input type="text" class="span3" name="number" id="client_id" value="{% if doc_meta_type == 'amb' %}{{ number }}{% endif %}" {% if doc_meta_type != 'amb' %}disabled{% endif %} maxlength="16" size="20" autocomplete="on" placeholder="1234567890123456" />
+            <input type="text" class="span3" name="number" id="client_id" value="{% if doc_meta_type == 'amb' %}{{ number|default_if_none:"" }}{% endif %}" {% if doc_meta_type != 'amb' %}disabled{% endif %} maxlength="16" size="20" autocomplete="on" placeholder="1234567890123456" />
         </div>
     </div>
 </div>
@@ -51,14 +51,14 @@
     <div class="control-group">
         <label class="control-label" for="doc_series">Серия документа<span class="text-error">*</span></label>
         <div class="controls">
-            <input type="text" name="series" id="doc_series" value="{% if doc_meta_type == 'doc' %}{{ series }}{% endif %}" {% if doc_meta_type != 'doc' %}disabled{% endif %} maxlength="10" size="2" autocomplete="on" placeholder="" class="span1" />
+            <input type="text" name="series" id="doc_series" value="{% if doc_meta_type == 'doc' %}{{ series|default_if_none:"" }}{% endif %}" {% if doc_meta_type != 'doc' %}disabled{% endif %} maxlength="10" size="2" autocomplete="on" placeholder="" class="span1" />
         </div>
     </div>
 
     <div class="control-group">
         <label class="control-label" for="doc_number">Номер документа<span class="text-error">*</span></label>
         <div class="controls">
-            <input type="text" class="span3" name="number" id="doc_number" value="{% if doc_meta_type == 'doc' %}{{ number }}{% endif %}" {% if doc_meta_type != 'doc' %}disabled{% endif %} maxlength="16" size="20" autocomplete="on" placeholder="1234567890123456" />
+            <input type="text" class="span3" name="number" id="doc_number" value="{% if doc_meta_type == 'doc' %}{{ number|default_if_none:"" }}{% endif %}" {% if doc_meta_type != 'doc' %}disabled{% endif %} maxlength="16" size="20" autocomplete="on" placeholder="1234567890123456" />
         </div>
     </div>
 </div>
