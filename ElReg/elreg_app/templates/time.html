@@ -2,6 +2,9 @@
 {% load custom_filters %}
 
 {% block content %}
+<style>
+    form{margin:0;}
+</style>
 <blockquote>
     <dl class="dl-horizontal">
         <dt>Лечебное учреждение:</dt><dd>{{ current_lpu_title }}</dd>
@@ -24,8 +27,7 @@
 </legend>
 {% if ticketTable %}
 <div class="well well-large">
-<form action="{% url patient %}" method="post">
-    <table class="table  table-condensed">
+    <table class="table table-condensed">
         <caption>
             <div class="row-fluid">
                 <div class="span3"><p class="lead"><big>Расписание врача:</big></p></div>
@@ -50,23 +52,24 @@
             <tr>
                 {% for cell in row %}
                     {% if cell.start > now %}
-                        <td class="{{ cell.status }}">
-                            {% if cell.status == 'free' %}
-                                <button type="submit" class="btn btn-block btn-success" name=ticket value="{{ cell.start.date|date:"d:m:Y" }}-{{ cell.start.time }}-{{ cell.finish.time }}">
-                                    {{ cell.start.time|time:"H:i" }}
-                                </button>
-                            {% elif cell.status == 'locked' or cell.status == 'disabled' %}
-                                <button type="button" class="btn btn-block btn-danger disabled" name=ticket value="{{ cell.start.date|date:"d:m:Y" }}-{{ cell.start.time }}-{{ cell.finish.time }}">
-                                    {{ cell.start.time|time:"H:i" }}
-                                </button>
-                            {% else %}
-                                <button type="button" class="btn btn-block disabled{% if cell.start.time %} btn-inverse{% endif %}" name=ticket value="{{ cell.start.date|date:"d:m:Y" }}-{{ cell.start.time }}-{{ cell.finish.time }}">{{ cell.start.time|time:"H:i"|default:"&nbsp;" }}</button>
-                            {% endif %}
+                    <td class="{{ cell.status }}">
+                        <form action="{% url patient %}" method="post">
+                        {% if cell.status == 'free' %}
+                            <input type="hidden" name="ticket" value="{{ cell.start.date|date:"d:m:Y" }}-{{ cell.start.time }}-{{ cell.finish.time }}">
+                            <button type="submit" class="btn btn-block btn-success" name="tick_sub">{{ cell.start.time|time:"H:i" }}</button>
+                        {% elif cell.status == 'locked' or cell.status == 'disabled' %}
+                            <button type="button" class="btn btn-block btn-danger disabled" name=ticket value="{{ cell.start.date|date:"d:m:Y" }}-{{ cell.start.time }}-{{ cell.finish.time }}">
+                                {{ cell.start.time|time:"H:i" }}
+                            </button>
+                        {% else %}
+                            <button type="button" class="btn btn-block disabled{% if cell.start.time %} btn-inverse{% endif %}" name=ticket value="{{ cell.start.date|date:"d:m:Y" }}-{{ cell.start.time }}-{{ cell.finish.time }}">{{ cell.start.time|time:"H:i"|default:"&nbsp;" }}</button>
+                        {% endif %}
                     {% else %}
                         <td align="center">
                         <button type="button" class="btn btn-block disabled{% if cell.start.time %} btn-inverse{% endif %}" name=ticket value="{{ cell.start.date|date:"d:m:Y" }}-{{ cell.start.time }}-{{ cell.finish.time }}">{{ cell.start.time|time:"H:i"|default:"&nbsp;" }}</button>
                     {% endif %}
-                </td>
+                    </form>
+                    </td>
                 {% endfor %}
             </tr>
         {% endfor %}
