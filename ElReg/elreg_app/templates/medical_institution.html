@@ -39,6 +39,9 @@
                 {% if hospital.uid == '5/0' %}
                 <li><a href="javascript:void(0);" onclick="$('#myModal').modal();">{{ hospital.name }}</a></li>
                 {% else %}
+                {% elif hospital.uid == '15/0' %}
+                <li><a href="javascript:void(0);" onclick="$('#gor2Modal').modal();">{{ hospital.name }}</a></li>
+                {% else %}
                 <li><a href="{% url subdivision %}{{ hospital.uid|slice:":2"|cut:"/" }}/">{{ hospital.name }}</a></li>
                 {% endif %}
             {% endfor %}
@@ -54,6 +57,16 @@
     </div>
     <div class="modal-body">
         <p>Запись к специалистам ПОКБ им. Н.Н. Бурденко осуществляется врачами в ЛПУ по месту жительства.</p>
+    </div>
+</div>
+<!-- Modal -->
+<div id="gor2Modal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="myModalLabel">Запись на приём в ГБУЗ «Городская больница № 2»</h3>
+    </div>
+    <div class="modal-body">
+        <p>Для записи на прием перейдите по <a href="{% url subdivision %}16/">ссылке</a>.</p>
     </div>
 </div>
 <a href="{% url index %}" class="btn btn-primary btn-large">Вернуться</a>
