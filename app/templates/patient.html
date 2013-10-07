@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+
+{% block content %}
+<legend><big>Информация о записи:</big></legend>
+<blockquote>
+    <dl class="dl-horizontal">
+        <dt>Лечебное учреждение:</dt><dd>{{ current_lpu_title }}</dd>
+        <dd>{{ address }}</dd>
+        <dt>Телефон:</dt><dd>{{ current_lpu_phone }}</dd>
+        <dt>Специализация:</dt><dd>{{ speciality }}</dd>
+        <dt>Врач:</dt><dd>{{ doctor }}</dd>
+        <dt>Дата и время приёма:</dt><dd>{{ date }} {{ start_time }} - {{ finish_time }}</dd>
+    </dl>
+</blockquote>
+{% if errors %}
+<p>
+    <div id="dialog-modal" class="alert alert-error" title="Ошибка записи">
+        {#    <button type="button" class="close" data-dismiss="alert">&times;</button>#}
+        <strong>Ошибка записи!</strong>
+        {% for error in errors %}
+            {{ error }}<br />
+        {% endfor %}
+    </div>
+    <script type="text/javascript">
+        $(".alert").alert();
+    </script>
+</p>
+{% endif %}
+
+{% if ticketPatient_err %}
+    <div id="dialog-modal" class="alert alert-error" title="Ошибка записи">
+{#    <button type="button" class="close" data-dismiss="alert">&times;</button>#}
+    <strong>Ошибка записи!</strong>
+    {{ ticketPatient_err }}
+    </div>
+    <script type="text/javascript">
+        $(".alert").alert();
+    </script>
+{% endif %}
+
+<div class="well well-small">
+<form id="patient_form" action="" method="post" name="frm" class="form-horizontal">
+    <input type="hidden" name="ticket" value="{{ ticket }}" />
+    <input type="hidden" name="flag" value="True" />
+
+    <legend><big>Данные посетителя</big></legend>
+    <div class="control-group">
+        <label class="control-label" for="lastName">Фамилия<span class="text-error">*</span></label>
+        <div class="controls">
+            <input type="text" class="span4" name="lastName" id="lastName" value="{{ lastName|default_if_none:"" }}" autocomplete="on" placeholder="Иванов" />
+        </div>
+    </div>
+    <div class="control-group">
+        <label class="control-label" for="firstName">Имя<span class="text-error">*</span></label>
+        <div class="controls">
+            <input type="text" class="span4" name="firstName" id="firstName" value="{{ firstName|default_if_none:"" }}" maxlength="40" size="30" autocomplete="on" placeholder="Иван" />
+        </div>
+    </div>
+
+    <div class="control-group">
+        <label class="control-label" for="patronymic">Отчество<span class="text-error">*</span></label>
+        <div class="controls">
+            <input type="text" class="span4" name="patronymic" id="patronymic" value="{{ patronymic|default_if_none:"" }}" maxlength="40" size="30" autocomplete="on" placeholder="Иванович" />
+        </div>
+    </div>
+
+    <div class="control-group">
+        <label class="control-label" for="dd">Дата рождения<span class="text-error">*</span></label>
+        <div class="controls">
+            <input type="text" class="span1" name="dd" id="dd" value="{{ dd|default_if_none:"" }}" maxlength="2" size="2" autocomplete="on" placeholder="01" />
+            <input type="text" class="span1" name="mm" id="mm" value="{{ mm|default_if_none:"" }}" maxlength="2" size="2" autocomplete="on" placeholder="12" />
+            <input type="text" class="span1" name="yy" id="yy" value="{{ yy|default_if_none:"" }}" maxlength="4" size="4" autocomplete="on" placeholder="2001" />
+        </div>
+    </div>
+
+    <div class="control-group">
+        <label class="control-label" for="radio1">Пол<span class="text-error">*</span></label>
+        <div class="controls">
+            <input type="radio" name="radio" id="radio1" value="1"{% if request.POST.radio == '1' or sex == '1' %}checked="checked"{% endif %} /> М
+            <input type="radio" name="radio" id="radio2" value="2"{% if request.POST.radio == '2' or sex == '2' %}checked="checked"{% endif %} /> Ж
+        </div>
+    </div>
+
+    {% include '__documents_select.html' %}
+
+    <div class="control-group">
+        <div class="controls">
+            <input id="chb" value="1" name="send_email" type="checkbox"{% if request.POST.send_email or send_email %}checked="checked"{% endif %} /> - отправить информацию о записи на электронный адрес
+        </div>
+    </div>
+    <div class="control-group">
+        <label class="control-label" for="email">Адрес электронной почты</label>
+        <div class="controls">
+            <input type="text" class="span4" name="email" id="email" value="{{ userEmail|default_if_none:"" }}" maxlength="50" size="35" {% if not request.POST.send_email and not send_email %}disabled="disabled"{% endif %} autocomplete="on" placeholder="example@email.ru" />
+        </div>
+    </div>
+
+    <div class="control-group">
+        <label class="control-label" for="captcha_1">Сосчитайте результат выражения<span class="text-error">*</span></label>
+        <div class="controls">
+            {{ captcha }}
+        </div>
+    </div>
+
+    <div class="control-group">
+        <div class="controls">
+            <span class="text-error">* - поля, обязательные для заполнения</span>
+        </div>
+    </div>
+    <div class="row-fluid">
+        <div class="span7">
+            <label for="confirm">
+                <input type="checkbox" id="confirm" name="confirm" value="confirm" /> Я даю своё согласие на автоматизированную обработку указанной информации, распространяющейся на осуществление всех действий с ней, включая сбор, передачу по сетям связи общего назначения, накопление, хранение, обновление, изменение, использование, обезличивание, блокирование, уничтожение и обработку посредством внесения в электронную базу данных, систематизации, включения в списки и отчетные формы.
+            </label>
+        </div>
+    </div>
+
+    <div class="form-actions">
+        <button type="submit" id="button-submit" class="btn btn-success disabled" disabled>Подтвердить</button>
+        <a href="{% url time %}" class="btn">Отменить</a>
+    </div>
+</form>
+</div>
+<a href="{% url time %}" class="btn btn-primary btn-large">Вернуться</a>
+
+{% endblock %}

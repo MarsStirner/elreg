@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block content %}
+<blockquote>
+    <dl class="dl-horizontal">
+        <dt>Лечебное учреждение:</dt><dd>{{ current_lpu.name }}</dd>
+        {% if current_lpu.phone %}<dt>Телефон:</dt><dd>{{ current_lpu.phone }}</dd>{% endif %}
+        {% if current_lpu.email %}<dt>Электронная почта:</dt><dd><a href="mailto:{{ current_lpu.email }}">{{ current_lpu.email }}</a></dd>{% endif %}
+    </dl>
+</blockquote>
+<div class="well">
+<div class="row-fluid">
+<div class="span4">
+    <ul class="firstTable nav nav-pills nav-stacked">
+        {% for subdivision in subdivision_list %}
+            <li><a id="{{ subdivision.id }}" href="javascript:;" class="spec">{{ subdivision.name }} {% if subdivision.address %}({{ subdivision.address }}){% endif %}</a></li>
+        {% endfor %}
+    </ul>
+</div>
+<div class="span4">
+    <ul class="secondTable nav nav-pills nav-stacked"></ul>
+</div>
+<div class="span4">
+    <ul class="thirdTable nav nav-pills nav-stacked"></ul>
+</div>
+</div>
+</div>
+<a href="{% url medical_institution %}" class="btn btn-primary btn-large">Вернуться</a>
+{% endblock %}

@@ -1,0 +1,15 @@
+Flask
+Flask-Login
+Flask-Principal
+Flask-SQLAlchemy
+wtforms
+Flask-WTF
+alembic
+pillow
+simplejson
+pytz==2013b
+suds
+sqlalchemy
+fabric
+mysql-python
+lxml

@@ -4,12 +4,13 @@
 *debug*
 
 *.pyc
+*.pyo
+*.pyd
 *.exe
 *.dll
 *.db
 build/*
 migrations/
 media/
-settings_local.py
-static_admin*
-to_slave.py
+config_local.py
+ElReg/*
