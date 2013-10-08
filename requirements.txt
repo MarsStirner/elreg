@@ -7,7 +7,7 @@ Flask-WTF
 alembic
 pillow
 simplejson
-pytz==2013b
+pytz
 suds
 sqlalchemy
 fabric

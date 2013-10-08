@@ -1,0 +1,48 @@
+.top_path ul{
+    width:100%;
+}
+.top_path ul > li {
+    padding: 0 10px;
+    min-width: 9%;
+}
+.top_path ul > li > a{
+    text-align: center;
+}
+.top_path ul > li.divider-vertical {
+    padding: 0;
+    min-width: 0;
+}
+.top_path .label{
+    vertical-align: top;
+}
+.dl-horizontal dt {
+    width: 170px;
+}
+.dl-horizontal dd {
+    margin-left: 190px;
+}
+th.th-centered{
+    text-align: center;
+}
+blockquote {
+    border-color: #B94A48;
+}
+ul.upper_case li{
+    text-transform: uppercase;
+}
+.no_shadow_print h4, .no_shadow_print h5{
+    text-align: center;
+}
+.navbar{
+    min-width:1170px;
+}
+.captcha{
+    border: 1px solid #CCC;
+}
+input#captcha_1{
+    width: 56px;
+}
+.no-vmargin{
+    margin-top:0;
+    margin-bottom: 0;
+}
