@@ -57,7 +57,6 @@ admin_permission = permissions.get('admin')
 user_permission = permissions.get('user')
 
 
-
 def stringValidation(string):
     """
     Простой валидатор переменных типа str, который проверяет наличие в строке SQL-команд.

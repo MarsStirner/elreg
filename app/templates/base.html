@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    {% include '_header.html' %}
+    {% block modules_css %}{% endblock %}
+    <title>Администрирование{% block title %}{% endblock %}</title>
+  </head>
+  <body>
+  <div id="wrap">
+
+  {% include '_top.html' %}
+
+  <div id="container" class="container">
+
+    {% block content %}
+
+      <!-- Jumbotron -->
+      <div class="jumbotron">
+        <h1>Система администрирования Электронной регистратуры</h1>
+        <p class="lead">Добро пожаловать в систему администрирования Электронной регистратуры.</p>
+      </div>
+
+    {% endblock %}
+
+   </div> <!-- /container -->
+   <div id="push"></div>
+  </div>
+
+  {% include '_bottom.html' %}
+  {% include '_footer.html' %}
+  {% block modules_js %}{% endblock %}
+
+  </body>
+</html>

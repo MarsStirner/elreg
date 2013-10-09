@@ -1,13 +1,15 @@
 # -*- coding: utf-8 -*-
 from suds.client import Client
+from config import DEBUG, IS
 
-class ListWSDL():
-    """ Класс для обращения к файлу list.wsdl.
+
+class List():
+    """ Класс для обращения к сервису list.wsdl.
     Класс содержит методы listHospitals и listDoctors, обращающиеся к одноименным методам web-сервиса.
 
     """
     def __init__(self):
-        if settings.DEBUG:
+        if DEBUG:
             self.client = Client(IS % "list", cache=None)
         else:
             self.client = Client(IS % "list")
@@ -58,13 +60,13 @@ class ListWSDL():
         return doctors
 
 
-class InfoWSDL():
-    """ Класс для обращения к файлу info.wsdl.
+class Info():
+    """ Класс для обращения к сервису info.wsdl.
     Класс содержит метод getHospitalInfo, обращающийся к одноименному методу web-сервиса.
 
     """
     def __init__(self):
-        if settings.DEBUG:
+        if DEBUG:
             self.client = Client(IS % "info", cache=None)
         else:
             self.client = Client(IS % "info")
@@ -85,13 +87,13 @@ class InfoWSDL():
         return info_list
 
 
-class ScheduleWSDL():
-    """ Класс для обращения к файлу schedule.wsdl.
+class Schedule():
+    """ Класс для обращения к сервису schedule.wsdl.
     Класс содержит методы getScheduleInfo, getTicketStatus и enqueue, обращающиеся к одноименным методам web-сервиса.
 
     """
     def __init__(self):
-        if settings.DEBUG:
+        if DEBUG:
             self.client = Client(IS % "schedule", cache=None)
         else:
             self.client = Client(IS % "schedule")

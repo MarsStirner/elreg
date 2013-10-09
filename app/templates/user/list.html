@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+
+{% block title %} > Пользователи{% endblock %}
+
+{% block content %}
+<legend>Список пользователей</legend>
+{%- with messages = get_flashed_messages() -%}
+  {%- if messages -%}
+    <div class="alert alert-success">
+    {%- for message in messages -%}
+      <div>{{ message }}</div>
+    {%- endfor -%}
+    </div>
+  {%- endif -%}
+{%- endwith -%}
+<div class="row">
+    <div class="span6">
+    <p><a href="{{ url_for('post_user') }}" title="Добавить пользователя" class="btn btn-success"><i class="icon-plus-sign icon-white"></i> Новый</a></p>
+        <table class="table table-striped table-bordered table-condensed">
+            <thead>
+                <tr>
+                    <th width="1%"></th>
+                    <th>Логин</th>
+                    <th>Роль</th>
+                    <th width="1%"></th>
+                </tr>
+            </thead>
+            {% if users %}
+            <tbody>
+            {% for user in users %}
+                <tr>
+                    <td>
+                        <a class="icon label label-info" href="{{ url_for('put_user', user_id=user.id) }}" title="Редактировать пользователя {{ user.login }}"><i class="icon-white icon-pencil"></i></a>
+                    </td>
+                    <td>{{ user.login }}</td>
+                    <td>
+                        {%- if user.roles -%}
+                            {%- for role in user.roles -%}
+                                {{ role.name }} {% if role.description %}({{ role.description }}){%- endif -%}
+                                {%- if not loop.last %}<br>{% endif -%}
+                            {%- endfor -%}
+                        {%- endif -%}
+                    </td>
+                    <td>
+                        <form class="icon" method="post" action="{{ url_for('delete_user', user_id=user.id) }}">
+                            <button onclick="return confirm('Вы действительно хотите удалить пользователя {{ user.login }}?');" title="Удалить пользователя {{ user.login }}">
+                                <span class="label label-important"><i class="icon-trash icon-white"></i></span>
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+            {% endif %}
+        </table>
+    </div>
+</div>
+{% endblock %}
