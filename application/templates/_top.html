@@ -4,7 +4,7 @@
         <ul class="nav" id="cur_modules">
           <li>
               <div class="btn-group">
-                <a class="btn btn-small btn-inverse" href="/" title="Главная страница"><i class="icon-home icon-white"></i></a>
+                <a class="btn btn-small btn-inverse" href="{{ url_for('index') }}" title="Главная страница"><i class="icon-home icon-white"></i></a>
                 <a id="gen_settings" class="btn btn-small btn-inverse"  href="{{ url_for('settings') }}" title="Настройки"><i class="icon-wrench icon-white"></i> Настройки</a>
                 <a id="users" class="btn btn-small btn-inverse"  href="{{ url_for('users') }}" title="Пользователи"><i class="icon-user icon-white"></i> Пользователи</a>
               </div>

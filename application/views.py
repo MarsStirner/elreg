@@ -20,12 +20,22 @@ from lib.utils import admin_permission, public_endpoint
 login_manager.login_view = 'login'
 
 
+def exclude_endpoint(endpoint, exclude):
+    for item in exclude:
+        if item in endpoint:
+            return True
+    return False
+
+
 @app.before_request
 def check_valid_login():
     login_valid = current_user.is_authenticated()
 
+    exclude_list = ['static']
+    exclude_list.extend(getattr(current_app, 'blueprints', list()).keys())
+
     if (request.endpoint and
-            'static' not in request.endpoint and
+            not exclude_endpoint(request.endpoint, exclude_list) and
             not login_valid and
             not getattr(app.view_functions[request.endpoint], 'is_public', False)):
         return redirect(url_for('login', next=url_for(request.endpoint)))
