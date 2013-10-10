@@ -7,18 +7,18 @@
         <div class="span4">
             <ul class="nav nav-tabs nav-stacked">
         {% endif %}
-        {% if forloop.counter0 in break_keys %}
+        {% if loop.index0 in break_keys %}
             </ul>
         </div>
         <div class="span4">
             <ul class="nav nav-tabs nav-stacked">
         {% endif %}
                 <li>
-                    <a href ="{% url medical_institution %}{{ region.code }}/">
+                    <a href ="{{ url_for('medical_institution') }}{{ region.code }}/">
                         <h4>{{ region.name }}</h4>
                     </a>
                 </li>
-        {% if forloop.last %}
+        {% if loop.last %}
             </ul>
         </div>
         {% endif %}

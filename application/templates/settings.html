@@ -22,7 +22,7 @@
                 <div class="control-group">
                     <label class="control-label">{{ field.description|safe }}</label>
                     <div class="controls">
-                        {{ field(value=field.value, placeholder="Введите "+field.description, title="Необходимо заполнить это поле!") }}
+                        {{ field(value=field.value, placeholder="Введите "+field.description) }}
                     </div>
                 </div>
             {% endif %}

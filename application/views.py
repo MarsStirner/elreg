@@ -47,7 +47,7 @@ def settings():
         for variable in variables:
             setattr(ConfigVariablesForm,
                     variable.code,
-                    TextField(variable.code, validators=[Required()], default="", description=variable.name))
+                    TextField(variable.code, default="", description=variable.name))
 
         form = ConfigVariablesForm()
         for variable in variables:
