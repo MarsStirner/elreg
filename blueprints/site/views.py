@@ -20,6 +20,11 @@ def lpu(okato):
     return render_template('{0}/lpu.html'.format(module.name))
 
 
+@module.route('/medical_institution/search/', methods=['GET'])
+def search():
+    return render_template('{0}/lpu.html'.format(module.name))
+
+
 @module.route('/subdivision/<lpu_id>/', methods=['GET'])
 def departments(lpu_id):
     return render_template('departments.html'.format(module.name))
