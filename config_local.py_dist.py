@@ -7,6 +7,7 @@ DB_PORT = 3306
 DB_USER = 'elreg_login'
 DB_PASSWORD = 'elreg_password'
 DB_NAME = 'elreg'
+DB_CONNECT_OPTIONS = '?charset=utf8'
 
 SERVER_HOST = '127.0.0.1'
 SERVER_PORT = 8800

@@ -18,4 +18,4 @@ Principal(app)
 login_manager.init_app(app)
 
 # Import all views
-from views import *
+import views

@@ -14,7 +14,7 @@ from alembic import op
 
 
 def upgrade():
-    from app.app import db, app
+    from application.app import db, app
     from restore import restore
     with app.app_context():
         db.create_all()

@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 from suds.client import Client
-from config import DEBUG, IS
+from config import DEBUG
+from ..lib.utils import _config
+
+IS = _config('IS_URL')
 
 
 class List():

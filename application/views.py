@@ -10,7 +10,7 @@ from flask.ext.principal import Identity, AnonymousIdentity, identity_changed
 from flask.ext.principal import identity_loaded, Permission, RoleNeed, UserNeed
 from flask.ext.login import login_user, logout_user, login_required, current_user
 
-from app.app import app, db, login_manager
+from application.app import app, db, login_manager
 from models import Settings, Users, Roles
 from lib.user import User
 from forms import EditUserForm, LoginForm
@@ -51,7 +51,7 @@ def settings():
 
         form = ConfigVariablesForm()
         for variable in variables:
-            form[variable.code].value = variable.value
+            form[variable.code].value = variable.value if variable.value is not None else ""
 
         if form.validate_on_submit():
             for variable in variables:

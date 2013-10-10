@@ -4,7 +4,7 @@ import sys
 from sqlalchemy import exc
 from sqlalchemy.ext.serializer import loads
 from sqlalchemy import func
-from app.app import app, db
+from application.app import app, db
 
 
 sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
