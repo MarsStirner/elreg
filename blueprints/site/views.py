@@ -35,9 +35,10 @@ def search():
     return render_template('{0}/lpu.html'.format(module.name))
 
 
-@module.route('/subdivision/<lpu_id>/', methods=['GET'])
-def departments(lpu_id):
-    return render_template('departments.html'.format(module.name))
+@module.route('/subdivisions/', methods=['GET'])
+@module.route('/subdivisions/<lpu_id>/', methods=['GET'])
+def departments(lpu_id=None):
+    return render_template('department.html'.format(module.name))
 
 
 @module.route('/time/<int:doctor_id>/', methods=['GET'])
