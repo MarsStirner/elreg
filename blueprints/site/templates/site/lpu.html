@@ -36,7 +36,7 @@
         <ul id="search_table" class="nav nav-tabs nav-stacked upper_case">
         {% if hospitals_list %}
             {% for hospital in hospitals_list %}
-            <li><a href="{{ url_for('.departments', lpu_id=hospital.uid) }}">{{ hospital.name }}</a></li>
+            <li><a href="{{ url_for('.division', lpu_id=hospital.uid) }}">{{ hospital.name }}</a></li>
             {% endfor %}
         {% endif %}
         </ul>
@@ -56,7 +56,7 @@
             $.getJSON("/search/", {search_lpu: search_lpu, search_gorod: search_gorod, search_rayon: search_rayon}, function(data) {
                 var $items = [];
                 $.each(data, function(key, val) {
-                    $items.push('<li><a href="{{ url_for('.department') }}' + key + '/">' + val + '</a></li>');
+                    $items.push('<li><a href="{{ url_for('.division') }}' + key + '/">' + val + '</a></li>');
                 });
                 $("#search_table").html($items.join('')).fadeIn('fast');
             });
@@ -73,7 +73,7 @@
             $.getJSON("/search/", {search_lpu: search_lpu, search_gorod: search_gorod, search_rayon: search_rayon}, function(data) {
                 var $items = [];
                 $.each(data, function(key, val) {
-                    $items.push('<li><a href="{{ url_for('.department') }}' + key + '/">' + val + '</a></li>');
+                    $items.push('<li><a href="{{ url_for('.division') }}' + key + '/">' + val + '</a></li>');
                 });
                 $("#search_table").html($items.join('')).fadeIn('fast');
             });
@@ -90,7 +90,7 @@
             $.getJSON("/search/", {search_lpu: search_lpu, search_gorod: search_gorod, search_rayon: search_rayon}, function(data) {
                 var $items = [];
                 $.each(data, function(key, val) {
-                    $items.push('<li><a href="{{ url_for('.department') }}' + key + '/">' + val + '</a></li>');
+                    $items.push('<li><a href="{{ url_for('.division') }}' + key + '/">' + val + '</a></li>');
                 });
                 $("#search_table").html($items.join('')).fadeIn('fast');
             });
