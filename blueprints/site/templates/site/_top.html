@@ -1,5 +1,5 @@
 <div class="row-fluid page-header no_print">
-    <div class="span1"><a href="{{ home_link|default('/') }}" title="На главную"><img src="{{ MEDIA_URL }}{{ logo }}"></a></div>
+    {% if logo %}<div class="span1"><a href="{{ home_link|default('/') }}" title="На главную"><img src="{{ url_for('.static', filename=logo) }}"></a></div>{% endif %}
     <div class="span11 lead no-vmargin"><h2 class="no-vmargin">{{ site_name }}</h2>{{ region_name }}</div>
 </div>
 <div class="navbar top_path no_print">

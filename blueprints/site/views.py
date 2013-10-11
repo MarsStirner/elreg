@@ -9,6 +9,7 @@ from wtforms.validators import Required
 
 from .app import module
 from .lib.service_client import List, Info, Schedule
+from .context_processors import header
 
 @module.route('/', methods=['GET'])
 def index():
