@@ -3,10 +3,11 @@
 {% block content %}
     <div class="row-fluid">
         {% for region in region_list %}
-        {% if forloop.first %}
+        {% if loop.first %}
         <div class="span4">
             <ul class="nav nav-tabs nav-stacked">
         {% endif %}
+        {% set break_keys=((((region_list|length) /3)|round(0, 'ceil') ), ((2 * (region_list|length) / 3)|round(0, 'ceil')))%}
         {% if loop.index0 in break_keys %}
             </ul>
         </div>
