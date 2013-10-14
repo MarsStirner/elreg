@@ -10,58 +10,54 @@ $(document).ready(function () {
         }
     }
 
-    function spec_handler() {
+    function division_handler() {
         abort_ajax();
-        $('a.spec').off("click", spec_handler);
+        $('a.division').off("click", division_handler);
         $(this).closest('ul').children('li').removeClass('active');
-//        $('.specActive').removeClass('specActive').addClass('spec');
         $(this).closest('li').addClass('active');
-        var $clickSpec = this.id;
-        var $value = $(this).text();
+        var href = $(this).attr('href');
         $('ul.secondTable').html("");
         $('ul.thirdTable').html("");
         jqXHR.push($.ajax({
-            url: '/updates/',
-            data: {clickSpec: $clickSpec, value: $value},
+            url: href,
             crossDomain: true,
             cache: false, // обязательно для IE
             dataType: 'json',
-            method: 'post',
             success: function (data) {
                 var $items = [];
-                $.each(data, function(key, val) {
-                    $items.push('<li><a class="prof" href="javascript:;">' + val + '</a></li>');
+                $.each(data['result'], function(key, val) {
+                    $items.push('<li><a class="speciality" href="' + href.replace('ajax_specialities', 'ajax_doctors') + val + '/">' + val + '</a></li>');
                 });
                 $('ul.secondTable').html($($items.join('')).fadeIn('fast'));
                 $('body,html').animate({
                     scrollTop: 0
                 }, 300);
-                $('a.spec').on("click", spec_handler);
-                $('a.prof').on("click", prof_handler);
+                $('a.division').on("click", division_handler);
+                $('a.speciality').on("click", speciality_handler);
             }
         }));
+        return false;
     }
-    $('a.spec').on("click", spec_handler);
+    $('a.division').on("click", division_handler);
 
-    function prof_handler(){
+    function speciality_handler(){
         abort_ajax();
         $(this).closest('ul').children('li').removeClass('active');
 //        $('.specActive').removeClass('specActive').addClass('spec');
         $(this).closest('li').addClass('active');
-        $('.profActive').removeClass('profActive').addClass('prof');
-        $(this).addClass('profActive');
-        var $clickProf = $(this).text();
+        $('.specialityActive').removeClass('specialityActive').addClass('speciality');
+        $(this).addClass('specialityActive');
+        var href = $(this).attr('href');
         $('ul.thirdTable').html("");
         jqXHR.push($.ajax({
-            url: '/updates/',
-            data: {clickProf: $clickProf},
+            url: href,
             crossDomain: true,
             cache: false, // обязательно для IE
             dataType: 'json',
             success: function (data) {
                 var $items = [];
-                $.each(data, function(key, val) {
-                    $items.push('<li><a href="/time/' + val.uid + '/">' + val.name + '</a></li>');
+                $.each(data['result'], function(key, val) {
+                    $items.push('<li><a href="' + val.href + '/">' + val.name + '</a></li>');
                 });
                 $('ul.thirdTable').html($($items.join('')).fadeIn('fast'));
                 $('body,html').animate({
@@ -69,6 +65,7 @@ $(document).ready(function () {
                 }, 300);
             }
         }));
+        return false;
     }
 });
 
@@ -289,7 +286,28 @@ $(document).ready(function(){
             $('.' + $(this).val()).removeClass('hidden');
             $('.doc_div').find('input').attr("disabled","disabled");
             $('.' + $(this).val()).find('input').removeAttr("disabled");
-
         }
+        show_doc($(this).val());
     });
 });
+function show_doc(type){
+    var src_sm = "";
+    var src = "";
+    var $doc_example = $('#doc_example');
+    $doc_example.hide();
+    if (type == 'policy_type_4'){
+        src_sm = '/static/images/docs/polis_sm.jpg';
+        src = '/static/images/docs/polis.jpg';
+    }else if (type == 'policy_type_2'){
+        src_sm = '/static/images/docs/old_polis_sm.jpg';
+        src = '/static/images/docs/old_polis.jpg';
+    }
+    $doc_example.find('img').attr('src', src_sm);
+    $('#doc_example_modal').find('img').attr('src', src);
+    $('#show_big_doc').click(function(){
+        $('#doc_example_modal').modal();
+    });
+    if(src_sm){
+        $doc_example.show();
+    }
+}

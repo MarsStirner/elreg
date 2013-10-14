@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
+    <div class="alert alert-info"><h4>Укажите населенный пункт</h4>Выберите регион и населенный пункт, в котором предполагается посетить медицинское учреждение</div>
     <div class="row-fluid">
         {% for region in region_list %}
         {% if forloop.first %}

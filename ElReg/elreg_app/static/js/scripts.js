@@ -288,7 +288,28 @@ $(document).ready(function(){
             $('.' + $(this).val()).removeClass('hidden');
             $('.doc_div').find('input').attr("disabled","disabled");
             $('.' + $(this).val()).find('input').removeAttr("disabled");
-
         }
+        show_doc($(this).val());
     });
 });
+function show_doc(type){
+    var src_sm = "";
+    var src = "";
+    var $doc_example = $('#doc_example');
+    $doc_example.hide();
+    if (type == 'policy_type_4'){
+        src_sm = '/static/images/docs/polis_sm.jpg';
+        src = '/static/images/docs/polis.jpg';
+    }else if (type == 'policy_type_2'){
+        src_sm = '/static/images/docs/old_polis_sm.jpg';
+        src = '/static/images/docs/old_polis.jpg';
+    }
+    $doc_example.find('img').attr('src', src_sm);
+    $('#doc_example_modal').find('img').attr('src', src);
+    $('#show_big_doc').click(function(){
+        $('#doc_example_modal').modal();
+    });
+    if(src_sm){
+        $doc_example.show();
+    }
+}

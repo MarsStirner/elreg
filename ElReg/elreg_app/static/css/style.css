@@ -46,3 +46,15 @@ input#captcha_1{
     margin-top:0;
     margin-bottom: 0;
 }
+#doc_example{
+    position: absolute;
+    right: 30%;
+    top: -50px;
+}
+#doc_example_modal{
+    width: inherit;
+    top: 30%;
+}
+#doc_example_modal .modal-body{
+    max-height: 720px;
+}
