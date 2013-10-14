@@ -1,12 +1,13 @@
 {% extends "base.html" %}
 
 {% block content %}
+<div class="alert alert-info"><h4>Внесите данные пациента в поля для заполнения ниже</h4></div>
 <legend><big>Информация о записи:</big></legend>
 <blockquote>
     <dl class="dl-horizontal">
         <dt>Лечебное учреждение:</dt><dd>{{ current_lpu_title }}</dd>
         <dd>{{ address }}</dd>
-        <dt>Телефон:</dt><dd>{{ current_lpu_phone }}</dd>
+        {% if current_lpu_phone %}<dt>Телефон:</dt><dd>{{ current_lpu_phone }}</dd>{% endif %}
         <dt>Специализация:</dt><dd>{{ speciality }}</dd>
         <dt>Врач:</dt><dd>{{ doctor }}</dd>
         <dt>Дата и время приёма:</dt><dd>{{ date }} {{ start_time }} - {{ finish_time }}</dd>
@@ -34,7 +35,12 @@
     {{ ticketPatient_err }}
     </div>
     <script type="text/javascript">
+    $(function(){
         $(".alert").alert();
+        {% if ticketPatient_err == 'Пациент не зарегистрирован в выбранном ЛПУ' %}
+        $('#not_fnd_modal').modal();
+        {% endif %}
+    });
     </script>
 {% endif %}
 
@@ -122,5 +128,17 @@
 </form>
 </div>
 <a href="{% url time %}" class="btn btn-primary btn-large">Вернуться</a>
-
+<!-- Modal -->
+<div id="not_fnd_modal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="myModalLabel">Уважаемые пользователи сайта!</h3>
+    </div>
+    <div class="modal-body">
+        <p>Просим Вас внимательно заполнять форму «Данные посетителя». Если же при правильном вводе данных появляется текст:</p>
+        <p class="lead">«Ошибка записи! Пациент не зарегистрирован в выбранном ЛПУ»,</p>
+        <p>это означает, что Ваш номер медицинского полиса не найден в базе данных программы.</p>
+	    <p>В этом случае, к сожалению, Вы не сможете записаться на прием, пока не внесена обновленная информация о Вашем полисе ОМС в базу данных ЛПУ. Для внесения информации, Вам необходимо подойти с полисом ОМС в регистратуру того ЛПУ, в которое вы хотите записаться, для актуализации  данных в программе, и в дальнейшем, пользоваться сервисом без ограничений.</p>
+    </div>
+</div>
 {% endblock %}
