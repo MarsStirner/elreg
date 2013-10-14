@@ -26,6 +26,7 @@ $(document).ready(function () {
             crossDomain: true,
             cache: false, // обязательно для IE
             dataType: 'json',
+            method: 'post',
             success: function (data) {
                 var $items = [];
                 $.each(data, function(key, val) {
