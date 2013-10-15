@@ -14,11 +14,11 @@
             </li>
             <li class="divider-vertical"></li>
             <li {% if session.get('step') == 3 %}class="active"{% endif %}>
-                {% if session.get('step') > 3 %}<a href="{{ url_for('.departments', okato=session.get('lpu_id')) }}">{% else %}<a>{% endif %}<span class="label{% if session.get('step') >= 3 %} label-info{% endif %}">3</span> <big>Подразделение/Специализация/Врач</big></a>
+                {% if session.get('step') > 3 %}<a href="{{ url_for('.division', okato=session.get('lpu_id')) }}">{% else %}<a>{% endif %}<span class="label{% if session.get('step') >= 3 %} label-info{% endif %}">3</span> <big>Подразделение/Специализация/Врач</big></a>
             </li>
             <li class="divider-vertical"></li>
             <li {% if session.get('step') == 4 %}class="active"{% endif %}>
-                {% if session.get('step') > 4 %}<a href="{{ url_for('.tickets', doctor_id=session.get('doctor_id')) }}">{% else %}<a>{% endif %}<span class="label{% if session.get('step') >= 4 %} label-info{% endif %}">4</span> <big>Время</big></a>
+                {% if session.get('step') > 4 %}<a href="{{ url_for('.tickets', lpu_id=session.get('lpu_id'), department_id=session.get('department_id'), doctor_id=session.get('doctor_id')) }}">{% else %}<a>{% endif %}<span class="label{% if session.get('step') >= 4 %} label-info{% endif %}">4</span> <big>Время</big></a>
             </li>
             <li class="divider-vertical"></li>
             <li {% if session.get('step') == 5 %}class="active"{% endif %}>
