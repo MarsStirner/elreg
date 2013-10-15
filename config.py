@@ -21,6 +21,7 @@ SYSTEM_USER = 'elreg'
 CSRF_ENABLED = True
 SECRET_KEY = ''
 
+BABEL_DEFAULT_LOCALE = 'ru_RU'
 
 try:
     from config_local import *

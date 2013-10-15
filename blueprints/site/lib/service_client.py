@@ -1,9 +1,23 @@
 # -*- coding: utf-8 -*-
 from suds.client import Client
+from suds.sax.text import Text
 from config import DEBUG
 from ..lib.utils import _config
 
 IS = _config('IS_URL')
+
+
+def unicode_result(value):
+    # NOT USED yet
+    if isinstance(value, basestring) or isinstance(value, Text):
+        return unicode(value)
+    if isinstance(value, list):
+        for obj in value:
+            return unicode_result(obj)
+    if isinstance(value, list):
+        for kk, vv in value.__dict__.iteritems():
+            setattr(object, kk, unicode_result(vv))
+    return value
 
 
 class List():
@@ -101,13 +115,16 @@ class Schedule():
         else:
             self.client = Client(IS % "schedule")
 
-    def getScheduleInfo(self, hospitalUid=0, doctorUid=0):
+    def getScheduleInfo(self, hospitalUid=0, doctorUid=0, startDate=None, endDate=None):
         """
         Метод возвращает расписания врачей.
 
         """
         try:
-            ticket = self.client.service.getScheduleInfo({'hospitalUid': hospitalUid, 'doctorUid': doctorUid}).timeslots
+            params = {'hospitalUid': hospitalUid, 'doctorUid': doctorUid}
+            if startDate and endDate:
+                params.update(dict(startDate=startDate, endDate=endDate))
+            ticket = self.client.service.getScheduleInfo(params).timeslots
         except Exception, e:
             print e
             ticket = []

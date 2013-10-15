@@ -57,7 +57,7 @@ $(document).ready(function () {
             success: function (data) {
                 var $items = [];
                 $.each(data['result'], function(key, val) {
-                    $items.push('<li><a href="' + val.href + '/">' + val.name + '</a></li>');
+                    $items.push('<li><a href="' + val.href + '">' + val.name + '</a></li>');
                 });
                 $('ul.thirdTable').html($($items.join('')).fadeIn('fast'));
                 $('body,html').animate({
