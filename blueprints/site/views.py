@@ -96,7 +96,7 @@ def tickets(lpu_id, department_id, doctor_id, start=None):
     tickets = Schedule().getScheduleInfo(hospitalUid=hospital_uid,
                                          doctorUid=doctor_id,
                                          startDate=monday,
-                                         endDate=monday+timedelta(days=6))
+                                         endDate=monday+timedelta(days=7))
     if tickets:
         office = getattr(tickets[0], 'office', '')
     doctors = List().listDoctors()
