@@ -174,13 +174,16 @@ class ScheduleWSDL():
         else:
             self.client = Client(IS % "schedule")
 
-    def getScheduleInfo(self, hospitalUid=0, doctorUid=0):
+    def getScheduleInfo(self, hospitalUid=0, doctorUid=0, startDate=None, endDate=None):
         """
         Метод возвращает расписания врачей.
 
         """
         try:
-            ticket = self.client.service.getScheduleInfo({'hospitalUid': hospitalUid, 'doctorUid': doctorUid}).timeslots
+            params = {'hospitalUid': hospitalUid, 'doctorUid': doctorUid}
+            if startDate and endDate:
+                params.update(dict(startDate=startDate, endDate=endDate))
+            ticket = self.client.service.getScheduleInfo(params).timeslots
         except Exception, e:
             print e
             ticket = []
