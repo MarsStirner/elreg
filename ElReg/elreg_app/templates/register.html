@@ -17,7 +17,7 @@
     <tr><th>№ Амбулаторной карты:</th><td colspan="2">{{ client_id }}</td></tr>
     {% else %}
     {% if policy_type == '2' or policy_type == '4' %}
-    <tr><th>Полис ОМС:</th><td colspan="2">{% if series %}{{ series }} {% endif %}{{ number }}</td></tr>
+    <tr><th>Полис ОМС:</th><td colspan="2">{% if series and series != '0' %}{{ series }} {% endif %}{{ number }}</td></tr>
     {% endif %}
     {% if policy_type == '3' %}
     <tr><th>Полис ДМС:</th><td colspan="2">{% if series %}{{ series }} {% endif %}{{ number }}</td></tr>
