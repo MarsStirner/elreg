@@ -26,7 +26,7 @@ $(document).ready(function () {
             success: function (data) {
                 var $items = [];
                 $.each(data['result'], function(key, val) {
-                    $items.push('<li><a class="speciality" href="' + href.replace('ajax_specialities', 'ajax_doctors') + val + '/">' + val + '</a></li>');
+                    $items.push('<li><a class="speciality" href="' + href.replace('ajax_specialities', 'ajax_doctors') + '?sp=' + encodeURIComponent(val) + '">' + val + '</a></li>');
                 });
                 $('ul.secondTable').html($($items.join('')).fadeIn('fast'));
                 $('body,html').animate({
@@ -296,11 +296,11 @@ function show_doc(type){
     var $doc_example = $('#doc_example');
     $doc_example.hide();
     if (type == 'policy_type_4'){
-        src_sm = '/static/images/docs/polis_sm.jpg';
-        src = '/static/images/docs/polis.jpg';
+        src_sm = $STATIC_DIR + 'i/docs/polis_sm.jpg';
+        src = $STATIC_DIR + 'i/docs/polis.jpg';
     }else if (type == 'policy_type_2'){
-        src_sm = '/static/images/docs/old_polis_sm.jpg';
-        src = '/static/images/docs/old_polis.jpg';
+        src_sm = $STATIC_DIR + 'i/docs/old_polis_sm.jpg';
+        src = $STATIC_DIR + 'i/docs/old_polis.jpg';
     }
     $doc_example.find('img').attr('src', src_sm);
     $('#doc_example_modal').find('img').attr('src', src);
