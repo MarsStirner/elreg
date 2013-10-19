@@ -84,6 +84,8 @@
                 $.each(data, function(key, val) {
                     if (key == '5'){
                         $items.push('<li><a href="javascript:void(0);" onclick="$(\'#myModal\').modal();">' + val + '</a></li>');
+                    }else if (key == '15'){
+                        $items.push('<li><a href="javascript:void(0);" onclick="$(\'#gor2Modal\').modal();">' + val + '</a></li>');
                     }else{
                         $items.push('<li><a href="{% url subdivision %}' + key + '/">' + val + '</a></li>');
                     }
@@ -105,6 +107,8 @@
                 $.each(data, function(key, val) {
                     if (key == '5'){
                         $items.push('<li><a href="javascript:void(0);" onclick="$(\'#myModal\').modal();">' + val + '</a></li>');
+                    }else if (key == '15'){
+                        $items.push('<li><a href="javascript:void(0);" onclick="$(\'#gor2Modal\').modal();">' + val + '</a></li>');
                     }else{
                         $items.push('<li><a href="{% url subdivision %}' + key + '/">' + val + '</a></li>');
                     }

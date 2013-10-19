@@ -144,7 +144,10 @@ def timePage(request, templateName, time=0):
         firstweekday = today - datetime.timedelta(days=datetime.date.isoweekday(today) - 1)
 
     hospital_Uid = db.get('hospital_Uid')
-    ticketList = ScheduleWSDL().getScheduleInfo(hospitalUid=hospital_Uid, doctorUid=time)
+    ticketList = ScheduleWSDL().getScheduleInfo(hospitalUid=hospital_Uid,
+                                                doctorUid=time,
+                                                startDate=firstweekday,
+                                                endDate=firstweekday+datetime.timedelta(days=7))
 
     try:
         office = ticketList[0].office
@@ -347,6 +350,7 @@ def patientPage(request, templateName):
                     finish_time = finish_time.strftime('%H:%M')
 
                     db_params = {'ticketUid': ticketPatient.ticketUid,
+                                 'message': getattr(ticketPatient, 'message', ''),
                                  'date': date,
                                  'start_time': start_time,
                                  'finish_time': finish_time,
@@ -479,6 +483,7 @@ def registerPage(request, templateName):
                       'number': db.get('number'), }
 
     template_parameters = {'ticketUid': db.get('ticketUid'),
+                           'message': db.get('message'),
                            'date': date,
                            'start_time': db.get('start_time'),
                            'finish_time': db.get('finish_time'),
