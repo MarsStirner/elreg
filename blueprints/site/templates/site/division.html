@@ -11,17 +11,17 @@
 </blockquote>
 <div class="well">
 <div class="row-fluid">
-<div class="span4">
+<div class="span3">
     <ul class="firstTable nav nav-pills nav-stacked">
         {% for division in lpu.buildings %}
-            <li><a id="{{ division.id }}" href="{{ url_for('.get_specialities', lpu_id=lpu_id, department_id=division.id) }}" class="division">{{ division.name }} {% if division.address %}({{ division.address }}){% endif %}</a></li>
+            <li><a id="{{ division.id }}" href="{{ url_for('.get_specialities', lpu_id=lpu_id, department_id=division.id) }}" class="division">{{ division.name }}{% if division.address %}<br>({{ division.address }}){% endif %}</a></li>
         {% endfor %}
     </ul>
 </div>
 <div class="span4">
     <ul class="secondTable nav nav-pills nav-stacked"></ul>
 </div>
-<div class="span4">
+<div class="span5">
     <ul class="thirdTable nav nav-pills nav-stacked"></ul>
 </div>
 </div>

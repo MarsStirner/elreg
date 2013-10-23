@@ -1,97 +1,106 @@
-{% extends "base.html" %}
+{% extends "site/base.html" %}
 
 {% block content %}
-<legend><big>Информация о записи:</big></legend>
+<legend>Информация о записи:</legend>
 <blockquote>
     <dl class="dl-horizontal">
-        <dt>Лечебное учреждение:</dt><dd>{{ current_lpu_title }}</dd>
-        <dd>{{ address }}</dd>
-        <dt>Телефон:</dt><dd>{{ current_lpu_phone }}</dd>
-        <dt>Специализация:</dt><dd>{{ speciality }}</dd>
-        <dt>Врач:</dt><dd>{{ doctor }}</dd>
-        <dt>Дата и время приёма:</dt><dd>{{ date }} {{ start_time }} - {{ finish_time }}</dd>
+        <dt>Лечебное учреждение:</dt><dd>{{ lpu.name }}</dd>
+        {% if lpu.address %}<dd>{{ lpu.address }}</dd>{% endif %}
+        {% if lpu.phone %}<dt>Телефон:</dt><dd>{{ lpu.phone }}</dd>{% endif %}
+        <dt>Специализация:</dt><dd>{{ doctor.get('speciality') }}</dd>
+        <dt>Врач:</dt><dd>{% if doctor %}{{ doctor.get('lastName') }} {{ doctor.get('firstName') }} {{ doctor.get('patronymic') }}{% else %}&nbsp;{% endif %}</dd>
+        <dt>Дата и время приёма:</dt><dd>{{ date|dateformat('d.M.y') }} {{ start_time|datetimeformat('H:mm') }} - {{ finish_time|datetimeformat('H:mm') }}</dd>
     </dl>
 </blockquote>
-{% if errors %}
-<p>
-    <div id="dialog-modal" class="alert alert-error" title="Ошибка записи">
-        {#    <button type="button" class="close" data-dismiss="alert">&times;</button>#}
+{% with errors = get_flashed_messages(category_filter=["error"]) %}
+  {% if errors %}
+    <div class="alert alert-error" title="Ошибка записи">
         <strong>Ошибка записи!</strong>
+        <ul class="unstyled">
         {% for error in errors %}
-            {{ error }}<br />
+          <li>{{ error }}</li>
         {% endfor %}
+        </ul>
     </div>
-    <script type="text/javascript">
-        $(".alert").alert();
-    </script>
-</p>
+  {% endif %}
+{% endwith %}
+{% if form.errors %}
+<div class="alert alert-error" title="Ошибка заполнения формы">
+    <strong>Форма заполнена некорректно</strong>
+    <ul class="unstyled">
+        {% for field_name, field_errors in form.errors|dictsort if field_errors %}
+            {% for error in field_errors %}
+                <li>{{ form[field_name].label(class="inline") }}: {{ error }}</li>
+            {% endfor %}
+        {% endfor %}
+    </ul>
+</div>
 {% endif %}
-
-{% if ticketPatient_err %}
-    <div id="dialog-modal" class="alert alert-error" title="Ошибка записи">
-{#    <button type="button" class="close" data-dismiss="alert">&times;</button>#}
-    <strong>Ошибка записи!</strong>
-    {{ ticketPatient_err }}
+{% with messages = get_flashed_messages(category_filter=["info"]) %}
+  {% if messages %}
+    <div class="alert alert-error" title="Сообщение">
+        <ul class="unstyled">
+        {% for message in messages %}
+          <li>{{ message }}</li>
+        {% endfor %}
+        </ul>
     </div>
-    <script type="text/javascript">
-        $(".alert").alert();
-    </script>
-{% endif %}
-
+  {% endif %}
+{% endwith %}
 <div class="well well-small">
 <form id="patient_form" action="" method="post" name="frm" class="form-horizontal">
+    {{ form.csrf_token }}
     <input type="hidden" name="ticket" value="{{ ticket }}" />
     <input type="hidden" name="flag" value="True" />
 
     <legend><big>Данные посетителя</big></legend>
     <div class="control-group">
-        <label class="control-label" for="lastName">Фамилия<span class="text-error">*</span></label>
+        {{ form.lastname.label(class="control-label") }}
         <div class="controls">
-            <input type="text" class="span4" name="lastName" id="lastName" value="{{ lastName|default_if_none:"" }}" autocomplete="on" placeholder="Иванов" />
+            {{ form.lastname(class="span4", autocomplete="off", default=session.get('lastname'), placeholder="Иванов") }}
         </div>
     </div>
     <div class="control-group">
-        <label class="control-label" for="firstName">Имя<span class="text-error">*</span></label>
+        {{ form.firstname.label(class="control-label") }}
         <div class="controls">
-            <input type="text" class="span4" name="firstName" id="firstName" value="{{ firstName|default_if_none:"" }}" maxlength="40" size="30" autocomplete="on" placeholder="Иван" />
+            {{ form.firstname(class="span4", autocomplete="off", default=session.get('firstname'), placeholder="Иван") }}
         </div>
     </div>
 
     <div class="control-group">
-        <label class="control-label" for="patronymic">Отчество<span class="text-error">*</span></label>
+        {{ form.patronymic.label(class="control-label") }}
         <div class="controls">
-            <input type="text" class="span4" name="patronymic" id="patronymic" value="{{ patronymic|default_if_none:"" }}" maxlength="40" size="30" autocomplete="on" placeholder="Иванович" />
+            {{ form.patronymic(class="span4", autocomplete="off", default=session.get('patronymic'), placeholder="Иванович") }}
         </div>
     </div>
 
     <div class="control-group">
         <label class="control-label" for="dd">Дата рождения<span class="text-error">*</span></label>
         <div class="controls">
-            <input type="text" class="span1" name="dd" id="dd" value="{{ dd|default_if_none:"" }}" maxlength="2" size="2" autocomplete="on" placeholder="01" />
-            <input type="text" class="span1" name="mm" id="mm" value="{{ mm|default_if_none:"" }}" maxlength="2" size="2" autocomplete="on" placeholder="12" />
-            <input type="text" class="span1" name="yy" id="yy" value="{{ yy|default_if_none:"" }}" maxlength="4" size="4" autocomplete="on" placeholder="2001" />
+            {{ form.day(class="day_month", id="dd", autocomplete="on", default=session.get('day'), placeholder="01") }}
+            {{ form.month(class="day_month", id="mm", autocomplete="on", default=session.get('month'), placeholder="12") }}
+            {{ form.year(class="year", id="yy", autocomplete="on", default=session.get('year'), placeholder="2001") }}
         </div>
     </div>
 
     <div class="control-group">
-        <label class="control-label" for="radio1">Пол<span class="text-error">*</span></label>
+        {{ form.gender.label(class="control-label") }}
         <div class="controls">
-            <input type="radio" name="radio" id="radio1" value="1"{% if request.POST.radio == '1' or sex == '1' %}checked="checked"{% endif %} /> М
-            <input type="radio" name="radio" id="radio2" value="2"{% if request.POST.radio == '2' or sex == '2' %}checked="checked"{% endif %} /> Ж
+            {{ form.gender(class="inline clearfix", default=session.get('gender')) }}
         </div>
     </div>
 
-    {% include '__documents_select.html' %}
+    {% include 'site/__documents_select.html' %}
 
     <div class="control-group">
         <div class="controls">
-            <input id="chb" value="1" name="send_email" type="checkbox"{% if request.POST.send_email or send_email %}checked="checked"{% endif %} /> - отправить информацию о записи на электронный адрес
+            {{ form.send_email(id="chb", default=session.get('send_email')) }} - отправить информацию о записи на электронный адрес
         </div>
     </div>
     <div class="control-group">
-        <label class="control-label" for="email">Адрес электронной почты</label>
+        {{ form.email.label(class="control-label") }}
         <div class="controls">
-            <input type="text" class="span4" name="email" id="email" value="{{ userEmail|default_if_none:"" }}" maxlength="50" size="35" {% if not request.POST.send_email and not send_email %}disabled="disabled"{% endif %} autocomplete="on" placeholder="example@email.ru" />
+            {{ form.email(class="span4", autocomplete="off", default=session.get('email'), placeholder="example@email.ru", disabled="disabled") }}
         </div>
     </div>
 
@@ -110,6 +119,7 @@
     <div class="row-fluid">
         <div class="span7">
             <label for="confirm">
+                {{ form.confirm(id="confirm", default=False) }} Я даю своё согласие на автоматизированную обработку указанной информации, распространяющейся на осуществление всех действий с ней, включая сбор, передачу по сетям связи общего назначения, накопление, хранение, обновление, изменение, использование, обезличивание, блокирование, уничтожение и обработку посредством внесения в электронную базу данных, систематизации, включения в списки и отчетные формы.
                 <input type="checkbox" id="confirm" name="confirm" value="confirm" /> Я даю своё согласие на автоматизированную обработку указанной информации, распространяющейся на осуществление всех действий с ней, включая сбор, передачу по сетям связи общего назначения, накопление, хранение, обновление, изменение, использование, обезличивание, блокирование, уничтожение и обработку посредством внесения в электронную базу данных, систематизации, включения в списки и отчетные формы.
             </label>
         </div>
@@ -117,10 +127,10 @@
 
     <div class="form-actions">
         <button type="submit" id="button-submit" class="btn btn-success disabled" disabled>Подтвердить</button>
-        <a href="{% url time %}" class="btn">Отменить</a>
+        <a href="{{ request.referrer }}" class="btn">Отменить</a>
     </div>
 </form>
 </div>
-<a href="{% url time %}" class="btn btn-primary btn-large">Вернуться</a>
+<a href="{{ request.referrer }}" class="btn btn-primary btn-large">Вернуться</a>
 
 {% endblock %}

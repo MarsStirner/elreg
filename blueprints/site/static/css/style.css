@@ -46,3 +46,26 @@ input#captcha_1{
     margin-top:0;
     margin-bottom: 0;
 }
+#doc_example{
+    position: absolute;
+    right: 30%;
+    top: -50px;
+}
+#doc_example_modal{
+    width: inherit;
+}
+#doc_example_modal .modal-body{
+    max-height: 720px;
+}
+input.day_month{
+    width: 17px;
+}
+input.year{
+    width: 33px;
+}
+.inline{
+    display: inline;
+}
+ul.inline>li>label{
+    display: inline;
+}

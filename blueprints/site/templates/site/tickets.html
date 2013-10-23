@@ -1,31 +1,25 @@
 {% extends "site/base.html" %}
 
 {% block content %}
-<style>
-    form{margin:0;}
-</style>
 <blockquote>
     <dl class="dl-horizontal">
         <dt>Лечебное учреждение:</dt><dd>{{ lpu.name }}</dd>
         {% if lpu.address %}<dd>{{ lpu.address }}</dd>{% endif %}
         {% if lpu.phone %}<dt>Телефон:</dt><dd>{{ lpu.phone }}</dd>{% endif %}
-        <dt>Специализация:</dt><dd>{{ doctor.speciality }}</dd>
-        <dt>Врач:</dt><dd>{% if doctor %}{{ doctor.name.lastName }} {{ doctor.name.firstName }} {{ doctor.name.patronymic }}{% else %}&nbsp;{% endif %}</dd>
-        {% if ticket_table %}
+        <dt>Специализация:</dt><dd>{{ doctor.get('speciality') }}</dd>
+        <dt>Врач:</dt><dd>{% if doctor %}{{ doctor.get('lastName') }} {{ doctor.get('firstName') }} {{ doctor.get('patronymic') }}{% else %}&nbsp;{% endif %}</dd>
+        {% if ticket_table and office is defined %}
             <dt>Кабинет:</dt><dd>{{ office }}</dd>
         {% endif %}
     </dl>
 </blockquote>
-<legend>
-<p>
-    <div class="row-fluid">
-        <div class="span3"><a href="{{ url_for('.tickets', lpu_id=lpu_id, department_id=department_id, doctor_id=doctor.uid, start=prev_monday) }}" class="btn btn-info" title="Предыдущая неделя">Предыдущая неделя</a></div>
-        <div class="span3 offset6"> <a href="{{ url_for('.tickets', lpu_id=lpu_id, department_id=department_id, doctor_id=doctor.uid, start=next_monday) }}" class="btn btn-info pull-right" title="Следующая неделя">Следующая неделя</a></div>
-    </div>
-</p>
-</legend>
+<div class="row-fluid">
+    <a href="{{ url_for('.tickets', lpu_id=lpu_id, department_id=department_id, doctor_id=doctor_id, start=prev_monday) }}" class="btn btn-info pull-left" title="Предыдущая неделя">Предыдущая неделя</a>
+    <a href="{{ url_for('.tickets', lpu_id=lpu_id, department_id=department_id, doctor_id=doctor_id, start=next_monday) }}" class="btn btn-info pull-right" title="Следующая неделя">Следующая неделя</a>
+</div>
+<br>
 {% if ticket_table %}
-<div class="well well-large">
+<div class="well well-small">
     <table class="table table-condensed">
         <caption>
             <div class="row-fluid">
@@ -52,25 +46,20 @@
                 {% for cell in row %}
                     {% if cell and cell|attr('start') > now %}
                     <td class="{{ cell.status }}">
-                        <form action="{{ url_for('.registration', lpu_id=lpu_id, department_id=department_id, doctor_id=doctor.uid) }}" method="POST">
                         {% if cell.status == 'free' %}
-                            <input type="hidden" name="ticket" value="{{ cell.start|dateformat('d.M.y') }}-{{ cell.start|datetimeformat('H:mm') }}-{{ cell.finish|datetimeformat('H:mm') }}">
-                            <button type="submit" class="btn btn-block btn-success" name="tick_sub">{{ cell.start|datetimeformat('H:mm') }}</button>
+                            <a href="{{ url_for('.registration', lpu_id=lpu_id, department_id=department_id, doctor_id=doctor_id, d=cell.start|dateformat('yMd'), s=cell.start|datetimeformat('Hmm'), f=cell.finish|datetimeformat('Hmm')) }}" class="btn btn-block btn-success">{{ cell.start|datetimeformat('H:mm') }}</a>
                         {% elif cell.status == 'locked' or cell.status == 'disabled' %}
-                            <button type="button" class="btn btn-block btn-danger disabled" name=ticket value="{{ cell.start|dateformat('d.M.y') }}-{{ cell.start|datetimeformat('H:mm') }}-{{ cell.finish|datetimeformat('H:mm') }}">
-                                {{ cell.start|datetimeformat('H:mm') }}
-                            </button>
+                            <span class="btn btn-block btn-danger disabled">{{ cell.start|datetimeformat('H:mm') }}</span>
                         {% else %}
-                            <button type="button" class="btn btn-block disabled{% if cell.start|datetimeformat('H:mm') %} btn-inverse{% endif %}" name="ticket" value="{{ cell.start|dateformat('d.M.y') }}-{{ cell.start|datetimeformat('H:mm') }}-{{ cell.finish|datetimeformat('H:mm') }}">{{ cell.start|datetimeformat('H:mm')|default("&nbsp;") }}</button>
+                            <span class="btn btn-block btn-danger disabled{% if cell.start|datetimeformat('H:mm') %} btn-inverse{% endif %}">{{ cell.start|datetimeformat('H:mm')|default("&nbsp;") }}</span>
                         {% endif %}
                     {% elif cell %}
-                        <td align="center">
-                        <button type="button" class="btn btn-block disabled{% if cell.start|datetimeformat('H:mm') %} btn-inverse{% endif %}" name="ticket" value="{{ cell.start|dateformat('d.M.y') }}-{{ cell.start|datetimeformat('H:mm') }}-{{ cell.finish|datetimeformat('H:mm') }}">{{ cell.start|datetimeformat('H:mm')|default("&nbsp;") }}</button>
+                    <td align="center">
+                        <span class="btn btn-block btn-danger disabled{% if cell.start|datetimeformat('H:mm') %} btn-inverse{% endif %}">{{ cell.start|datetimeformat('H:mm')|default("&nbsp;") }}</span>
                     {% else %}
-                        <td align="center">
-                        <button type="button" class="btn btn-block disabled" name="ticket">&nbsp;</button>
+                    <td align="center">
+                        <span class="btn btn-block disabled">&nbsp;</span>
                     {% endif %}
-                    </form>
                     </td>
                 {% endfor %}
             </tr>
@@ -84,7 +73,6 @@
             </tr>
         </tbody>
     </table>
-</form>
 </div>
 {% else %}
 <legend>Расписание на текущую неделю отсутствует ({{ dates[0]|dateformat('d.M.y') }} - {{ dates[6]|dateformat('d.M.y') }})</legend>

@@ -26,7 +26,7 @@ $(document).ready(function () {
             success: function (data) {
                 var $items = [];
                 $.each(data['result'], function(key, val) {
-                    $items.push('<li><a class="speciality" href="' + href.replace('ajax_specialities', 'ajax_doctors') + '?sp=' + encodeURIComponent(val) + '">' + val + '</a></li>');
+                    $items.push('<li><a class="speciality" href="' + href.replace('ajax_specialities', 'ajax_doctors') + '?sp=' + encodeURIComponent(val) + '">' + val.replace('(', '<br>(') + '</a></li>');
                 });
                 $('ul.secondTable').html($($items.join('')).fadeIn('fast'));
                 $('body,html').animate({
@@ -91,9 +91,19 @@ $(document).ready(function () {
             event.preventDefault();
         }
     });
+    $('#dd').keyup(function(event) {
+        if ($('#dd').val().length == 2){
+            $('#mm').focus();
+        }
+    });
     $('#mm').keypress(function(event) {
         if (event.which && (event.which < 48 || event.which > 57) && (event.which != 8)) {
             event.preventDefault();
+        }
+    });
+    $('#mm').keyup(function(event) {
+        if ($('#mm').val().length == 2){
+            $('#yy').focus();
         }
     });
     $('#yy').keypress(function(event) {

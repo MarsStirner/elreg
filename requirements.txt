@@ -3,6 +3,7 @@ Flask-Babel
 Flask-Login
 Flask-Principal
 Flask-SQLAlchemy
+Flask-Mail
 wtforms
 Flask-WTF
 alembic

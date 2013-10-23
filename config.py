@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 import os
-
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 DEBUG = False
@@ -18,7 +17,7 @@ SERVER_PORT = 8800
 
 SYSTEM_USER = 'elreg'
 
-CSRF_ENABLED = True
+WTF_CSRF_ENABLED = True
 SECRET_KEY = ''
 
 BABEL_DEFAULT_LOCALE = 'ru_RU'

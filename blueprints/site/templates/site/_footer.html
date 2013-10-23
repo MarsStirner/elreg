@@ -1,6 +1,9 @@
 <!-- Le javascript
 ================================================== -->
 <!-- Placed at the end of the document so the pages load faster -->
+<script type="text/javascript">
+    $STATIC_DIR = '{{ url_for('.static', filename='') }}';
+</script>
 <script type="text/javascript" src="{{ url_for('.static', filename='js/jquery-1.8.2.min.js') }}"></script>
 <script type="text/javascript" src="{{ url_for('static', filename='bootstrap/js/bootstrap.min.js') }}"></script>
 <script type="text/javascript" src="{{ url_for('.static', filename='js/jquery.placeholder.min.js') }}"></script>
