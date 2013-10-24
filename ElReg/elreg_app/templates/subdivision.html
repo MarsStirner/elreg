@@ -14,7 +14,7 @@
 <div class="span4">
     <ul class="firstTable nav nav-pills nav-stacked">
         {% for subdivision in subdivision_list %}
-            <li><a id="{{ subdivision.id }}" href="javascript:;" class="spec">{{ subdivision.name }} {% if subdivision.address %}({{ subdivision.address }}){% endif %}</a></li>
+            <li><a id="{{ subdivision.id }}" href="javascript:;" class="spec">{{ subdivision.name }}{% if subdivision.address %}<br>({{ subdivision.address }}){% endif %}</a></li>
         {% endfor %}
     </ul>
 </div>

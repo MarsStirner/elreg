@@ -514,7 +514,7 @@ def updatesPage(request):
         db.set({'address': request.GET['value'], 'spec': spec})
         for i in doctors_list:
             if i.hospitalUid == hospital_Uid:
-                data.append(i.speciality)
+                data.append(i.speciality.replace('(', '<br>('))
                 data = list(set(data))
                 data.sort()
 
