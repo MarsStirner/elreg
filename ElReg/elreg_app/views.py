@@ -425,7 +425,7 @@ def patientPage(request, templateName):
                                       context_instance=RequestContext(request))
         # если представление было вызвано нажатием на ячейку таблицы на странице Время:
         db.set('step', 5)
-        doctor = request.POST.get('doctor')
+        doctor = request.POST.get('doctor_id')
         if doctor:
             db.set('time', doctor)
             _remember_doctor(request, hospital_Uid, doctor)
