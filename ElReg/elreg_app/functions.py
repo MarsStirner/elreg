@@ -8,6 +8,7 @@ from livesettings import config_value
 from suds.client import Client
 import redis
 import settings
+from datetime import datetime
 
 import logging
 if settings.DEBUG:
@@ -221,6 +222,22 @@ class ScheduleWSDL():
             print e
             ticket = []
         return ticket
+
+    def get_closest_tickets(self, hospitalUid, doctors, start=None):
+        """
+        Метод возвращает информацию о ближайших талончиках.
+
+        """
+        if start is None:
+            start = datetime.now()
+        try:
+            tickets = self.client.service.getClosestTickets({'hospitalUid': hospitalUid,
+                                                            'doctors': doctors,
+                                                            'start': start}).tickets
+        except Exception, e:
+            print e
+            tickets = []
+        return tickets
 
 
 def stringValidation(string):

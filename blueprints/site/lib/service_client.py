@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from datetime import datetime
 from suds.client import Client
 from suds.sax.text import Text
 from config import DEBUG
@@ -162,3 +163,19 @@ class Schedule():
             print e
             ticket = []
         return ticket
+
+    def get_closest_tickets(self, hospitalUid, doctors, start=None):
+        """
+        Метод возвращает информацию о ближайших талончиках.
+
+        """
+        if start is None:
+            start = datetime.now()
+        try:
+            tickets = self.client.service.getClosestTickets({'hospitalUid': hospitalUid,
+                                                            'doctors': doctors,
+                                                            'start': start}).tickets
+        except Exception, e:
+            print e
+            tickets = []
+        return tickets

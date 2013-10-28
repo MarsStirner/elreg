@@ -165,15 +165,14 @@ def tickets(lpu_id, department_id, doctor_id, start=None):
 
 @module.route('/patient/<int:lpu_id>/<int:department_id>/<int:doctor_id>/', methods=['POST', 'GET'])
 def registration(lpu_id, department_id, doctor_id):
-    """Логика страницы Пациент
+    """Логика страницы Запись на приём
     Здесь происходит обработка данных полученных от пользователя (на стороне сервера). Осуществляется проверка на
     наличие незаполненных полей и упрощенная валидация введенных данных. Все найденные ошибки заносятся в
     словарь errors, который выводится в шаблон в случае присутствия в нем элементов. В случае отсутствия ошибок в
     форме с данными пользователя формируется запрос на запись в ЛПУ (ticketPatient). При отклонении записи на приём,
     причина отклонения содержится в переменной result, которая и передается в шаблон. При успешной записи на приём,
     в случае если пользователь указал e-mail (userEmail), формируется тело письма и выполняется его отправка. Далее
-    осуществляется редирект на страницу Запись. При попытке попасть на страницу Пациент по средсвам введения
-    url-адреса в адресную строку, будет осуществлен редирект на главную страницу.
+    осуществляется редирект на страницу Запись.
 
     """
     hospital_uid = '{0}/{1}'.format(lpu_id, department_id)
@@ -292,7 +291,7 @@ def registration(lpu_id, department_id, doctor_id):
                 hospitalUid=hospital_uid,
                 doctorUid=time,
                 timeslotStart=str(date) + 'T' + str(start_time),
-                hospitalUidFrom="0",
+                hospitalUidFrom='',
                 birthday=unicode('-'.join([yy, mm, dd]))
             )
 
@@ -404,16 +403,30 @@ def get_doctors(lpu_id=None, department_id=None):
     if not lpu_id or not department_id or not speciality:
         abort(404)
     data = list()
-    doctors_list = List().listDoctors(hospital_Uid='{0}/{1}'.format(lpu_id, department_id),
+    hospital_uid = '{0}/{1}'.format(lpu_id, department_id)
+    doctors_list = List().listDoctors(hospital_Uid=hospital_uid,
                                       speciality=speciality)
     for doctor in doctors_list:
         if doctor.speciality == speciality:
+            _tickets = list()
+            closest_tickets = Schedule().get_closest_tickets(hospital_uid, [doctor.uid])
+            if closest_tickets:
+                for key, value in enumerate(closest_tickets):
+                    _tickets.append(dict(href=url_for('.registration',
+                                                      lpu_id=lpu_id,
+                                                      department_id=department_id,
+                                                      doctor_id=doctor.uid,
+                                                      d=value['timeslotStart'].strftime('%Y%m%d'),
+                                                      s=value['timeslotStart'].strftime('%H%M'),
+                                                      f=value['timeslotEnd'].strftime('%H%M')),
+                                         info=value['timeslotStart'].strftime('%d.%m %H:%M')))
             data.append(dict(uid=doctor.uid,
                              name=' '.join([doctor.name.lastName, doctor.name.firstName, doctor.name.patronymic]),
-                             href=url_for('.tickets',
-                                          lpu_id=lpu_id,
-                                          department_id=department_id,
-                                          doctor_id=doctor.uid)))
+                             schedule_href=url_for('.tickets',
+                                                   lpu_id=lpu_id,
+                                                   department_id=department_id,
+                                                   doctor_id=doctor.uid),
+                             tickets=_tickets))
     return jsonify(result=data)
 
 
@@ -427,4 +440,5 @@ def get_lpu(hospital_uid):
         lpu_info = hospitals[0]
         for build in lpu_info.buildings:
             build.name = unicode(build.name)
+            build.address = unicode(build.address)
     return lpu_info

@@ -1,6 +1,14 @@
 jQuery.support.cors = true;
 
 $(document).ready(function () {
+    $("body").on({
+        ajaxStart: function() {
+            $(this).addClass("loading");
+        },
+        ajaxStop: function() {
+            $(this).removeClass("loading");
+        }
+    });
 
     var jqXHR = [];
 
@@ -24,7 +32,7 @@ $(document).ready(function () {
             cache: false, // обязательно для IE
             dataType: 'json',
             success: function (data) {
-                var $items = [];
+                var $items = ['<li class="nav-header">Выбор мед. специализации</li>'];
                 $.each(data['result'], function(key, val) {
                     $items.push('<li><a class="speciality" href="' + href.replace('ajax_specialities', 'ajax_doctors') + '?sp=' + encodeURIComponent(val) + '">' + val.replace('(', '<br>(') + '</a></li>');
                 });
@@ -55,9 +63,18 @@ $(document).ready(function () {
             cache: false, // обязательно для IE
             dataType: 'json',
             success: function (data) {
-                var $items = [];
-                $.each(data['result'], function(key, val) {
-                    $items.push('<li><a href="' + val.href + '">' + val.name + '</a></li>');
+                var $items = ['<li class="nav-header">Выбор Врача<span class="pull-right">Ближайшая свободная запись/Расписание</span></li>'];
+                var doctor;
+                $.each(data.result, function(key, val) {
+                    doctor = '<li class="clearfix"><a class="span7" href="' + val.schedule_href + '">' + val.name + '</a>';
+                    doctor += '<div class="btn-group pull-right">';
+                    if (val.tickets.length > 0){
+                       doctor += '<a href="' + val.tickets[0].href + '" class="btn btn-small btn-success">' + val.tickets[0].info + '</button>';
+                    }
+                    doctor += '<a href="' + val.schedule_href + '" class="btn btn-small btn-warning" type="button">Расписание</button>';
+                    doctor += '</div>';
+                    doctor += '</li>';
+                    $items.push(doctor);
                 });
                 $('ul.thirdTable').html($($items.join('')).fadeIn('fast'));
                 $('body,html').animate({

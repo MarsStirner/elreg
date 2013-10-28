@@ -1,11 +1,12 @@
 {% extends "site/base.html" %}
 
 {% block content %}
+<div class="alert alert-info"><h4>Внесите данные пациента в поля для заполнения ниже</h4></div>
 <legend>Информация о записи:</legend>
 <blockquote>
     <dl class="dl-horizontal">
         <dt>Лечебное учреждение:</dt><dd>{{ lpu.name }}</dd>
-        {% if lpu.address %}<dd>{{ lpu.address }}</dd>{% endif %}
+        {% if lpu.buildings[0] %}<dd>{{ lpu.buildings[0]|attr('name') }}{% if lpu.buildings[0]|attr('address') %} ({{ lpu.buildings[0]|attr('address') }}){% endif %}</dd>{% endif %}
         {% if lpu.phone %}<dt>Телефон:</dt><dd>{{ lpu.phone }}</dd>{% endif %}
         <dt>Специализация:</dt><dd>{{ doctor.get('speciality') }}</dd>
         <dt>Врач:</dt><dd>{% if doctor %}{{ doctor.get('lastName') }} {{ doctor.get('firstName') }} {{ doctor.get('patronymic') }}{% else %}&nbsp;{% endif %}</dd>
@@ -131,6 +132,6 @@
     </div>
 </form>
 </div>
-<a href="{{ request.referrer }}" class="btn btn-primary btn-large">Вернуться</a>
+<a href="{{ url_for('.tickets', lpu_id=request.view_args.get('lpu_id'), department_id=request.view_args.get('department_id'), doctor_id=request.view_args.get('doctor_id')) }}" class="btn btn-primary btn-large">К расписанию</a>
 
 {% endblock %}

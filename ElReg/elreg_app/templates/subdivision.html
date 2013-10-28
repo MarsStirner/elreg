@@ -9,19 +9,20 @@
         {% if current_lpu.email %}<dt>Электронная почта:</dt><dd><a href="mailto:{{ current_lpu.email }}">{{ current_lpu.email }}</a></dd>{% endif %}
     </dl>
 </blockquote>
-<div class="well">
+<div class="well well-small">
 <div class="row-fluid">
 <div class="span3">
     <ul class="firstTable nav nav-pills nav-stacked">
+    <li class="nav-header">Выбор подразделения</li>
         {% for subdivision in subdivision_list %}
             <li><a id="{{ subdivision.id }}" href="javascript:;" class="spec">{{ subdivision.name }}{% if subdivision.address %}<br>({{ subdivision.address }}){% endif %}</a></li>
         {% endfor %}
     </ul>
 </div>
-<div class="span3">
+<div class="span4">
     <ul class="secondTable nav nav-pills nav-stacked"></ul>
 </div>
-<div class="span4">
+<div class="span5">
     <ul class="thirdTable nav nav-pills nav-stacked"></ul>
 </div>
 </div>
