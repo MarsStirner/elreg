@@ -133,7 +133,7 @@ $(document).ready(function () {
             event.preventDefault();
         }
     });
-    $('#captcha_1').keypress(function(event) {
+    $('#captcha').keypress(function(event) {
         if (event.which && (event.which < 48 || event.which > 57) && (event.which != 8)) {
             event.preventDefault();
         }
@@ -144,8 +144,8 @@ $(document).ready(function () {
         document.getElementById('email').focus();
     });
     $('#patient_form').submit(function() {
-        var $lastName = $('#lastName');
-        var $firstName = $('#firstName');
+        var $lastname = $('#lastname');
+        var $firstname = $('#firstname');
         var $patronymic = $('#patronymic');
         var $dd = $('#dd');
         var $mm = $('#mm');
@@ -153,33 +153,33 @@ $(document).ready(function () {
         var $policy1 = $('#policy1');
         var $policy2 = $('#policy2');
         var $email = $('#email');
-        if (!$lastName.val()) {
-            $('#lastName').closest('.control-group').removeClass('success').addClass('error');
+        if (!$lastname.val()) {
+            $('#lastname').closest('.control-group').removeClass('success').addClass('error');
             if($('#note1')){
                 $('#note1').remove();
             }
-            $('<span class="help-inline" id="note1">Введите фамилию</span>').fadeIn('slow').insertAfter($lastName);
-            $lastName.focus();
+            $('<span class="help-inline" id="note1">Введите фамилию</span>').fadeIn('slow').insertAfter($lastname);
+            $lastname.focus();
             return false;
         }else {
             if($('#note1')){
                 $('#note1').remove();
             }
-            $('#lastName').closest('.control-group').removeClass('error').addClass('success');
+            $('#lastname').closest('.control-group').removeClass('error').addClass('success');
         }
-        if (!$firstName.val()) {
-            $('#firstName').closest('.control-group').removeClass('success').addClass('error');
+        if (!$firstname.val()) {
+            $('#firstname').closest('.control-group').removeClass('success').addClass('error');
             if($('#note2')){
                 $('#note2').remove();
             }
-            $('<span class="help-inline" id="note2">Введите имя</span>').fadeIn('slow').insertAfter($firstName);
-            $firstName.focus();
+            $('<span class="help-inline" id="note2">Введите имя</span>').fadeIn('slow').insertAfter($firstname);
+            $firstname.focus();
             return false;
         }else {
             if($('#note2')){
                 $('#note2').remove();
             }
-            $('#firstName').closest('.control-group').removeClass('error').addClass('success');
+            $('#firstname').closest('.control-group').removeClass('error').addClass('success');
         }
         if (!$patronymic.val()) {
             $('#patronymic').closest('.control-group').removeClass('success').addClass('error');
@@ -218,18 +218,18 @@ $(document).ready(function () {
             }
             $('#dd').closest('.control-group').removeClass('error').addClass('success');
         }
-        if(!$('#radio1').is(":checked") && !$('#radio2').is(":checked")){
-            $('#radio1').closest('.control-group').removeClass('success').addClass('error');
+        if(!$('#gender-0').is(":checked") && !$('#gender-1').is(":checked")){
+            $('#gender').closest('.control-group').removeClass('success').addClass('error');
             if($('#note5')){
                 $('#note5').remove();
             }
-            $('#radio1').closest('.controls').append( $('<span class="help-inline" id="note5">Выберите пол</span>').fadeIn('slow') );
+            $('#gender').closest('.controls').append( $('<span class="help-inline" id="note5">Выберите пол</span>').fadeIn('slow') );
             return false;
         }else{
             if($('#note5')){
                 $('#note5').remove();
             }
-            $('#radio1').closest('.control-group').removeClass('error').addClass('success');
+            $('#gender').closest('.control-group').removeClass('error').addClass('success');
         }
         if ( $('#chb').is(':checked') && $email.val()) {
             $('#email').closest('.control-group').removeClass('error').addClass('success');
@@ -253,20 +253,6 @@ $(document).ready(function () {
         }else{
             $('#email').closest('.control-group').removeClass('error').addClass('success');
         }
-        if (!$('#captcha_1').val()){
-            $('#captcha_1').closest('.control-group').removeClass('success').addClass('error');
-            if($('#note8')){
-                $('#note8').remove();
-            }
-            $('<span class="help-inline" id="note8">Введите результат выражения</span>').fadeIn('slow').insertAfter($('#captcha_1'));
-            $('#captcha_1').focus();
-            return false;
-        } else {
-            if($('#note8')){
-                $('#note8').remove();
-            }
-            $('#captcha_1').closest('.control-group').removeClass('error').addClass('success');
-        }
         if(!$('select#doc_type_selector').val()){
             $('#doc_type_selector').closest('.control-group').removeClass('success').addClass('error');
             if($('#note9')){
@@ -282,8 +268,13 @@ $(document).ready(function () {
             $('#doc_type_selector').closest('.control-group').removeClass('error').addClass('success');
 
             var comment = {};
+            comment['doc_series'] = 'серию';
             comment['series'] = 'серию';
+            comment['policy_series'] = 'серию';
             comment['number'] = 'номер';
+            comment['client_id'] = 'номер';
+            comment['doc_number'] = 'номер';
+            comment['policy_number'] = 'номер';
             var i=10;
             var is_valid = true;
             $('.doc_div:visible').find('input').each(function(){
@@ -302,6 +293,20 @@ $(document).ready(function () {
             if (!is_valid){
                 return false;
             }
+        }
+        if (!$('#captcha').val()){
+            $('#captcha').closest('.control-group').removeClass('success').addClass('error');
+            if($('#note8')){
+                $('#note8').remove();
+            }
+            $('<span class="help-inline" id="note8">Введите результат выражения</span>').fadeIn('slow').insertAfter($('#captcha'));
+            $('#captcha').focus();
+            return false;
+        } else {
+            if($('#note8')){
+                $('#note8').remove();
+            }
+            $('#captcha').closest('.control-group').removeClass('error').addClass('success');
         }
         return true;
     })

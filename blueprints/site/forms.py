@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
 from flask.ext.wtf import Form, RecaptchaField
 from wtforms import StringField, IntegerField, RadioField, SelectField, BooleanField, FormField
-from wtforms.validators import DataRequired, Email, length
+from wtforms.validators import DataRequired, Email, AnyOf, Optional, Required
 from application.lib.captcha.fields import CaptchaField
 
 
 class BirthdayForm(Form):
-    day = IntegerField(u'День', [DataRequired(u'Обязательное поле'), length(max=2)])
-    month = IntegerField(u'Месяц', [DataRequired(u'Обязательное поле'), length(max=2)])
-    year = IntegerField(u'Год', [DataRequired(u'Обязательное поле'), length(max=4)])
+    day = IntegerField(u'День', [DataRequired(u'Обязательное поле')])
+    month = IntegerField(u'Месяц', [DataRequired(u'Обязательное поле')])
+    year = IntegerField(u'Год', [DataRequired(u'Обязательное поле')])
 
 
 class EnqueuePatientForm(Form):
@@ -16,10 +16,12 @@ class EnqueuePatientForm(Form):
     firstname = StringField(u'Имя<span class="text-error">*</span>', [DataRequired()])
     patronymic = StringField(u'Отчество<span class="text-error">*</span>', [DataRequired()])
     #BirthdayForm = FormField(BirthdayForm, label=u'Дата рождения')
-    day = IntegerField(u'День', [DataRequired(u'Обязательное поле'), length(max=2)])
-    month = IntegerField(u'Месяц', [DataRequired(u'Обязательное поле'), length(max=2)])
-    year = IntegerField(u'Год', [DataRequired(u'Обязательное поле'), length(max=4)])
-    gender = RadioField(u'Пол<span class="text-error">*</span>', [DataRequired()], choices=[(1, u'М'), (2, u'Ж')])
+    day = IntegerField(u'День рождения<span class="text-error">*</span>', [DataRequired(u'Обязательное поле')])
+    month = IntegerField(u'Месяц рождения<span class="text-error">*</span>', [DataRequired(u'Обязательное поле')])
+    year = IntegerField(u'Год рождения<span class="text-error">*</span>', [DataRequired(u'Обязательное поле')])
+    gender = RadioField(u'Пол<span class="text-error">*</span>',
+                        [Required()],
+                        choices=[(u'1', u'М'), (u'2', u'Ж')])
     document_type = SelectField(u'Тип документа<span class="text-error">*</span>',
                                 [DataRequired()],
                                 choices=[('', u'- укажите тип документа -'),
@@ -30,7 +32,7 @@ class EnqueuePatientForm(Form):
                                          ('policy_type_4', u'Полис ОМС (нового образца)'),
                                          ('doc_type_4', u'Удостоверение личности офицера')])
     send_email = BooleanField(u'отправить информацию о записи на электронный адрес')
-    email = StringField(u'Адрес электронной почты', [Email(u'Введён некорректный email')])
+    email = StringField(u'Адрес электронной почты', [Optional(), Email(u'Введён некорректный email')])
     confirm = BooleanField()
     series = StringField(u'Серия полиса<span class="text-error">*</span>')
     number = StringField(u'Номер полиса<span class="text-error">*</span>')

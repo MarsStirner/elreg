@@ -9,7 +9,7 @@ CAPTCHA_FONT_PATH = getattr(config,
                             'CAPTCHA_FONT_PATH',
                             os.path.normpath(os.path.join(os.path.dirname(__file__), '../', 'fonts/Vera.ttf')))
 CAPTCHA_FONT_SIZE = getattr(config, 'CAPTCHA_FONT_SIZE', 22)
-CAPTCHA_LETTER_ROTATION = getattr(config, 'CAPTCHA_LETTER_ROTATION', (-35, 35))
+CAPTCHA_LETTER_ROTATION = getattr(config, 'CAPTCHA_LETTER_ROTATION', (-15, 15))
 CAPTCHA_BACKGROUND_COLOR = getattr(config, 'CAPTCHA_BACKGROUND_COLOR', '#ffffff')
 CAPTCHA_FOREGROUND_COLOR = getattr(config, 'CAPTCHA_FOREGROUND_COLOR', '#001100')
 CAPTCHA_CHALLENGE_FUNCT = getattr(config, 'CAPTCHA_CHALLENGE_FUNCT', 'captcha.helpers.math_challenge')

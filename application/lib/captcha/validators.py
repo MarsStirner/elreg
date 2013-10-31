@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from flask import request, current_app, session
+from wtforms.validators import ValidationError
 
 
 class CaptchaValidator(object):
@@ -12,12 +13,12 @@ class CaptchaValidator(object):
             self.message = u'Введён неверный проверочный код'
         if current_app.testing:
             return
-        captcha_id = request.form.get('{name}_id'.format(field.name), '')
+        captcha_id = request.form.get('{name}_id'.format(name=field.name), '')
         challenge = field.data.lower().strip()
         key = 'captcha_{id}'.format(id=captcha_id)
         captcha = session.get(key)
         response = captcha.get('response')
         if not response or response != challenge:
-            raise ValueError(self.message)
+            raise ValidationError(self.message)
         if key in session:
             del session[key]

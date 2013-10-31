@@ -63,7 +63,8 @@ def generate_image(text):
                 charimage = charimage.rotate(random.randrange(*settings.CAPTCHA_LETTER_ROTATION), expand=0, resample=Image.BICUBIC)
             else:
                 charimage = charimage.rotate(random.randrange(*settings.CAPTCHA_LETTER_ROTATION), resample=Image.BICUBIC)
-        charimage = charimage.crop(charimage.getbbox())
+        box = charimage.getbbox()
+        charimage = charimage.crop((box[0], box[1] - 4, box[2], box[3]))
         maskimage = Image.new('L', size)
 
         maskimage.paste(charimage, (xpos, 4, xpos + charimage.size[0], 4 + charimage.size[1]))

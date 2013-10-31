@@ -186,13 +186,6 @@ def registration(lpu_id, department_id, doctor_id):
 
     form = EnqueuePatientForm(request.form)
     if form.validate_on_submit():
-        pass
-
-
-
-
-    # если представление было вызвано при нажатии кнопки submit на странице Пациент:
-    if request.form.get('flag', ''):
         # Проверка на заполненность формы пользователем и ее корректность:
         # фамилия
         lastName = request.form.get('lastName', '').strip()
@@ -255,9 +248,9 @@ def registration(lpu_id, department_id, doctor_id):
             errors.append(u'Введите корректно адрес электронной почты')
 
         #form = get_captcha_form(request.form)
-        if not form.is_valid():
-            flash(u'Введено неверное значение проверочного выражения или истекло время, отведенное для его ввода',
-                  'error')
+        #if not form.is_valid():
+        #    flash(u'Введено неверное значение проверочного выражения или истекло время, отведенное для его ввода',
+        #          'error')
 
         ticketPatient_err = ''
 

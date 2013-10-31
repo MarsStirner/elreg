@@ -29,8 +29,8 @@
 <div class="alert alert-error" title="Ошибка заполнения формы">
     <strong>Форма заполнена некорректно</strong>
     <ul class="unstyled">
-        {% for field_name, field_errors in form.errors|dictsort if field_errors %}
-            {% for error in field_errors %}
+        {% for field_name in form.errors %}
+            {% for error in form.errors[field_name] %}
                 <li>{{ form[field_name].label(class="inline") }}: {{ error }}</li>
             {% endfor %}
         {% endfor %}
@@ -48,7 +48,7 @@
     </div>
   {% endif %}
 {% endwith %}
-<div class="well well-small">
+<div class="well">
 <form id="patient_form" action="" method="post" name="frm" class="form-horizontal">
     {{ form.csrf_token }}
     <input type="hidden" name="ticket" value="{{ ticket }}" />
@@ -78,9 +78,9 @@
     <div class="control-group">
         <label class="control-label" for="dd">Дата рождения<span class="text-error">*</span></label>
         <div class="controls">
-            {{ form.day(class="day_month", id="dd", autocomplete="on", default=session.get('day'), placeholder="01") }}
-            {{ form.month(class="day_month", id="mm", autocomplete="on", default=session.get('month'), placeholder="12") }}
-            {{ form.year(class="year", id="yy", autocomplete="on", default=session.get('year'), placeholder="2001") }}
+            {{ form.day(class="day_month", id="dd", autocomplete="on", value=session.get('day', ''), maxlength=2, placeholder="01") }}
+            {{ form.month(class="day_month", id="mm", autocomplete="on", value=session.get('month', ''), maxlength=2, placeholder="12") }}
+            {{ form.year(class="year", id="yy", autocomplete="on", value=session.get('year', ''), maxlength=4, placeholder="2001") }}
         </div>
     </div>
 
@@ -108,7 +108,7 @@
     <div class="control-group">
         {{ form.captcha.label(class="control-label") }}
         <div class="controls">
-            {{ form.captcha(class="span1") }}
+            {{ form.captcha(class="span1", value="") }}
         </div>
     </div>
 
@@ -127,10 +127,9 @@
 
     <div class="form-actions">
         <button type="submit" id="button-submit" class="btn btn-success disabled" disabled>Подтвердить</button>
-        <a href="{{ request.referrer }}" class="btn">Отменить</a>
+        <a href="{{ url_for('.tickets', lpu_id=request.view_args.get('lpu_id'), department_id=request.view_args.get('department_id'), doctor_id=request.view_args.get('doctor_id')) }}" class="btn">Отменить</a>
     </div>
 </form>
 </div>
 <a href="{{ url_for('.tickets', lpu_id=request.view_args.get('lpu_id'), department_id=request.view_args.get('department_id'), doctor_id=request.view_args.get('doctor_id')) }}" class="btn btn-primary btn-large">К расписанию</a>
-
 {% endblock %}
