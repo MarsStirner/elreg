@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
-from flask.ext.wtf import Form
-from wtforms import StringField, IntegerField, RadioField, SelectField, BooleanField, FormField,DateTimeField
+from flask.ext.wtf import Form, RecaptchaField
+from wtforms import StringField, IntegerField, RadioField, SelectField, BooleanField, FormField
 from wtforms.validators import DataRequired, Email, length
+from application.lib.captcha.fields import CaptchaField
 
 
 class BirthdayForm(Form):
@@ -37,4 +38,5 @@ class EnqueuePatientForm(Form):
     client_id = StringField(u'Электронная амбулаторная карта<span class="text-error">*</span>')
     doc_series = StringField(u'Серия документа<span class="text-error">*</span>')
     doc_number = StringField(u'Номер документа<span class="text-error">*</span>')
+    captcha = CaptchaField(u'Сосчитайте результат выражения<span class="text-error">*</span>')
 

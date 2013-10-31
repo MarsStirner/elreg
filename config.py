@@ -22,6 +22,12 @@ SECRET_KEY = ''
 
 BABEL_DEFAULT_LOCALE = 'ru_RU'
 
+# Конфигурация CAPTCHA
+CAPTCHA_NOISE_FUNCTIONS = ()
+CAPTCHA_LETTER_ROTATION = (-10, 10)
+CAPTCHA_FOREGROUND_COLOR = '#000'
+CAPTCHA_TIMEOUT = 1440
+
 try:
     from config_local import *
 except ImportError:

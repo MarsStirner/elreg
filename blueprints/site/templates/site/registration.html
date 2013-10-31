@@ -2,7 +2,7 @@
 
 {% block content %}
 <div class="alert alert-info"><h4>Внесите данные пациента в поля для заполнения ниже</h4></div>
-<legend>Информация о записи:</legend>
+<legend>Информация о записи</legend>
 <blockquote>
     <dl class="dl-horizontal">
         <dt>Лечебное учреждение:</dt><dd>{{ lpu.name }}</dd>
@@ -58,20 +58,20 @@
     <div class="control-group">
         {{ form.lastname.label(class="control-label") }}
         <div class="controls">
-            {{ form.lastname(class="span4", autocomplete="off", default=session.get('lastname'), placeholder="Иванов") }}
+            {{ form.lastname(class="span4", autocomplete="off", value=session.get('lastname', ''), placeholder="Иванов") }}
         </div>
     </div>
     <div class="control-group">
         {{ form.firstname.label(class="control-label") }}
         <div class="controls">
-            {{ form.firstname(class="span4", autocomplete="off", default=session.get('firstname'), placeholder="Иван") }}
+            {{ form.firstname(class="span4", autocomplete="off", value=session.get('firstname', ''), placeholder="Иван") }}
         </div>
     </div>
 
     <div class="control-group">
         {{ form.patronymic.label(class="control-label") }}
         <div class="controls">
-            {{ form.patronymic(class="span4", autocomplete="off", default=session.get('patronymic'), placeholder="Иванович") }}
+            {{ form.patronymic(class="span4", autocomplete="off", value=session.get('patronymic', ''), placeholder="Иванович") }}
         </div>
     </div>
 
@@ -87,7 +87,7 @@
     <div class="control-group">
         {{ form.gender.label(class="control-label") }}
         <div class="controls">
-            {{ form.gender(class="inline clearfix", default=session.get('gender')) }}
+            {{ form.gender(class="inline clearfix", value=session.get('gender', '')) }}
         </div>
     </div>
 
@@ -95,20 +95,20 @@
 
     <div class="control-group">
         <div class="controls">
-            {{ form.send_email(id="chb", default=session.get('send_email')) }} - отправить информацию о записи на электронный адрес
+            {{ form.send_email(id="chb", value=session.get('send_email', '')) }} - отправить информацию о записи на электронный адрес
         </div>
     </div>
     <div class="control-group">
         {{ form.email.label(class="control-label") }}
         <div class="controls">
-            {{ form.email(class="span4", autocomplete="off", default=session.get('email'), placeholder="example@email.ru", disabled="disabled") }}
+            {{ form.email(class="span4", autocomplete="off", value=session.get('email', ''), placeholder="example@email.ru", disabled="disabled") }}
         </div>
     </div>
 
     <div class="control-group">
-        <label class="control-label" for="captcha_1">Сосчитайте результат выражения<span class="text-error">*</span></label>
+        {{ form.captcha.label(class="control-label") }}
         <div class="controls">
-            {{ captcha }}
+            {{ form.captcha(class="span1") }}
         </div>
     </div>
 
@@ -120,8 +120,7 @@
     <div class="row-fluid">
         <div class="span7">
             <label for="confirm">
-                {{ form.confirm(id="confirm", default=False) }} Я даю своё согласие на автоматизированную обработку указанной информации, распространяющейся на осуществление всех действий с ней, включая сбор, передачу по сетям связи общего назначения, накопление, хранение, обновление, изменение, использование, обезличивание, блокирование, уничтожение и обработку посредством внесения в электронную базу данных, систематизации, включения в списки и отчетные формы.
-                <input type="checkbox" id="confirm" name="confirm" value="confirm" /> Я даю своё согласие на автоматизированную обработку указанной информации, распространяющейся на осуществление всех действий с ней, включая сбор, передачу по сетям связи общего назначения, накопление, хранение, обновление, изменение, использование, обезличивание, блокирование, уничтожение и обработку посредством внесения в электронную базу данных, систематизации, включения в списки и отчетные формы.
+                {{ form.confirm(id="confirm") }} Я даю своё согласие на автоматизированную обработку указанной информации, распространяющейся на осуществление всех действий с ней, включая сбор, передачу по сетям связи общего назначения, накопление, хранение, обновление, изменение, использование, обезличивание, блокирование, уничтожение и обработку посредством внесения в электронную базу данных, систематизации, включения в списки и отчетные формы.
             </label>
         </div>
     </div>

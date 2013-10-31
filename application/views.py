@@ -16,6 +16,7 @@ from lib.user import User
 from forms import EditUserForm, LoginForm
 from lib.utils import admin_permission, public_endpoint
 
+import lib.captcha.views
 
 login_manager.login_view = 'login'
 

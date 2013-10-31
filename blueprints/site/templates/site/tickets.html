@@ -36,7 +36,7 @@
             <tr>
             {% for date in dates %}
                 <th class="th-centered">
-                    {{ date|dateformat('d.M.y') }}, {{ date|dateformat('E') }}.
+                    {{ date|dateformat('dd.M.y') }}, {{ date|dateformat('E') }}.
                 </th>
             {% endfor %}
             </tr>
@@ -48,15 +48,15 @@
                     {% if cell and cell|attr('start') > now %}
                     <td class="{{ cell.status }}">
                         {% if cell.status == 'free' %}
-                            <a href="{{ url_for('.registration', lpu_id=lpu_id, department_id=department_id, doctor_id=doctor_id, d=cell.start|dateformat('yMd'), s=cell.start|datetimeformat('Hmm'), f=cell.finish|datetimeformat('Hmm')) }}" class="btn btn-block btn-success">{{ cell.start|datetimeformat('H:mm') }}</a>
+                            <a href="{{ url_for('.registration', lpu_id=lpu_id, department_id=department_id, doctor_id=doctor_id, d=cell.start|dateformat('yMd'), s=cell.start|datetimeformat('Hmm', rebase=False), f=cell.finish|datetimeformat('Hmm', rebase=False)) }}" class="btn btn-block btn-success">{{ cell.start|datetimeformat('H:mm', rebase=False) }}</a>
                         {% elif cell.status == 'locked' or cell.status == 'disabled' %}
-                            <span class="btn btn-block btn-danger disabled">{{ cell.start|datetimeformat('H:mm') }}</span>
+                            <span class="btn btn-block btn-danger disabled">{{ cell.start|datetimeformat('H:mm', rebase=False) }}</span>
                         {% else %}
-                            <span class="btn btn-block btn-danger disabled{% if cell.start|datetimeformat('H:mm') %} btn-inverse{% endif %}">{{ cell.start|datetimeformat('H:mm')|default("&nbsp;") }}</span>
+                            <span class="btn btn-block btn-danger disabled{% if cell.start|datetimeformat('H:mm', rebase=False) %} btn-inverse{% endif %}">{{ cell.start|datetimeformat('H:mm', rebase=False)|default("&nbsp;") }}</span>
                         {% endif %}
                     {% elif cell %}
                     <td align="center">
-                        <span class="btn btn-block btn-danger disabled{% if cell.start|datetimeformat('H:mm') %} btn-inverse{% endif %}">{{ cell.start|datetimeformat('H:mm')|default("&nbsp;") }}</span>
+                        <span class="btn btn-block btn-danger disabled{% if cell.start|datetimeformat('H:mm', rebase=False) %} btn-inverse{% endif %}">{{ cell.start|datetimeformat('H:mm', rebase=False)|default("&nbsp;") }}</span>
                     {% else %}
                     <td align="center">
                         <span class="btn btn-block disabled">&nbsp;</span>
@@ -68,7 +68,7 @@
             <tr>
                 {% for date in dates %}
                     <th class="th-centered">
-                        {{ date|dateformat('d.M.y') }}, {{ date|dateformat('E') }}.
+                        {{ date|dateformat('dd.M.y') }}, {{ date|dateformat('E') }}.
                     </th>
                 {% endfor %}
             </tr>
