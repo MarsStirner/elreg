@@ -28,5 +28,5 @@
 </div>
 </div>
 </div>
-<a href="{{ url_for('.index') }}" class="btn btn-primary btn-large">Вернуться</a>
+<a href="{{ url_for('.lpu', okato=session.get('okato')) }}" class="btn btn-primary btn-large">К выбору ЛПУ</a>
 {% endblock %}

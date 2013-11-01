@@ -44,7 +44,7 @@ def index():
 
 @module.route('/medical_institution/', methods=['GET'])
 @module.route('/medical_institution/<okato>/', methods=['GET'])
-def lpu(okato):
+def lpu(okato=None):
     """ Логика страницы ЛПУ
     Из полученного кода ОКАТО находим список всех ЛПУ для данного региона. Если на страницу попадаем через
     кнопку "Поиск ЛПУ", тогда  в okato передается строка search и список ЛПУ не выводится.
