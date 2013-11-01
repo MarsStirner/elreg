@@ -19,9 +19,9 @@
         {{ form.series.label(class="control-label") }}
         <div class="controls">
             {% if doc_type in ('policy_type_2', 'policy_type_3') %}
-                {{ form.series(class="span1", value=session.get('series', ''), maxlength="10", size="2") }}
+                {{ form.series(class="span1", value=session.get('series', ''), maxlength="10", size="2", autocomplete="off") }}
             {% else %}
-                {{ form.series(class="span1", value=session.get('series', ''), disabled=disabled, maxlength="10", size="2") }}
+                {{ form.series(class="span1", value=session.get('series', ''), disabled=disabled, maxlength="10", size="2", autocomplete="off") }}
             {% endif %}
         </div>
     </div>
@@ -30,9 +30,9 @@
         {{ form.number.label(class="control-label") }}
         <div class="controls">
             {% if doc_type in ('policy_type_2', 'policy_type_3') %}
-                {{ form.number(class="span3", value=session.get('number', ''), placeholder="1234567890123456") }}
+                {{ form.number(class="span3", value=session.get('number', ''), placeholder="1234567890123456", autocomplete="off") }}
             {% else %}
-                {{ form.number(class="span3", value=session.get('number', ''), disabled=disabled, placeholder="1234567890123456") }}
+                {{ form.number(class="span3", value=session.get('number', ''), disabled=disabled, placeholder="1234567890123456", autocomplete="off") }}
             {% endif %}
         </div>
     </div>
@@ -43,9 +43,9 @@
         {{ form.policy_number.label(class="control-label") }}
         <div class="controls">
         {% if doc_type == 'policy_type_4' %}
-            {{ form.policy_number(class="span3", value=session.get('policy_number', ''), placeholder="1234567890123456") }}
+            {{ form.policy_number(class="span3", value=session.get('policy_number', ''), placeholder="1234567890123456", autocomplete="off") }}
         {% else %}
-            {{ form.policy_number(class="span3", value=session.get('policy_number', ''), disabled=disabled, placeholder="1234567890123456") }}
+            {{ form.policy_number(class="span3", value=session.get('policy_number', ''), disabled=disabled, placeholder="1234567890123456", autocomplete="off") }}
         {% endif %}
         </div>
     </div>
@@ -56,9 +56,9 @@
         {{ form.client_id.label(class="control-label") }}
         <div class="controls">
         {% if doc_type == 'client_id' %}
-            {{ form.client_id(class="span3", value=session.get('client_id', ''), placeholder="1234567890123456") }}
+            {{ form.client_id(class="span3", value=session.get('client_id', ''), placeholder="1234567890123456", autocomplete="off") }}
         {% else %}
-            {{ form.client_id(class="span3", value=session.get('client_id', ''), disabled=disabled, placeholder="1234567890123456") }}{% set disabled=True %}
+            {{ form.client_id(class="span3", value=session.get('client_id', ''), disabled=disabled, placeholder="1234567890123456", autocomplete="off") }}{% set disabled=True %}
         {% endif %}
         </div>
     </div>
@@ -69,9 +69,9 @@
         {{ form.doc_series.label(class="control-label") }}
         <div class="controls">
         {% if doc_type in ('doc_type_4', 'doc_type_7') %}
-            {{ form.doc_series(class="span1", value=session.get('doc_series', ''), maxlength="10", size="2") }}
+            {{ form.doc_series(class="span1", value=session.get('doc_series', ''), maxlength="10", size="2", autocomplete="off") }}
         {% else %}
-            {{ form.doc_series(class="span1", value=session.get('doc_series', ''), disabled=disabled, maxlength="10", size="2") }}
+            {{ form.doc_series(class="span1", value=session.get('doc_series', ''), disabled=disabled, maxlength="10", size="2", autocomplete="off") }}
         {% endif %}
         </div>
     </div>
@@ -80,9 +80,9 @@
         {{ form.doc_number.label(class="control-label") }}
         <div class="controls">
             {% if doc_type in ('doc_type_4', 'doc_type_7') %}
-                {{ form.doc_number(class="span3", default=session.get('doc_number', ''), placeholder="1234567890123456") }}
+                {{ form.doc_number(class="span3", default=session.get('doc_number', ''), placeholder="1234567890123456", autocomplete="off") }}
             {% else %}
-                {{ form.doc_number(class="span3", default=session.get('doc_number', ''), disabled=disabled, placeholder="1234567890123456") }}
+                {{ form.doc_number(class="span3", default=session.get('doc_number', ''), disabled=disabled, placeholder="1234567890123456", autocomplete="off") }}
             {% endif %}
         </div>
     </div>

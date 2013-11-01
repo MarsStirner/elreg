@@ -91,7 +91,7 @@ def tickets(lpu_id, department_id, doctor_id, start=None):
     session['doctor_id'] = doctor_id
 
     hospital_uid = '{0}/{1}'.format(lpu_id, department_id)
-    lpu_info = get_lpu(hospital_uid)
+    lpu_info = get_lpu('{0}/0'.format(lpu_id))
 
     today = date.today()
     now = datetime.now()
@@ -113,17 +113,7 @@ def tickets(lpu_id, department_id, doctor_id, start=None):
     if tickets:
         office = getattr(tickets[0], 'office', '')
 
-    # TODO: хорошо бы иметь метод получения врача по uid
-    doctors = List().listDoctors(hospital_Uid=hospital_uid)
-
-    doctor_info = None
-    for doctor in doctors:
-        if doctor_id and doctor.uid == doctor_id:
-            doctor_info = dict(firstName=doctor.name.firstName,
-                               lastName=doctor.name.lastName,
-                               patronymic=doctor.name.patronymic,
-                               speciality=doctor.speciality)
-            break
+    doctor_info = _get_doctor_info(hospital_uid, doctor_id)
 
     times = []  # Список времен начала записи текущей недели
     dates = []  # Список дат текущей недели
@@ -188,7 +178,16 @@ def registration(lpu_id, department_id, doctor_id):
 
     """
     hospital_uid = '{0}/{1}'.format(lpu_id, department_id)
-    lpu_info = get_lpu(hospital_uid)
+    lpu_info = get_lpu('{0}/0'.format(lpu_id))
+
+    session['department_id'] = department_id
+    session['doctor_id'] = doctor_id
+
+    if request.args.get('office'):
+        session['office'] = request.args.get('office')
+
+    if 'doctor' not in session:
+        session['doctor'] = _get_doctor_info(hospital_uid, doctor_id)
 
     timeslot, ticket_start, ticket_end = None, None, None
 
@@ -228,21 +227,19 @@ def registration(lpu_id, department_id, doctor_id):
 
         # электронная почта
         patient_email = form.email.data.strip()
-        send_email = form.send_email.data.strip()
-
-        patient_name = u'{lastname} {firstname} {patronymic}'.format(form.data)
+        send_email = form.send_email.data
 
         ticket = Schedule().enqueue(
             person={'lastName': unicode(form.lastname.data.strip().title()),
                     'firstName': unicode(form.firstname.data.strip().title()),
-                    'patronymic': unicode(form.patronymic.strip().title())},
+                    'patronymic': unicode(form.patronymic.data.strip().title())},
             document=document,
             sex=form.gender.data,
             hospitalUid=hospital_uid,
             doctorUid=doctor_id,
-            timeslotStart=timeslot.strftime('%Y-%m-%dT%H:%M'),
+            timeslotStart=timeslot.strftime('%Y-%m-%dT%H:%M:%S'),
             hospitalUidFrom='',
-            birthday=unicode('{dd}.{mm}.{yy}'.format(form.data))
+            birthday=unicode('{year}-{month}-{day}'.format(**form.data))
         )
 
         # запись на приём произошла успешно:
@@ -251,13 +248,18 @@ def registration(lpu_id, department_id, doctor_id):
             #[_del_session(key) for key in doc_keys]
 
             session['ticket_uid'] = ticket.ticketUid
-            session['date'] = timeslot.date()
-            session['start_time'] = ticket_start
-            session['finish_time'] = ticket_end
+            session['date'] = timeslot.date().strftime('%d.%m.%Y')
+            session['start_time'] = ticket_start.strftime('%H:%M')
+            session['finish_time'] = ticket_end.strftime('%H:%M')
+
+            session['document'] = document
+
+            session['patient'] = dict(name=u'{lastname} {firstname} {patronymic}'.format(**form.data),
+                                      birthday=u'{day:02d}.{month:02d}.{year}'.format(**form.data))
 
             # формирование и отправка письма:
             if send_email and patient_email:
-                _send_ticket(patient_email, form.data)
+                _send_ticket(patient_email, form.data, lpu_info)
 
             return redirect(url_for('.ticket_info'))
             # ошибка записи на приём:
@@ -275,15 +277,17 @@ def registration(lpu_id, department_id, doctor_id):
                            date=timeslot.date(),
                            start_time=ticket_start,
                            finish_time=ticket_end,
-                           office=session['office'],
-                           doctor=session['doctor'],
+                           office=session.get('office'),
+                           doctor=session.get('doctor'),
                            form=form)
 
 
-@module.route('/register/', methods=['POST'])
+@module.route('/register/', methods=['GET'])
 def ticket_info():
     session['step'] = 6
-    return render_template('{0}/ticket_info.html'.format(module.name))
+    hospital_uid = '{0}/{1}'.format(session.get('lpu_id'), session.get('department_id'))
+    lpu_info = get_lpu(hospital_uid)
+    return render_template('{0}/ticket_info.html'.format(module.name), lpu=lpu_info)
 
 
 @module.route('/ajax_specialities/<int:lpu_id>/<int:department_id>/', methods=['GET'])
@@ -321,6 +325,7 @@ def get_doctors(lpu_id=None, department_id=None):
                                                       lpu_id=lpu_id,
                                                       department_id=department_id,
                                                       doctor_id=doctor.uid,
+                                                      office=value['office'],
                                                       d=value['timeslotStart'].strftime('%Y%m%d'),
                                                       s=value['timeslotStart'].strftime('%H%M'),
                                                       f=value['timeslotEnd'].strftime('%H%M')),
@@ -343,24 +348,39 @@ def get_lpu(hospital_uid):
         print e
     else:
         lpu_info = hospitals[0]
-        for build in lpu_info.buildings:
-            build.name = unicode(build.name)
-            build.address = unicode(build.address)
+        for build in getattr(lpu_info, 'buildings', list()):
+            build.name = build.name
+            build.address = build.address
     return lpu_info
 
 
-def _generate_message(template, data):
+def _get_doctor_info(hospital_uid, doctor_id):
+    # TODO: хорошо бы иметь метод получения врача по uid
+    doctors = List().listDoctors(hospital_Uid=hospital_uid)
+
+    doctor_info = None
+    for doctor in doctors:
+        if doctor_id and doctor.uid == doctor_id:
+            doctor_info = dict(firstName=doctor.name.firstName,
+                               lastName=doctor.name.lastName,
+                               patronymic=doctor.name.patronymic,
+                               speciality=doctor.speciality)
+            break
+    return doctor_info
+
+
+def _generate_message(template, data, lpu_info):
     env = Environment(loader=PackageLoader(module.import_name,  module.template_folder))
     template = env.get_template(template)
-    return template.render(data=data)
+    return template.render(data=data, session=session, lpu=lpu_info)
 
 
-def _send_ticket(patient_email, data):
+def _send_ticket(patient_email, data, lpu_info):
     mail = Mail(current_app)
     message = Message(u'Уведомление о записи на приём', recipients=[patient_email])
 
-    message.body = _generate_message('{0}/email/email.txt'.format(module.name), data)
-    message.html = _generate_message('{0}/email/email.html'.format(module.name), data)
+    message.body = _generate_message('{0}/email/email.txt'.format(module.name), data, lpu_info)
+    message.html = _generate_message('{0}/email/email.html'.format(module.name), data, lpu_info)
 
     try:
         mail.send(message)

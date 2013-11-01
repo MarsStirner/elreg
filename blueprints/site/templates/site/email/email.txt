@@ -21,9 +21,9 @@
 {% endif %}
 {% endif %}
 ВЫ ЗАПИСАНЫ НА ПРИЕМ:
-Лечебное учреждение: {{ session.get('current_lpu_title') }}, {{ session.get('address') }}, телефон: {{ session.get('current_lpu_phone') }}
+Лечебное учреждение: {{ lpu.name }}, {% if lpu.buildings[0] %}{{ lpu.buildings[0]|attr('name') }}{% if lpu.buildings[0]|attr('address') %} ({{ lpu.buildings[0]|attr('address') }}){% endif %}{% if lpu.buildings[0]|attr('phone') %}, телефон: {{ lpu.buildings[0]|attr('phone') }}{% endif %}{% endif %}
 Врач: {% set doctor=session.get('doctor') %}{{ doctor['lastName'] }} {{ doctor['firstName'] }} {{ doctor['patronymic'] }} ({{ doctor.get('speciality') }})
-Дата и время приёма: {{ date|dateformat('dd.M.y') }} {{ start_time|datetimeformat('H:mm', rebase=False) }} - {{ finish_time|datetimeformat('H:mm', rebase=False) }}
+Дата и время приёма: {{ session.get('date', '') }} {{ session.get('start_time', '') }} - {{ session.get('finish_time', '') }}
 ВНИМАНИЕ:
 В случае невозможности посещения врача в указанное время, пожалуйста, сообщите об этом лечебному учреждению по контактным данным, указанным в настоящем уведомлении.
 С настоящим уведомлением необходимо обратиться в регистратуру лечебного учреждения не менее чем за 15 минут до указанного времени приёма.

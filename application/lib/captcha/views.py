@@ -57,7 +57,7 @@ def generate_image(text):
         fgimage = Image.new('RGB', size, settings.CAPTCHA_FOREGROUND_COLOR)
         charimage = Image.new('L', size, '#000000')
         chardraw = ImageDraw.Draw(charimage)
-        chardraw.text((0, 0), ' %s ' % char, font=font, fill='#ffffff')
+        chardraw.text((8, 0), ' %s ' % char, font=font, fill='#ffffff')
         if settings.CAPTCHA_LETTER_ROTATION:
             if PIL_VERSION >= 116:
                 charimage = charimage.rotate(random.randrange(*settings.CAPTCHA_LETTER_ROTATION), expand=0, resample=Image.BICUBIC)

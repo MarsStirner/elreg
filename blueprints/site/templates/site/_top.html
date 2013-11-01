@@ -22,7 +22,7 @@
             </li>
             <li class="divider-vertical"></li>
             <li {% if session.get('step') == 5 %}class="active"{% endif %}>
-                {% if session.get('step') > 5 %}<a href="{{ url_for('.registration') }}">{% else %}<a>{% endif %}<span class="label{% if session.get('step') >= 5 %} label-info{% endif %}">5</span> <big>Пациент</big></a>
+                {% if session.get('step') > 5 %}<a href="{{ url_for('.registration', lpu_id=session.get('lpu_id'), department_id=session.get('department_id'), doctor_id=session.get('doctor_id')) }}">{% else %}<a>{% endif %}<span class="label{% if session.get('step') >= 5 %} label-info{% endif %}">5</span> <big>Пациент</big></a>
             </li>
             <li class="divider-vertical"></li>
             <li {% if session.get('step') == 6 %}class="active"{% endif %}>
