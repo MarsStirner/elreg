@@ -3,28 +3,15 @@
 {% block content %}
     <div class="alert alert-info"><h4>Укажите населенный пункт</h4>Выберите регион и населенный пункт, в котором предполагается посетить медицинское учреждение</div>
     <div class="row-fluid">
-        {% for region in region_list %}
-        {% if loop.first %}
+        {%- for columns in region_list|slice(3) -%}
         <div class="span4">
             <ul class="nav nav-tabs nav-stacked">
-        {% endif %}
-        {% set break_keys=((((region_list|length) /3)|round(0, 'ceil') ), ((2 * (region_list|length) / 3)|round(0, 'ceil')))%}
-        {% if loop.index0 in break_keys %}
+            {%- for region in columns -%}
+            <li><a href ="{{ url_for('.lpu', okato=region.code) }}"><h4>{{ region.name }}</h4></a></li>
+            {%- endfor -%}
             </ul>
         </div>
-        <div class="span4">
-            <ul class="nav nav-tabs nav-stacked">
-        {% endif %}
-                <li>
-                    <a href ="{{ url_for('.lpu', okato=region.code) }}">
-                        <h4>{{ region.name }}</h4>
-                    </a>
-                </li>
-        {% if loop.last %}
-            </ul>
-        </div>
-        {% endif %}
-        {% endfor %}
+        {%- endfor -%}
     </div>
     <p class="pull-right">
         <a href="{{ url_for('.search') }}" class="btn btn-primary btn-large" title="Поиск ЛПУ">Поиск ЛПУ</a>

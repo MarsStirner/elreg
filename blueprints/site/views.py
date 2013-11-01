@@ -37,9 +37,7 @@ def index():
     region_list = List().listRegions()
     session.clear()
     session['step'] = 1
-
-    return render_template('{0}/index.html'.format(module.name), region_list=region_list,
-                           break_keys=(math.ceil(len(region_list) / 3.), math.ceil(2 * len(region_list) / 3.),))
+    return render_template('{0}/index.html'.format(module.name), region_list=region_list)
 
 
 @module.route('/medical_institution/', methods=['GET'])
