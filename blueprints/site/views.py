@@ -1,5 +1,16 @@
 # -*- encoding: utf-8 -*-
-from flask import render_template, abort, request, redirect, url_for, flash, session, current_app, jsonify
+from flask import (render_template,
+                   template_rendered,
+                   abort,
+                   request,
+                   redirect,
+                   url_for,
+                   flash,
+                   session,
+                   current_app,
+                   jsonify)
+from jinja2 import Environment, PackageLoader
+from flask_mail import Mail, Message
 import math
 from datetime import datetime, timedelta, date
 from pytz import timezone
@@ -11,7 +22,7 @@ from .app import module
 from .lib.service_client import List, Info, Schedule
 from .context_processors import header
 
-from .lib.utils import _config, stringValidation
+from .lib.utils import _config
 
 
 @module.route('/', methods=['GET'])
@@ -24,6 +35,7 @@ def index():
     """
     # получение списка регионов:
     region_list = List().listRegions()
+    session.clear()
     session['step'] = 1
 
     return render_template('{0}/index.html'.format(module.name), region_list=region_list,
@@ -177,190 +189,90 @@ def registration(lpu_id, department_id, doctor_id):
     """
     hospital_uid = '{0}/{1}'.format(lpu_id, department_id)
     lpu_info = get_lpu(hospital_uid)
-    session['step'] = 5
 
-    errors = []
-    ticket_date = datetime.strptime(request.args.get('d'), '%Y%m%d').replace(tzinfo=timezone(_config('TIME_ZONE')))
-    ticket_start = datetime.strptime(request.args.get('s'), '%H%M').replace(tzinfo=timezone(_config('TIME_ZONE')))
-    ticket_end = datetime.strptime(request.args.get('f'), '%H%M').replace(tzinfo=timezone(_config('TIME_ZONE')))
+    timeslot, ticket_start, ticket_end = None, None, None
+
+    date_string = '{date}{time}'.format(date=request.args.get('d'), time=request.args.get('s'))
+    try:
+        timeslot = datetime.strptime(date_string, '%Y%m%d%H%M').replace(tzinfo=timezone(_config('TIME_ZONE')))
+        ticket_start = datetime.strptime(request.args.get('s'), '%H%M').time()
+        ticket_end = datetime.strptime(request.args.get('f'), '%H%M').time()
+    except Exception, e:
+        print e
+        abort(404)
+
+    session['step'] = 5
 
     form = EnqueuePatientForm(request.form)
     if form.validate_on_submit():
-        # Проверка на заполненность формы пользователем и ее корректность:
-        # фамилия
-        lastName = request.form.get('lastName', '').strip()
-        if not lastName:
-            flash(u"Введите фамилию", 'error')
-        elif not stringValidation(lastName):
-            flash(u'Введите корректно фамилию', 'error')
-        # имя
-        firstName = request.form.get('firstName', '').strip()
-        if not firstName:
-            flash(u"Введите имя", 'error')
-        elif not stringValidation(firstName):
-            flash(u'Введите корректное имя', 'error')
-        # отчество
-        patronymic = request.form.get('patronymic', '').strip()
-        if not patronymic:
-            flash(u"Введите отчество", 'error')
-        elif not stringValidation(patronymic):
-            flash(u'Введите корректно отчество', 'error')
-        # день рождения
-        dd = request.form.get('dd', '').strip()
-        mm = request.form.get('mm', '').strip()
-        yy = request.form.get('yy', '').strip()
-        if not dd or not mm or not yy:
-            flash(u'Введите дату рождения', 'error')
-        # документ
-        document_type = request.form.get('document_type', '').strip()
-        series = request.form.get('series', '').strip()
-        number = request.form.get('number', '').strip()
-        doc_meta_type = ''
+        session.update(form.data)
 
+        document_type = form.document_type.data.strip()
         document = dict()
         if not document_type:
             flash(u"Выберите тип документа", 'error')
         else:
             if document_type in ('policy_type_2', 'policy_type_3'):
-                doc_meta_type = 'oms_dms'
                 document['policy_type'] = int(document_type.replace('policy_type_', ''))
-                document['series'] = series
-                document['number'] = number
+                document['series'] = form.series.data.strip()
+                document['number'] = form.number.data.strip()
             elif document_type in ('doc_type_4', 'doc_type_7'):
-                doc_meta_type = 'doc'
                 document['document_code'] = int(document_type.replace('doc_type_', ''))
-                document['series'] = series
-                document['number'] = number
+                document['series'] = form.doc_series.data.strip()
+                document['number'] = form.doc_number.data.strip()
             elif document_type == 'client_id':
-                doc_meta_type = 'amb'
-                document['client_id'] = int(number)
+                document['client_id'] = int(form.client_id.data.strip())
             elif document_type == 'policy_type_4':
-                doc_meta_type = 'new_oms'
                 document['policy_type'] = int(document_type.replace('policy_type_', ''))
-                document['number'] = number
-
-            if not number:
-                flash(u"Введите номер документа", 'error')
+                document['number'] = form.policy_number.data.strip()
 
         # электронная почта
-        userEmail = request.form.get('email', '').strip()
-        if userEmail:
-            errors.append(u'Введите корректно адрес электронной почты')
+        patient_email = form.email.data.strip()
+        send_email = form.send_email.data.strip()
 
-        #form = get_captcha_form(request.form)
-        #if not form.is_valid():
-        #    flash(u'Введено неверное значение проверочного выражения или истекло время, отведенное для его ввода',
-        #          'error')
+        patient_name = u'{lastname} {firstname} {patronymic}'.format(form.data)
 
-        ticketPatient_err = ''
+        ticket = Schedule().enqueue(
+            person={'lastName': unicode(form.lastname.data.strip().title()),
+                    'firstName': unicode(form.firstname.data.strip().title()),
+                    'patronymic': unicode(form.patronymic.strip().title())},
+            document=document,
+            sex=form.gender.data,
+            hospitalUid=hospital_uid,
+            doctorUid=doctor_id,
+            timeslotStart=timeslot.strftime('%Y-%m-%dT%H:%M'),
+            hospitalUidFrom='',
+            birthday=unicode('{dd}.{mm}.{yy}'.format(form.data))
+        )
 
-        _remember_user(request,
-                       {'lastName': lastName,
-                        'firstName': firstName,
-                        'patronymic': patronymic,
-                        'dd': dd,
-                        'mm': mm,
-                        'yy': yy,
-                        'document_type': document_type,
-                        'doc_meta_type': doc_meta_type,
-                        'series': series if series != '0' else '',
-                        'number': number,
-                        'userEmail': userEmail,
-                        'sex': request.form.get('radio', ''),
-                        'send_email': request.form.get('send_email', '')})
+        # запись на приём произошла успешно:
+        if ticket and ticket.result is True and len(ticket.ticketUid.split('/')[0]) != 0:
+            #doc_keys = ('policy_type', 'policy_number', 'doc_series', 'doc_number', 'client_id', 'series', 'number')
+            #[_del_session(key) for key in doc_keys]
 
-        # если ошибок в форме нет
-        if not errors:
-            hospital_uid = db.get('hospital_Uid')
-            time = db.get('time')
-            patientName = ' '.join([lastName, firstName, patronymic])
+            session['ticket_uid'] = ticket.ticketUid
+            session['date'] = timeslot.date()
+            session['start_time'] = ticket_start
+            session['finish_time'] = ticket_end
 
-            ticketPatient = Schedule().enqueue(
-                person={'lastName': unicode(lastName),
-                        'firstName': unicode(firstName),
-                        'patronymic': unicode(patronymic)},
-                document=document,
-                sex=request.form.get('radio', ''),
-                hospitalUid=hospital_uid,
-                doctorUid=time,
-                timeslotStart=str(date) + 'T' + str(start_time),
-                hospitalUidFrom='',
-                birthday=unicode('-'.join([yy, mm, dd]))
-            )
+            # формирование и отправка письма:
+            if send_email and patient_email:
+                _send_ticket(patient_email, form.data)
 
-            # запись на приём произошла успешно:
-            if ticketPatient and ticketPatient.result is True and len(ticketPatient.ticketUid.split('/')[0]) != 0:
-                doc_keys = ('policy_type', 'document_code', 'client_id', 'series', 'number')
-                db.delete(*doc_keys)
-                for key in doc_keys:
-                    db.set(key, '0')
-
-                start_time = start_time.strftime('%H:%M')
-                finish_time = finish_time.strftime('%H:%M')
-
-                db_params = {'ticketUid': ticketPatient.ticketUid,
-                             'date': date,
-                             'start_time': start_time,
-                             'finish_time': finish_time,
-                             'patientName': patientName,
-                             'birthday': '.'.join([dd, mm, yy])}
-                db_params.update(document)
-                db.set(db_params)
-                # формирование и отправка письма:
-                if userEmail:
-                    emailLPU = db.get('current_lpu_email')
-                    plaintext = get_template('email/email.txt')
-                    htmly = get_template('email/email.html')
-
-                    context_parameters = {'ticketUid': ticketPatient.ticketUid,
-                                           'patientName': db.get('patientName'),
-                                           'birthday': db.get('birthday'),
-                                           'current_lpu_title': db.get('current_lpu_title'),
-                                           'current_lpu_phone': db.get('current_lpu_phone'),
-                                           'address': db.get('address'),
-                                           'doctor': db.get('doctor'),
-                                           'speciality': db.get('speciality'),
-                                           'date': date,
-                                           'start_time': start_time,
-                                           'finish_time': finish_time}
-                    context_parameters.update(document)
-                    context = Context(context_parameters)
-
-                    subject, from_email, to = u'Уведомление о записи на приём', emailLPU, userEmail
-                    text_content = plaintext.render(context)
-                    html_content = htmly.render(context)
-                    connection = get_connection(settings.EMAIL_BACKEND, False,
-                                                **{'host': str(config_value('Mail', 'EMAIL_HOST')),
-                                                   'port': config_value('Mail', 'EMAIL_PORT'),
-                                                   'username': str(config_value('Mail', 'EMAIL_HOST_USER')),
-                                                   'password': str(config_value('Mail', 'EMAIL_HOST_PASSWORD')),
-                                                   'use_tls': config_value('Mail', 'EMAIL_USE_TLS'),
-                                                   })
-                    msg = EmailMultiAlternatives(subject, text_content, from_email, [to], connection=connection,)
-                    msg.attach_alternative(html_content, "text/html")
-                    try:
-                        msg.send()
-                    except Exception, e:
-                        print e
-                        logger.error(e)
-
-                return HttpResponseRedirect(reverse('register'))
+            return redirect(url_for('.ticket_info'))
             # ошибка записи на приём:
-            elif ticketPatient:
-                if ticketPatient.result is True:
-                    ticketPatient_err = u"Ошибка записи"
-                else:
-                    ticketPatient_err = ticketPatient.message
+        elif ticket:
+            if ticket.result is True:
+                flash(u"Ошибка записи", 'error')
             else:
-                ticketPatient_err = '''Не удалось соединиться с сервером.
-                Попробуйте отправить запрос ещё раз.'''
-        # ошибка при записи на приём или ошибки в заполненной форме:
-        db.set('step', 5)
+                flash(ticket.message, 'error')
+        else:
+            flash(u'Не удалось соединиться с сервером. Попробуйте отправить запрос ещё раз.', 'error')
 
         # если представление было вызвано нажатием на ячейку таблицы на странице Время:
     return render_template('{0}/registration.html'.format(module.name),
                            lpu=lpu_info,
-                           date=ticket_date,
+                           date=timeslot.date(),
                            start_time=ticket_start,
                            finish_time=ticket_end,
                            office=session['office'],
@@ -435,3 +347,29 @@ def get_lpu(hospital_uid):
             build.name = unicode(build.name)
             build.address = unicode(build.address)
     return lpu_info
+
+
+def _generate_message(template, data):
+    env = Environment(loader=PackageLoader(module.import_name,  module.template_folder))
+    template = env.get_template(template)
+    return template.render(data=data)
+
+
+def _send_ticket(patient_email, data):
+    mail = Mail(current_app)
+    message = Message(u'Уведомление о записи на приём', recipients=[patient_email])
+
+    message.body = _generate_message('{0}/email/email.txt'.format(module.name), data)
+    message.html = _generate_message('{0}/email/email.html'.format(module.name), data)
+
+    try:
+        mail.send(message)
+    except Exception, e:
+        print e
+        return False
+    return True
+
+
+def _del_session(key):
+    if key in session:
+        del session[key]
