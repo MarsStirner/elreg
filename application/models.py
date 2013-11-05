@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from datetime import datetime
 from database import db
 from flask_login import UserMixin
 
@@ -48,3 +49,15 @@ class UsersRoles(db.Model):
 
     user_id = db.Column(db.Integer, db.ForeignKey(Users.id), primary_key=True)
     role_id = db.Column(db.Integer, db.ForeignKey(Roles.id), primary_key=True)
+
+
+class Tickets(db.Model):
+    __tablename__ = '%s_tickets' % TABLE_PREFIX
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    uid = db.Column(db.Unicode(100))
+    ticket_uid = db.Column(db.Unicode(20))
+    info = db.Column(db.UnicodeText())
+    created = db.Column(db.DateTime(), default=datetime.now())
+    updated = db.Column(db.DateTime(), nullable=True)
+    is_active = db.Column(db.Boolean(), default=True)

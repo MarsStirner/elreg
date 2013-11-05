@@ -1,0 +1,38 @@
+{% extends "site/base.html" %}
+
+{% block content %}
+<legend>Отмена записи на приём</legend>
+<blockquote>
+{{ ticket.info }}
+</blockquote>
+{% with errors = get_flashed_messages(category_filter=["error"]) %}
+  {% if errors %}
+    <div class="alert alert-error" title="Ошибка записи">
+        <strong>Ошибка записи!</strong>
+        <ul class="unstyled">
+        {% for error in errors %}
+          <li>{{ error }}</li>
+        {% endfor %}
+        </ul>
+    </div>
+  {% endif %}
+{% endwith %}
+{% with messages = get_flashed_messages(category_filter=["success"]) %}
+  {% if messages %}
+    <div class="alert alert-success" title="Сообщение">
+        <ul class="unstyled">
+        {% for message in messages %}
+          <li>{{ message }}</li>
+        {% endfor %}
+        </ul>
+    </div>
+  {% endif %}
+{% endwith %}
+{% if request.method == 'GET' %}
+<p class="lead">Вы уверены, что хотите отменить запись на приём?</p>
+<form method="post">
+<button type="submit" class="btn btn-danger">Да</button><a href="{{ url_for('.index') }}" class="btn">Нет</a>
+</form>
+{% endif %}
+<a href="{{ url_for('.index') }}" class="btn btn-primary btn-large">На главную</a>
+{% endblock %}

@@ -1,11 +1,19 @@
-{% extends "base.html" %}
-
-{% load i18n %}
-
-{% block title %}Страница не найдена{% endblock %}
-
-{% block content %}
-    <legend><h3>Страница не найдена</h3></legend>
-    <p>Извините, запрошенная вами страница не найдена.</p>
-    <h4><a href="{% url index %}" title="На главную страницу">Вернуться на главную страницу</a></h4>
-{% endblock %}
+<!DOCTYPE html>
+<html lang="ru">
+	<head>
+        {% include 'site/_header.html' %}
+        <title>Страница не найдена</title>
+	</head>
+	<body>
+    <div class="container">
+    <section>
+		{% block content %}
+        <legend><h3>Страница не найдена</h3></legend>
+        <p>Извините, запрошенная вами страница не найдена.</p>
+        <h4><a href="{{ url_for('site.index') }}" title="На главную страницу">На главную</a></h4>
+        {% endblock %}
+    </section>
+	</div>
+      {% include 'site/_footer.html' %}
+	</body>
+</html>

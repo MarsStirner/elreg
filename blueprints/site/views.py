@@ -11,7 +11,6 @@ from flask import (render_template,
                    jsonify)
 from jinja2 import Environment, PackageLoader
 from flask_mail import Mail, Message
-import math
 from datetime import datetime, timedelta, date
 from pytz import timezone
 
@@ -21,6 +20,9 @@ from forms import EnqueuePatientForm
 from .app import module
 from .lib.service_client import List, Info, Schedule
 from .context_processors import header
+from application.app import db
+from application.models import Tickets
+
 
 from .lib.utils import _config
 
@@ -255,13 +257,15 @@ def registration(lpu_id, department_id, doctor_id):
             session['patient'] = dict(name=u'{lastname} {firstname} {patronymic}'.format(**form.data),
                                       birthday=u'{day:02d}.{month:02d}.{year}'.format(**form.data))
 
+            ticket_hash = _save_ticket(ticket.ticketUid, lpu_info=lpu_info)
+
             # формирование и отправка письма:
             if send_email and patient_email:
-                _send_ticket(patient_email, form.data, lpu_info)
+                _send_ticket(patient_email, form.data, lpu_info, ticket_hash=ticket_hash)
 
             return redirect(url_for('.ticket_info'))
-            # ошибка записи на приём:
         elif ticket:
+            # ошибка записи на приём:
             if ticket.result is True:
                 flash(u"Ошибка записи", 'error')
             else:
@@ -338,6 +342,30 @@ def get_doctors(lpu_id=None, department_id=None):
     return jsonify(result=data)
 
 
+@module.route('/dequeue/<int:lpu_id>/<int:department_id>/<uid>/', methods=['GET', 'POST'])
+def dequeue(lpu_id, department_id, uid):
+    ticket = db.session.query(Tickets).filter(uid=uid, is_active=True).first()
+    if not ticket:
+        abort(404)
+    if request.method == 'POST':
+        result = Schedule().dequeue(hospitalUid='{0}/{1}'.format(lpu_id, department_id),
+                                    ticketUid=ticket.ticket_uid)
+        if result and result['success']:
+            flash(u'Отмена записи произведена успешно', category='success')
+            ticket.is_active = False
+            ticket.updated = datetime.now()
+        else:
+            flash(u'''Отмена записи произошла с ошибкой,
+            попробуйте ещё раз или сообщите об отмене записи лечебному учреждению по контактным данным,
+            указанным в талоне''', category='error')
+    return render_template('{0}/dequeue.html', ticket=ticket)
+
+
+@module.errorhandler(404)
+def page_not_found(e):
+    return render_template('{0}/404.html'.format(module.name)), 404
+
+
 def get_lpu(hospital_uid):
     lpu_info = None
     try:
@@ -367,18 +395,20 @@ def _get_doctor_info(hospital_uid, doctor_id):
     return doctor_info
 
 
-def _generate_message(template, data, lpu_info):
+def _generate_message(template, data, lpu_info, ticket_hash):
     env = Environment(loader=PackageLoader(module.import_name,  module.template_folder))
     template = env.get_template(template)
-    return template.render(data=data, session=session, lpu=lpu_info)
+    return template.render(data=data, session=session, lpu=lpu_info, ticket_hash=ticket_hash)
 
 
-def _send_ticket(patient_email, data, lpu_info):
+def _send_ticket(patient_email, data, lpu_info, ticket_hash):
     mail = Mail(current_app)
     message = Message(u'Уведомление о записи на приём', recipients=[patient_email])
 
-    message.body = _generate_message('{0}/email/email.txt'.format(module.name), data, lpu_info)
-    message.html = _generate_message('{0}/email/email.html'.format(module.name), data, lpu_info)
+    message.body = _generate_message('{0}/email/email.txt'.format(module.name),
+                                     data, lpu_info, ticket_hash=ticket_hash)
+    message.html = _generate_message('{0}/email/email.html'.format(module.name),
+                                     data, lpu_info, ticket_hash=ticket_hash)
 
     try:
         mail.send(message)
@@ -391,3 +421,15 @@ def _send_ticket(patient_email, data, lpu_info):
 def _del_session(key):
     if key in session:
         del session[key]
+
+
+def _save_ticket(ticket_uid, lpu_info):
+    import hashlib
+    uid = hashlib.md5(ticket_uid).hexdigest()
+    env = Environment(loader=PackageLoader(module.import_name,  module.template_folder))
+    template = env.get_template('{0}/_ticket.html'.format(module.name))
+    info = template.render(lpu=lpu_info)
+    ticket = Tickets(uid=uid, ticket_uid=ticket_uid, info=info)
+    db.session.add(ticket)
+    db.session.commit()
+    return uid

@@ -39,7 +39,7 @@
 {% endif %}
 {% with messages = get_flashed_messages(category_filter=["info"]) %}
   {% if messages %}
-    <div class="alert alert-error" title="Сообщение">
+    <div class="alert alert-success" title="Сообщение">
         <ul class="unstyled">
         {% for message in messages %}
           <li>{{ message }}</li>

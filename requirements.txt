@@ -14,4 +14,4 @@ suds
 sqlalchemy
 fabric
 mysql-python
-lxml
+#lxml

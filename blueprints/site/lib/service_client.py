@@ -164,6 +164,19 @@ class Schedule():
             ticket = []
         return ticket
 
+    def dequeue(self, hospitalUid, ticketUid):
+        """Отмена записи на приём
+        """
+        try:
+            result = self.client.service.enqueue({
+                'hospitalUid': hospitalUid,
+                'ticketUid': ticketUid,
+            })
+        except Exception, e:
+            print e
+            result = None
+        return result
+
     def get_closest_tickets(self, hospitalUid, doctors, start=None):
         """
         Метод возвращает информацию о ближайших талончиках.

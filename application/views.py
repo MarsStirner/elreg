@@ -207,6 +207,11 @@ def authorisation_failed(e):
     return render_template('user/denied.html')
 
 
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('404.html')
+
+
 #########################################
 
 @login_manager.user_loader
