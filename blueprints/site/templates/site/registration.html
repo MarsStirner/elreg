@@ -10,7 +10,7 @@
         {% if lpu.phone %}<dt>Телефон:</dt><dd>{{ lpu.phone }}</dd>{% endif %}
         <dt>Специализация:</dt><dd>{{ doctor.get('speciality') }}</dd>
         <dt>Врач:</dt><dd>{% if doctor %}{{ doctor.get('lastName') }} {{ doctor.get('firstName') }} {{ doctor.get('patronymic') }}{% else %}&nbsp;{% endif %}</dd>
-        <dt>Дата и время приёма:</dt><dd>{{ date|dateformat('d.M.y') }} {{ start_time|datetimeformat('H:mm') }} - {{ finish_time|datetimeformat('H:mm') }}</dd>
+        <dt>Дата и время приёма:</dt><dd>{{ date|dateformat('dd.M.y', rebase=False) }} {{ start_time|datetimeformat('H:mm', rebase=False) }} - {{ finish_time|datetimeformat('H:mm', rebase=False) }}</dd>
     </dl>
 </blockquote>
 {% with errors = get_flashed_messages(category_filter=["error"]) %}
