@@ -65,6 +65,12 @@ def lpu(okato=None):
 
 @module.route('/medical_institution/search/', methods=['GET'])
 def search():
+    session['step'] = 2
+    return render_template('{0}/lpu.html'.format(module.name))
+
+
+@module.route('/medical_institution/ajax_search/', methods=['GET'])
+def ajax_search():
     search_lpu = request.args.get('search_lpu', '')
     search_gorod = request.args.get('search_gorod', '')
     search_rayon = request.args.get('search_rayon', '')
