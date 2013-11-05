@@ -2,9 +2,7 @@
 
 {% block content %}
 <legend>Отмена записи на приём</legend>
-<blockquote>
-{{ ticket.info }}
-</blockquote>
+<div class="well well-small">{{ ticket.info|safe }}</div>
 {% with errors = get_flashed_messages(category_filter=["error"]) %}
   {% if errors %}
     <div class="alert alert-error" title="Ошибка записи">
@@ -31,8 +29,8 @@
 {% if request.method == 'GET' %}
 <p class="lead">Вы уверены, что хотите отменить запись на приём?</p>
 <form method="post">
-<button type="submit" class="btn btn-danger">Да</button><a href="{{ url_for('.index') }}" class="btn">Нет</a>
+<button type="submit" class="btn btn-danger">Отменить запись</button> <a href="{{ url_for('.index') }}" class="btn">Не отменять</a>
 </form>
 {% endif %}
-<a href="{{ url_for('.index') }}" class="btn btn-primary btn-large">На главную</a>
+{#<a href="{{ url_for('.index') }}" class="btn btn-primary btn-large">На главную</a>#}
 {% endblock %}

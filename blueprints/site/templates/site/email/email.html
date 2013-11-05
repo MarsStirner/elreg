@@ -40,7 +40,7 @@
             </td></tr>
             <tr><td>Дата и время приёма:</td><td colspan="2">{{ session.get('date', '') }} {{ session.get('start_time', '') }} - {{ session.get('finish_time', '') }}</td></tr>
             <tr><th colspan="3">ВНИМАНИЕ:</th></tr>
-            <tr><td colspan="3">В случае невозможности посещения врача в указанное время, пожалуйста, сообщите об этом лечебному учреждению по контактным данным, указанным в настоящем уведомлении, или отмените запись, воспользовавшись ссылкой: <a href="{{ url_for('.dequeue', lpu_id=session.get('lpu_id'), department_id=session.get('department_id'), uid=ticket_hash) }}">{{ url_for('.dequeue', lpu_id=session.get('lpu_id'), department_id=session.get('department_id'), uid=ticket_hash) }}</a>.</td></tr>
+            <tr><td colspan="3">В случае невозможности посещения врача в указанное время, пожалуйста, сообщите об этом лечебному учреждению по контактным данным, указанным в настоящем уведомлении, или отмените запись, воспользовавшись ссылкой: <a href="{{ request.host_url }}{{ url_for('.dequeue', lpu_id=session.get('lpu_id'), department_id=session.get('department_id'), uid=ticket_hash) }}">{{ request.host_url }}{{ url_for('.dequeue', lpu_id=session.get('lpu_id'), department_id=session.get('department_id'), uid=ticket_hash) }}</a>.</td></tr>
             <tr><td colspan="3">С настоящим уведомлением необходимо обратиться в регистратуру лечебного учреждения не менее чем за 15 минут до указанного времени приёма.</td></tr>
         </table>
     </body>

@@ -316,6 +316,7 @@ def registration(lpu_id, department_id, doctor_id):
                                       birthday=u'{day:02d}.{month:02d}.{year}'.format(**form.data))
 
             ticket_hash = _save_ticket(ticket.ticketUid, lpu_info=lpu_info)
+            session['ticket_hash'] = ticket_hash
 
             # формирование и отправка письма:
             if send_email and patient_email:
@@ -402,7 +403,7 @@ def get_doctors(lpu_id=None, department_id=None):
 
 @module.route('/dequeue/<int:lpu_id>/<int:department_id>/<uid>/', methods=['GET', 'POST'])
 def dequeue(lpu_id, department_id, uid):
-    ticket = db.session.query(Tickets).filter(uid=uid, is_active=True).first()
+    ticket = db.session.query(Tickets).filter(Tickets.uid == uid, Tickets.is_active == True).first()
     if not ticket:
         abort(404)
     if request.method == 'POST':
@@ -416,7 +417,7 @@ def dequeue(lpu_id, department_id, uid):
             flash(u'''Отмена записи произошла с ошибкой,
             попробуйте ещё раз или сообщите об отмене записи лечебному учреждению по контактным данным,
             указанным в талоне''', category='error')
-    return render_template('{0}/dequeue.html', ticket=ticket)
+    return render_template('{0}/dequeue.html'.format(module.name), ticket=ticket)
 
 
 @module.errorhandler(404)
@@ -486,7 +487,7 @@ def _save_ticket(ticket_uid, lpu_info):
     uid = hashlib.md5(ticket_uid).hexdigest()
     env = Environment(loader=PackageLoader(module.import_name,  module.template_folder))
     template = env.get_template('{0}/_ticket.html'.format(module.name))
-    info = template.render(lpu=lpu_info)
+    info = template.render(lpu=lpu_info, session=session)
     ticket = Tickets(uid=uid, ticket_uid=ticket_uid, info=info)
     db.session.add(ticket)
     db.session.commit()
