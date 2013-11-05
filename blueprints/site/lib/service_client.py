@@ -168,7 +168,7 @@ class Schedule():
         """Отмена записи на приём
         """
         try:
-            result = self.client.service.enqueue({
+            result = self.client.service.cancel({
                 'hospitalUid': hospitalUid,
                 'ticketUid': ticketUid,
             })

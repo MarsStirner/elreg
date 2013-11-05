@@ -94,3 +94,6 @@ input.year{
 ul.inline>li>label{
     display: inline;
 }
+.well .table{
+    margin-bottom: 5px;
+}

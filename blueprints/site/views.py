@@ -406,6 +406,8 @@ def dequeue(lpu_id, department_id, uid):
     ticket = db.session.query(Tickets).filter(Tickets.uid == uid, Tickets.is_active == True).first()
     if not ticket:
         abort(404)
+    _del_session('step')
+    ticket_info = ticket.info
     if request.method == 'POST':
         result = Schedule().dequeue(hospitalUid='{0}/{1}'.format(lpu_id, department_id),
                                     ticketUid=ticket.ticket_uid)
@@ -413,11 +415,16 @@ def dequeue(lpu_id, department_id, uid):
             flash(u'Отмена записи произведена успешно', category='success')
             ticket.is_active = False
             ticket.updated = datetime.now()
+            db.session.commit()
+        elif result:
+            flash(u'''Запись не существует или уже отменена''', category='error')
         else:
-            flash(u'''Отмена записи произошла с ошибкой,
-            попробуйте ещё раз или сообщите об отмене записи лечебному учреждению по контактным данным,
-            указанным в талоне''', category='error')
-    return render_template('{0}/dequeue.html'.format(module.name), ticket=ticket)
+                flash(u'''Отмена записи произошла с ошибкой,
+                      <a href="{0}">попробуйте ещё раз</a>
+                      или сообщите об отмене записи лечебному учреждению по контактным данным,
+                      указанным в талоне'''
+                      .format(url_for('.dequeue', lpu_id=lpu_id, department_id=department_id, uid=uid)), category='error')
+    return render_template('{0}/dequeue.html'.format(module.name), ticket_info=ticket_info)
 
 
 @module.errorhandler(404)
