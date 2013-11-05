@@ -13,6 +13,7 @@ from jinja2 import Environment, PackageLoader
 from flask_mail import Mail, Message
 from datetime import datetime, timedelta, date
 from pytz import timezone
+from dateutil.tz import tzlocal
 
 from jinja2 import TemplateNotFound
 from forms import EnqueuePatientForm
@@ -64,7 +65,58 @@ def lpu(okato=None):
 
 @module.route('/medical_institution/search/', methods=['GET'])
 def search():
-    return render_template('{0}/lpu.html'.format(module.name))
+    search_lpu = request.args.get('search_lpu', '')
+    search_gorod = request.args.get('search_gorod', '')
+    search_rayon = request.args.get('search_rayon', '')
+    # если содержимое полей поиска не пустое:
+    if search_lpu or search_gorod or search_rayon:
+        result = {}
+
+        ### поиск ЛПУ по названию: ###
+        if search_lpu:
+            tmp_list = []
+            # получение списка введенных пользователем слов
+            search_list = search_lpu.lower().split(' ')
+
+            # формирование временного списка кортежей [(uid ЛПУ, наименование ЛПУ), ...]
+            for i in Info().getHospitalInfo():
+                tmp_list.append((i.uid.split('/')[0], i.name.lower()))
+            # формирование словаря со значениями, удовлетворяющими поиску,
+            # где ключ - uid ЛПУ, а значение - наименование ЛПУ
+            for (uid, title) in tmp_list:
+                flag = True
+                for i in search_list:
+                    if title.find(i) == -1:
+                        flag = False
+                if flag:
+                    result[uid] = title
+
+        ### поиск ЛПУ по названию города: ###
+        if search_gorod:
+            # формирование списка доступных городов:
+            # region_list = Region.objects.filter(activation=True).exclude(region__iendswith=u'район')
+            region_list = []
+            for region in List().listRegions():
+                if region.name.find(u'район') == -1:
+                    region_list.append(region)
+            # формирование словаря со значениями, удовлетворяющими поиску,
+            # где ключ - uid ЛПУ, а значение - наименование ЛПУ
+            result = _search(region_list, search_gorod, result)
+
+        ### поиск ЛПУ по названию района: ###
+        if search_rayon:
+            # формирование списка доступных районов:
+            # region_list = Region.objects.filter(activation=True, region__iendswith=u'район')
+            region_list = []
+            for region in List().listRegions():
+                if region.name.find(u'район') > 0:
+                    region_list.append(region)
+            # формирование словаря со значениями, удовлетворяющими поиску,
+            # где ключ - uid ЛПУ, а значение - наименование ЛПУ
+            result = _search(region_list, search_rayon, result)
+
+        # создание ответа в формате json из содержимого словаря result:
+        return jsonify(result)
 
 
 @module.route('/division/', methods=['GET'])
@@ -94,7 +146,7 @@ def tickets(lpu_id, department_id, doctor_id, start=None):
     lpu_info = get_lpu('{0}/0'.format(lpu_id))
 
     today = date.today()
-    now = datetime.now()
+    now = datetime.now(tzlocal()).astimezone(tz=timezone(_config('TIME_ZONE'))).replace(tzinfo=None)
     monday = None
 
     if start is not None:
@@ -433,3 +485,41 @@ def _save_ticket(ticket_uid, lpu_info):
     db.session.add(ticket)
     db.session.commit()
     return uid
+
+
+def _search(region_list, search_input, result):
+    """Поиск ЛПУ по названию города или по названию района в зависимости от того, что
+    передается в переменной region_list.
+
+    """
+    tmp_list, tmp_dict, lpu_dict = [], {}, {}
+    # получение списка введенных пользователем слов
+    search_list = search_input.lower().split(' ')
+
+    # формирование временного списка кортежей [(регион, код ОКАТО), ...]
+    for i in region_list:
+        tmp_list.append((i.name.lower(), i.code))
+
+    # формирование словаря result со значениями, удовлетворяющими поиску,
+    # где ключ - uid ЛПУ, а значение - наименование ЛПУ
+    for (region, code) in tmp_list:
+        flag = True
+        for i in search_list:
+            if region.find(i) == -1:
+                flag = False
+        if flag:
+            tmp_dict[code] = region
+    for i in tmp_dict.keys():
+        hospitals_list = List().listHospitals(i)
+        for j in hospitals_list:
+            lpu_dict[j.uid.split('/')[0]] = j.name
+    if not result:
+        result = lpu_dict
+    else:
+        adict = {}
+        for i in result.items():
+            for j in lpu_dict.keys():
+                if i[0] == j:
+                    adict[i[0]] = i[1]
+        result = adict
+    return result

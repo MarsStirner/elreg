@@ -25,6 +25,7 @@ app.config.update(
     MAIL_DEFAULT_SENDER=_config('DEFAULT_FROM_EMAIL')
 )
 
+
 @babel.timezoneselector
 def get_timezone():
     return pytz.timezone(_config('TIME_ZONE'))

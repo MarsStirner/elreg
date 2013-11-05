@@ -13,5 +13,6 @@ pytz
 suds
 sqlalchemy
 fabric
+dateutils
 mysql-python
 #lxml
