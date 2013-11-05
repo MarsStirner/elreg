@@ -6,7 +6,7 @@
 {% with errors = get_flashed_messages(category_filter=["error"]) %}
   {% if errors %}
     <div class="alert alert-error" title="Ошибка записи">
-        <strong>Ошибка записи!</strong>
+        <strong>Ошибка!</strong>
         <ul class="unstyled">
         {% for error in errors %}
           <li>{{ error|safe }}</li>
