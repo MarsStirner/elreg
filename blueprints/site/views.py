@@ -418,6 +418,9 @@ def dequeue(lpu_id, department_id, uid):
             db.session.commit()
         elif result:
             flash(u'''Запись не существует или уже отменена''', category='error')
+            ticket.is_active = False
+            ticket.updated = datetime.now()
+            db.session.commit()
         else:
                 flash(u'''Отмена записи произошла с ошибкой,
                       <a href="{0}">попробуйте ещё раз</a>
