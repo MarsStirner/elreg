@@ -7,13 +7,17 @@
     <thead>
     <tr><th colspan="3"><h4>УВЕДОМЛЕНИЕ О ЗАПИСИ НА ПРИЕМ №{{ ticketUid }}</h4></th></tr>
     </thead>
+    <tbody>
+    {% if message %}
+        <tr><td colspan="3"><div class="alert"><strong>{{ message }}</strong></div></td></tr>
+    {% endif %}
     <tr><th>ФИО (Пациент):</th><td colspan="2">{{ patientName }}</td></tr>
     <tr><th>Дата рождения:</th><td colspan="2">{{ birthday }} г.</td></tr>
     {% if client_id %}
     <tr><th>№ Амбулаторной карты:</th><td colspan="2">{{ client_id }}</td></tr>
     {% else %}
     {% if policy_type == '2' or policy_type == '4' %}
-    <tr><th>Полис ОМС:</th><td colspan="2">{% if series %}{{ series }} {% endif %}{{ number }}</td></tr>
+    <tr><th>Полис ОМС:</th><td colspan="2">{% if series and series != '0' %}{{ series }} {% endif %}{{ number }}</td></tr>
     {% endif %}
     {% if policy_type == '3' %}
     <tr><th>Полис ДМС:</th><td colspan="2">{% if series %}{{ series }} {% endif %}{{ number }}</td></tr>
@@ -32,6 +36,7 @@
     <tr><th colspan="3"><h4>ВНИМАНИЕ:</h4></th></tr>
     <tr><td colspan="3">В случае невозможности посещения врача в указанное время, пожалуйста, сообщите об этом лечебному учреждению по контактным данным, указанным в настоящем уведомлении.</td></tr>
     <tr><td colspan="3">С настоящим уведомлением необходимо обратиться в регистратуру лечебного учреждения не менее чем за 15 минут до указанного времени приёма.</td></tr>
+</tbody>
 </table>
 <br />
 <div class="no_print" class="form-horizontal">

@@ -144,19 +144,17 @@ def timePage(request, templateName, time=0):
         firstweekday = today - datetime.timedelta(days=datetime.date.isoweekday(today) - 1)
 
     hospital_Uid = db.get('hospital_Uid')
-    ticketList = ScheduleWSDL().getScheduleInfo(hospitalUid=hospital_Uid, doctorUid=time)
+    ticketList = ScheduleWSDL().getScheduleInfo(hospitalUid=hospital_Uid,
+                                                doctorUid=time,
+                                                startDate=firstweekday,
+                                                endDate=firstweekday+datetime.timedelta(days=7))
 
     try:
         office = ticketList[0].office
     except:
         office = ''
 
-    doctors = ListWSDL().listDoctors(hospital_Uid)
-
-    for i in doctors:
-        if time and i.uid == int(time):
-            doctor = ' '.join([unicode(i.name.lastName), unicode(i.name.firstName), unicode(i.name.patronymic)]) # ФИО врача
-            db.set('doctor', doctor)
+    _remember_doctor(request, hospital_Uid, time)
 
     times = []  # Список времен начала записи текущей недели
     dates = []  # Список дат текущей недели
@@ -223,6 +221,7 @@ def patientPage(request, templateName):
         return f
 
     db = Redis(request)
+    hospital_Uid = db.get('hospital_Uid')
     errors = []
     if request.method == 'POST':
         ticket = request.POST['ticket']
@@ -319,7 +318,6 @@ def patientPage(request, templateName):
 
             # если ошибок в форме нет
             if not errors:
-                hospital_Uid = db.get('hospital_Uid')
                 time = db.get('time')
                 patientName = ' '.join([lastName, firstName, patronymic])
 
@@ -332,7 +330,7 @@ def patientPage(request, templateName):
                     hospitalUid=hospital_Uid,
                     doctorUid=time,
                     timeslotStart=str(date) + 'T' + str(start_time),
-                    hospitalUidFrom="0",
+                    hospitalUidFrom='',
                     birthday=unicode('-'.join([yy, mm, dd]))
                 )
 
@@ -347,6 +345,7 @@ def patientPage(request, templateName):
                     finish_time = finish_time.strftime('%H:%M')
 
                     db_params = {'ticketUid': ticketPatient.ticketUid,
+                                 'message': getattr(ticketPatient, 'message', ''),
                                  'date': date,
                                  'start_time': start_time,
                                  'finish_time': finish_time,
@@ -426,6 +425,10 @@ def patientPage(request, templateName):
                                       context_instance=RequestContext(request))
         # если представление было вызвано нажатием на ячейку таблицы на странице Время:
         db.set('step', 5)
+        doctor = request.POST.get('doctor_id')
+        if doctor:
+            db.set('time', doctor)
+            _remember_doctor(request, hospital_Uid, doctor)
         return render_to_response(templateName, {'errors': errors,
                                                  'ticket': ticket,
                                                  'date': date,
@@ -456,6 +459,15 @@ def _remember_user(request, data):
     db.set(data)
 
 
+def _remember_doctor(request, hospital_uid, doctor_id):
+    db = Redis(request)
+    doctors = ListWSDL().listDoctors(hospital_uid)
+    for i in doctors:
+        if doctor_id and i.uid == int(doctor_id):
+            doctor = ' '.join([unicode(i.name.lastName), unicode(i.name.firstName), unicode(i.name.patronymic)]) # ФИО врача
+            db.set('doctor', doctor)
+
+
 def registerPage(request, templateName):
     """Логика страницы Запись
     Запись на приём прошла успешно. Здесь происходит запрос на получение сведений о записи (номер талона, имя врача,
@@ -479,6 +491,7 @@ def registerPage(request, templateName):
                       'number': db.get('number'), }
 
     template_parameters = {'ticketUid': db.get('ticketUid'),
+                           'message': db.get('message'),
                            'date': date,
                            'start_time': db.get('start_time'),
                            'finish_time': db.get('finish_time'),
@@ -509,7 +522,7 @@ def updatesPage(request):
         db.set({'address': request.GET['value'], 'spec': spec})
         for i in doctors_list:
             if i.hospitalUid == hospital_Uid:
-                data.append(i.speciality)
+                data.append(i.speciality.replace('(', '<br>('))
                 data = list(set(data))
                 data.sort()
 
@@ -521,7 +534,17 @@ def updatesPage(request):
         doctors_list = ListWSDL().listDoctors(hospital_Uid = hospital_Uid, speciality = speciality)
         for i in doctors_list:
             if i.hospitalUid == hospital_Uid and i.speciality == speciality:
-                data.append({'uid': i.uid, 'name': ' '.join([i.name.lastName, i.name.firstName, i.name.patronymic])})
+                closest_tickets = ScheduleWSDL().get_closest_tickets(hospital_Uid, [i.uid])
+                tickets = list()
+                for k, v in enumerate(closest_tickets):
+                    tickets.append(dict(ticket_start=v['timeslotStart'].strftime('%d.%m %H:%M'),
+                                        ticket_info='{0}-{1}'.format(v['timeslotStart'].strftime('%d:%m:%Y-%H:%M:%S'),
+                                                                     v['timeslotEnd'].strftime('%H:%M:%S')),
+                                        office=v['office'],
+                                        doctor_id=v['doctor_id']))
+                data.append({'uid': i.uid,
+                             'name': ' '.join([i.name.lastName, i.name.firstName, i.name.patronymic]),
+                             'tickets': tickets})
 
     # при обращении к странице через адресную строку:
     else:

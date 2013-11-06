@@ -1,3 +1,28 @@
+.loader {
+    display:    none;
+    position:   fixed;
+    z-index:    1000;
+    top:        0;
+    left:       0;
+    height:     100%;
+    width:      100%;
+    background: rgba( 255, 255, 255, .8 )
+    url('/static/images/ajax-loader.gif')
+    50% 50%
+    no-repeat;
+}
+
+/* When the body has the loading class, we turn
+   the scrollbar off with overflow:hidden */
+body.loading {
+    overflow: hidden;
+}
+
+/* Anytime the body has the loading class, our
+   modal element will be visible */
+body.loading .loader {
+    display: block;
+}
 .top_path ul{
     width:100%;
 }
@@ -45,4 +70,19 @@ input#captcha_1{
 .no-vmargin{
     margin-top:0;
     margin-bottom: 0;
+}
+#doc_example{
+    position: absolute;
+    right: 30%;
+    top: -50px;
+}
+#doc_example_modal{
+    width: inherit;
+    top: 30%;
+}
+#doc_example_modal .modal-body{
+    max-height: 720px;
+}
+.thirdTable li form{
+    margin-top: 5px;
 }

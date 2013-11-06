@@ -1,4 +1,4 @@
-<div class="control-group">
+<div class="control-group" style="position: relative;">
     <label class="control-label" for="doc_type_selector">Тип документа<span class="text-error">*</span></label>
     <div class="controls">
         <select name="document_type" id="doc_type_selector" class="span3">
@@ -10,6 +10,15 @@
             <option value="policy_type_4"{% if document_type == 'policy_type_4' %} selected{% endif %}>Полис ОМС (нового образца)</option>
             <option value="doc_type_4"{% if document_type == 'doc_type_4' %} selected{% endif %}>Удостоверение личности офицера</option>
         </select>
+    </div>
+    <div id="doc_example" class="hide">
+        <a href="javascript:void(0);" id="show_big_doc"><img src="" class="img-polaroid"></a>
+        <!-- Modal -->
+        <div id="doc_example_modal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-body">
+                <img src="">
+            </div>
+        </div>
     </div>
 </div>
 

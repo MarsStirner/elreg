@@ -1,6 +1,14 @@
 jQuery.support.cors = true;
 
 $(document).ready(function () {
+    $("body").on({
+        ajaxStart: function() {
+            $(this).addClass("loading");
+        },
+        ajaxStop: function() {
+            $(this).removeClass("loading");
+        }
+    });
 
     var jqXHR = [];
 
@@ -27,7 +35,7 @@ $(document).ready(function () {
             cache: false, // обязательно для IE
             dataType: 'json',
             success: function (data) {
-                var $items = [];
+                var $items = ['<li class="nav-header">Выбор мед. специализации</li>'];
                 $.each(data, function(key, val) {
                     $items.push('<li><a class="prof" href="javascript:;">' + val + '</a></li>');
                 });
@@ -58,9 +66,24 @@ $(document).ready(function () {
             cache: false, // обязательно для IE
             dataType: 'json',
             success: function (data) {
-                var $items = [];
+                var $items = ['<li class="nav-header">Выбор Врача<span class="pull-right">Ближайшая свободная запись/Расписание</span></li>'];
+                var doctor;
                 $.each(data, function(key, val) {
-                    $items.push('<li><a href="/time/' + val.uid + '/">' + val.name + '</a></li>');
+                    doctor = '<li class="clearfix"><a class="span7" href="/time/' + val.uid + '/">' + val.name + '</a>';
+                    doctor += '<form class="navbar-form text-right span5" action="/patient/" method="POST">';
+                    if (val.tickets.length > 0){
+                       doctor += '<input type="hidden" name="ticket" value="' + val.tickets[0].ticket_info + '">';
+                       doctor += '<input type="hidden" name="doctor_id" value="' + val.uid + '">';
+                    }
+                    doctor += '<div class="btn-group">';
+                    if (val.tickets.length > 0){
+                       doctor += '<button type="submit" class="btn btn-small btn-success">' + val.tickets[0].ticket_start + '</button>';
+                    }
+                    doctor += '<a href="/time/' + val.uid + '/" class="btn btn-small btn-warning" type="button">Расписание</button>';
+                    doctor += '</div>';
+                    doctor += '</form>';
+                    doctor += '</li>';
+                    $items.push(doctor);
                 });
                 $('ul.thirdTable').html($($items.join('')).fadeIn('fast'));
                 $('body,html').animate({
@@ -288,7 +311,28 @@ $(document).ready(function(){
             $('.' + $(this).val()).removeClass('hidden');
             $('.doc_div').find('input').attr("disabled","disabled");
             $('.' + $(this).val()).find('input').removeAttr("disabled");
-
         }
+        show_doc($(this).val());
     });
 });
+function show_doc(type){
+    var src_sm = "";
+    var src = "";
+    var $doc_example = $('#doc_example');
+    $doc_example.hide();
+    if (type == 'policy_type_4'){
+        src_sm = '/static/images/docs/polis_sm.jpg';
+        src = '/static/images/docs/polis.jpg';
+    }else if (type == 'policy_type_2'){
+        src_sm = '/static/images/docs/old_polis_sm.jpg';
+        src = '/static/images/docs/old_polis.jpg';
+    }
+    $doc_example.find('img').attr('src', src_sm);
+    $('#doc_example_modal').find('img').attr('src', src);
+    $('#show_big_doc').click(function(){
+        $('#doc_example_modal').modal();
+    });
+    if(src_sm){
+        $doc_example.show();
+    }
+}
