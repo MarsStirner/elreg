@@ -30,3 +30,17 @@
 </div>
 <a href="{{ url_for('.lpu', okato=session.get('okato')) }}" class="btn btn-primary btn-large">К выбору ЛПУ</a>
 {% endblock %}
+{% block js %}
+    <script>
+    $(document).ready(function () {
+        $("body").on({
+            ajaxStart: function() {
+                $(this).addClass("loading");
+            },
+            ajaxStop: function() {
+                $(this).removeClass("loading");
+            }
+        });
+    });
+    </script>
+{% endblock %}

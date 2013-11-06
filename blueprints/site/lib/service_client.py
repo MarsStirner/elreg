@@ -4,6 +4,8 @@ from suds.client import Client
 from suds.sax.text import Text
 from config import DEBUG
 from ..lib.utils import _config
+from pytz import timezone
+from dateutil.tz import tzlocal
 
 IS = _config('IS_URL')
 
@@ -183,7 +185,7 @@ class Schedule():
 
         """
         if start is None:
-            start = datetime.now()
+            start = datetime.now(tzlocal()).astimezone(tz=timezone(_config('TIME_ZONE'))).replace(tzinfo=None)
         try:
             tickets = self.client.service.getClosestTickets({'hospitalUid': hospitalUid,
                                                             'doctors': doctors,

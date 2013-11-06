@@ -70,7 +70,7 @@
             if (!search_lpu && !search_gorod && !search_rayon){
                 return false;
             }
-            $.getJSON("/search/", {search_lpu: search_lpu, search_gorod: search_gorod, search_rayon: search_rayon}, function(data) {
+            $.getJSON('{{ url_for('.ajax_search') }}', {search_lpu: search_lpu, search_gorod: search_gorod, search_rayon: search_rayon}, function(data) {
                 var $items = [];
                 $.each(data, function(key, val) {
                     $items.push('<li><a href="{{ url_for('.division') }}' + key + '/">' + val + '</a></li>');
@@ -87,7 +87,7 @@
             if (!search_lpu && !search_gorod && !search_rayon){
                 return false;
             }
-            $.getJSON("/search/", {search_lpu: search_lpu, search_gorod: search_gorod, search_rayon: search_rayon}, function(data) {
+            $.getJSON('{{ url_for('.ajax_search') }}', {search_lpu: search_lpu, search_gorod: search_gorod, search_rayon: search_rayon}, function(data) {
                 var $items = [];
                 $.each(data, function(key, val) {
                     $items.push('<li><a href="{{ url_for('.division') }}' + key + '/">' + val + '</a></li>');

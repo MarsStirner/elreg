@@ -376,10 +376,11 @@ def get_doctors(lpu_id=None, department_id=None):
     hospital_uid = '{0}/{1}'.format(lpu_id, department_id)
     doctors_list = List().listDoctors(hospital_Uid=hospital_uid,
                                       speciality=speciality)
+    start = datetime.now(tzlocal()).astimezone(tz=timezone(_config('TIME_ZONE'))).replace(tzinfo=None)
     for doctor in doctors_list:
         if doctor.speciality == speciality:
             _tickets = list()
-            closest_tickets = Schedule().get_closest_tickets(hospital_uid, [doctor.uid])
+            closest_tickets = Schedule().get_closest_tickets(hospital_uid, [doctor.uid], start=start)
             if closest_tickets:
                 for key, value in enumerate(closest_tickets):
                     _tickets.append(dict(href=url_for('.registration',
