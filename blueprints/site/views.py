@@ -387,7 +387,7 @@ def get_doctors(lpu_id=None, department_id=None):
                                                       lpu_id=lpu_id,
                                                       department_id=department_id,
                                                       doctor_id=doctor.uid,
-                                                      office=value['office'],
+                                                      office=getattr(value, 'office', ''),
                                                       d=value['timeslotStart'].strftime('%Y%m%d'),
                                                       s=value['timeslotStart'].strftime('%H%M'),
                                                       f=value['timeslotEnd'].strftime('%H%M')),
