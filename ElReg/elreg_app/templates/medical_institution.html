@@ -38,6 +38,8 @@
             {% for hospital in hospitals_list %}
                 {% if hospital.uid == '5/0' %}
                 <li><a href="javascript:void(0);" onclick="$('#myModal').modal();">{{ hospital.name }}</a></li>
+                {% elif hospital.uid == '15/0' %}
+                <li><a href="javascript:void(0);" onclick="$('#gor2Modal').modal();">{{ hospital.name }}</a></li>
                 {% else %}
                 <li><a href="{% url subdivision %}{{ hospital.uid|slice:":2"|cut:"/" }}/">{{ hospital.name }}</a></li>
                 {% endif %}
@@ -56,6 +58,16 @@
         <p>Запись к специалистам ПОКБ им. Н.Н. Бурденко осуществляется врачами в ЛПУ по месту жительства.</p>
     </div>
 </div>
+<!-- Modal -->
+<div id="gor2Modal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="myModalLabel">Запись на приём в<br>ГБУЗ «Городская больница № 2»</h3>
+    </div>
+    <div class="modal-body">
+        <p>Для записи на прием перейдите по <a href="{% url subdivision %}16/">ссылке</a>.</p>
+    </div>
+</div>
 <a href="{% url index %}" class="btn btn-primary btn-large">Вернуться</a>
 
     <script type="text/javascript">
@@ -72,6 +84,8 @@
                 $.each(data, function(key, val) {
                     if (key == '5'){
                         $items.push('<li><a href="javascript:void(0);" onclick="$(\'#myModal\').modal();">' + val + '</a></li>');
+                    }else if (key == '15'){
+                        $items.push('<li><a href="javascript:void(0);" onclick="$(\'#gor2Modal\').modal();">' + val + '</a></li>');
                     }else{
                         $items.push('<li><a href="{% url subdivision %}' + key + '/">' + val + '</a></li>');
                     }
@@ -93,6 +107,8 @@
                 $.each(data, function(key, val) {
                     if (key == '5'){
                         $items.push('<li><a href="javascript:void(0);" onclick="$(\'#myModal\').modal();">' + val + '</a></li>');
+                    }else if (key == '15'){
+                        $items.push('<li><a href="javascript:void(0);" onclick="$(\'#gor2Modal\').modal();">' + val + '</a></li>');
                     }else{
                         $items.push('<li><a href="{% url subdivision %}' + key + '/">' + val + '</a></li>');
                     }
