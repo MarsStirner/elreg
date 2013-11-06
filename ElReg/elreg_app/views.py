@@ -540,7 +540,7 @@ def updatesPage(request):
                     tickets.append(dict(ticket_start=v['timeslotStart'].strftime('%d.%m %H:%M'),
                                         ticket_info='{0}-{1}'.format(v['timeslotStart'].strftime('%d:%m:%Y-%H:%M:%S'),
                                                                      v['timeslotEnd'].strftime('%H:%M:%S')),
-                                        office=v.get('office', ''),
+                                        office=getattr(v, 'office', ''),
                                         doctor_id=v['doctor_id']))
                 data.append({'uid': i.uid,
                              'name': ' '.join([i.name.lastName, i.name.firstName, i.name.patronymic]),
