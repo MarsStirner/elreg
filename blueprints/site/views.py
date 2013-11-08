@@ -260,7 +260,7 @@ def registration(lpu_id, department_id, doctor_id):
 
     session['step'] = 5
 
-    form = EnqueuePatientForm(request.form)
+    form = EnqueuePatientForm(request.form, **dict(session))
     if form.validate_on_submit():
         session.update(form.data)
 
@@ -468,7 +468,13 @@ def _get_doctor_info(hospital_uid, doctor_id):
 def _generate_message(template, data, lpu_info, ticket_hash):
     env = Environment(loader=PackageLoader(module.import_name,  module.template_folder))
     template = env.get_template(template)
-    return template.render(data=data, session=session, lpu=lpu_info, ticket_hash=ticket_hash)
+    dequeue_link = '{0}://{1}{2}'.format(request.scheme,
+                                         request.host,
+                                         url_for('.dequeue',
+                                                 lpu_id=session.get('lpu_id'),
+                                                 department_id=session.get('department_id'),
+                                                 uid=ticket_hash))
+    return template.render(data=data, session=session, lpu=lpu_info, dequeue_link=dequeue_link)
 
 
 def _send_ticket(patient_email, data, lpu_info, ticket_hash):

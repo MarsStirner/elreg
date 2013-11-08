@@ -1,7 +1,7 @@
 <div class="control-group" style="position: relative;">
         {{ form.document_type.label(class="control-label") }}
         <div class="controls">
-            {{ form.document_type( id="doc_type_selector", class="span3", default=session.get('document_type')) }}
+            {{ form.document_type(id="doc_type_selector", class="span3", value='client_id') }}
         </div>
     <div id="doc_example" class="hide">
         <a href="javascript:void(0);" id="show_big_doc"><img src="" class="img-polaroid"></a>
@@ -13,7 +13,7 @@
         </div>
     </div>
 </div>
-{% set doc_type = form.document_type.data %}
+{% set doc_type = session.get('document_type', '') %}
 <div class="{% if doc_type not in ('policy_type_2', 'policy_type_3') %}hidden{% endif %} doc_div policy_type_2 policy_type_3">
     <div class="control-group">
         {{ form.series.label(class="control-label") }}

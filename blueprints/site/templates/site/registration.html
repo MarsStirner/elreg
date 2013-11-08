@@ -95,13 +95,17 @@
 
     <div class="control-group">
         <div class="controls">
-            {{ form.send_email(id="chb", value=session.get('send_email', '')) }} - отправить информацию о записи на электронный адрес
+            {{ form.send_email(id="chb") }} - отправить информацию о записи на электронный адрес
         </div>
     </div>
     <div class="control-group">
         {{ form.email.label(class="control-label") }}
         <div class="controls">
-            {{ form.email(class="span4", autocomplete="off", value=session.get('email', ''), placeholder="example@email.ru", disabled="disabled") }}
+            {% if session.get('send_email', False) %}
+                {{ form.email(class="span4", autocomplete="off", value=session.get('email', ''), placeholder="example@email.ru") }}
+            {% else %}
+                {{ form.email(class="span4", autocomplete="off", value=session.get('email', ''), placeholder="example@email.ru", disabled="disabled") }}
+            {% endif %}
         </div>
     </div>
 
