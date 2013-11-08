@@ -28,4 +28,16 @@
 </div>
 </div>
 <a href="{% url medical_institution %}" class="btn btn-primary btn-large">Вернуться</a>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("body").on({
+            ajaxStart: function() {
+                $(this).addClass("loading");
+            },
+            ajaxStop: function() {
+                $(this).removeClass("loading");
+            }
+        });
+    });
+</script>
 {% endblock %}

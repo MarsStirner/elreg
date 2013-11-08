@@ -57,7 +57,7 @@ $(document).ready(function () {
             cache: false, // обязательно для IE
             dataType: 'json',
             success: function (data) {
-                var $items = ['<li class="nav-header">Выбор Врача<span class="pull-right">Ближайшая свободная запись/Расписание</span></li>'];
+                var str = '<li class="nav-header">Выбор Врача<span class="pull-right">Ближайшая свободная запись/Расписание</span></li>';
                 var doctor;
                 $.each(data, function(key, val) {
                     doctor = '<li class="clearfix"><a class="span7" href="/time/' + val.uid + '/">' + val.name + '</a>';
@@ -74,9 +74,9 @@ $(document).ready(function () {
                     doctor += '</div>';
                     doctor += '</form>';
                     doctor += '</li>';
-                    $items.push(doctor);
+                    str += doctor;
                 });
-                $('ul.thirdTable').html($($items.join('')).fadeIn('fast'));
+                $('ul.thirdTable').html(str);
                 $('body,html').animate({
                     scrollTop: 0
                 }, 300);
