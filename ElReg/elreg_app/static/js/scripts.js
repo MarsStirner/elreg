@@ -70,7 +70,7 @@ $(document).ready(function () {
                     if (val.tickets.length > 0){
                        doctor += '<button type="submit" class="btn btn-small btn-success">' + val.tickets[0].ticket_start + '</button>';
                     }
-                    doctor += '<a href="/time/' + val.uid + '/" class="btn btn-small btn-warning" type="button">Расписание</button>';
+                    doctor += '<a href="/time/' + val.uid + '/" class="btn btn-small btn-warning" type="button">Расписание</a>';
                     doctor += '</div>';
                     doctor += '</form>';
                     doctor += '</li>';
