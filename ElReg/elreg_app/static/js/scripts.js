@@ -1,15 +1,6 @@
 jQuery.support.cors = true;
 
 $(document).ready(function () {
-    $("body").on({
-        ajaxStart: function() {
-            $(this).addClass("loading");
-        },
-        ajaxStop: function() {
-            $(this).removeClass("loading");
-        }
-    });
-
     var jqXHR = [];
 
     function abort_ajax(){

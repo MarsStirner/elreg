@@ -71,6 +71,16 @@
 <a href="{% url index %}" class="btn btn-primary btn-large">Вернуться</a>
 
     <script type="text/javascript">
+    $(document).ready(function () {
+        $("body").on({
+            ajaxStart: function() {
+                $(this).addClass("loading");
+            },
+            ajaxStop: function() {
+                $(this).removeClass("loading");
+            }
+        });
+    });
         function searchLpu() {
             $("#search_table").html("");
             var search_lpu = $('#search_lpu').val();
