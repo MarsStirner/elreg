@@ -2,5 +2,5 @@ div.no_print {display: none;}
 table.no_shadow_print {box-shadow: none;}
 table.no_shadow_print tr td {font-size: 18px;}
 a[href]:after {
-    content: none!important;
+    content: none;
 }

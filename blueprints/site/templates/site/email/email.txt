@@ -25,5 +25,5 @@
 Врач: {% set doctor=session.get('doctor') %}{{ doctor['lastName'] }} {{ doctor['firstName'] }} {{ doctor['patronymic'] }} ({{ doctor.get('speciality') }})
 Дата и время приёма: {{ session.get('date', '') }} {{ session.get('start_time', '') }} - {{ session.get('finish_time', '') }}
 ВНИМАНИЕ:
-В случае невозможности посещения врача в указанное время, пожалуйста, сообщите об этом лечебному учреждению по контактным данным, указанным в настоящем уведомлении, или отмените запись, воспользовавшись ссылкой: {{ request.host_url }}{{ url_for('.dequeue', lpu_id=session.get('lpu_id'), department_id=session.get('department_id'), uid=ticket_hash) }}.
+В случае невозможности посещения врача в указанное время, пожалуйста, сообщите об этом лечебному учреждению по контактным данным, указанным в настоящем уведомлении, или отмените запись, воспользовавшись ссылкой: {{ request.scheme }}://{{ request.host }}{{ url_for('.dequeue', lpu_id=session.get('lpu_id'), department_id=session.get('department_id'), uid=ticket_hash) }}.
 С настоящим уведомлением необходимо обратиться в регистратуру лечебного учреждения не менее чем за 15 минут до указанного времени приёма.
