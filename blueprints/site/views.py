@@ -25,7 +25,7 @@ from application.app import db
 from application.models import Tickets
 
 
-from .lib.utils import _config
+from .lib.utils import _config, logger
 
 
 @module.route('/', methods=['GET'])
@@ -322,15 +322,59 @@ def registration(lpu_id, department_id, doctor_id):
             if send_email and patient_email:
                 _send_ticket(patient_email, form.data, lpu_info, ticket_hash=ticket_hash)
 
+            log_message = render_template('{0}messages/success.txt'.format(module.name),
+                                          lpu=lpu_info,
+                                          lpu_id=lpu_id,
+                                          doctor_id=doctor_id,
+                                          doctor='{0} {1} {2}'.format(session['doctor'].get('lastName'),
+                                                                      session['doctor'].get('firstName'),
+                                                                      session['doctor'].get('patronymic')),
+                                          patinet_id=ticket.ticketUid.split('/')[1],
+                                          ticket_id=ticket.ticketUid.split('/')[0],
+                                          date=timeslot.date().strftime('%d.%m.%Y'),
+                                          start_time=ticket_start.strftime('%H:%M'),
+                                          finish_time=ticket_end.strftime('%H:%M'))
+            logger.info(log_message, extra=dict(tags=[u'успешная запись', 'elreg']))
+
             return redirect(url_for('.ticket_info'))
         elif ticket:
             # ошибка записи на приём:
             if ticket.result is True:
                 flash(u"Ошибка записи", 'error')
+                log_message = render_template('{0}/messages/failed.txt'.format(module.name),
+                                              lpu=lpu_info,
+                                              lpu_id=lpu_id,
+                                              doctor_id=doctor_id,
+                                              doctor=session['doctor'],
+                                              message=u"Ошибка записи",
+                                              date=timeslot.date().strftime('%d.%m.%Y'),
+                                              start_time=ticket_start.strftime('%H:%M'),
+                                              finish_time=ticket_end.strftime('%H:%M'))
+                logger.error(log_message, extra=dict(tags=[u'ошибка записи', 'elreg']))
             else:
                 flash(ticket.message, 'error')
+                log_message = render_template('{0}/messages/failed.txt'.format(module.name),
+                                              lpu=lpu_info,
+                                              lpu_id=lpu_id,
+                                              doctor_id=doctor_id,
+                                              doctor=session['doctor'],
+                                              message=ticket.message,
+                                              date=timeslot.date().strftime('%d.%m.%Y'),
+                                              start_time=ticket_start.strftime('%H:%M'),
+                                              finish_time=ticket_end.strftime('%H:%M'))
+                logger.error(log_message, extra=dict(tags=[u'ошибка записи', 'elreg']))
         else:
             flash(u'Не удалось соединиться с сервером. Попробуйте отправить запрос ещё раз.', 'error')
+            log_message = render_template('{0}/messages/failed.txt'.format(module.name),
+                                          lpu=lpu_info,
+                                          lpu_id=lpu_id,
+                                          doctor_id=doctor_id,
+                                          doctor=session['doctor'],
+                                          message=u'Не удалось соединиться с ИС',
+                                          date=timeslot.date().strftime('%d.%m.%Y'),
+                                          start_time=ticket_start.strftime('%H:%M'),
+                                          finish_time=ticket_end.strftime('%H:%M'))
+            logger.error(log_message, extra=dict(tags=[u'ошибка записи', 'elreg']))
 
         # если представление было вызвано нажатием на ячейку таблицы на странице Время:
     return render_template('{0}/registration.html'.format(module.name),

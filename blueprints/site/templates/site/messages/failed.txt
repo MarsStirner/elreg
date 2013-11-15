@@ -1,0 +1,4 @@
+{{ message }}
+ЛПУ: ({{ lpu_id }}) {{ lpu.name }}, {% if lpu.buildings[0] %}{{ lpu.buildings[0]|attr('name') }}{% endif %}
+Врач: ({{ doctor_id }}) {{ doctor['lastName'] }} {{ doctor['firstName'] }} {{ doctor['patronymic'] }}
+Дата и время приёма: {{ date }} {{ start_time }} - {{ finish_time }}
