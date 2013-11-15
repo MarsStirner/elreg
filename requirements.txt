@@ -16,3 +16,5 @@ fabric
 dateutils
 mysql-python
 #lxml
+
+-r pysimplelogs/requirements.txt
