@@ -300,6 +300,9 @@ def registration(lpu_id, department_id, doctor_id):
             birthday=unicode('{year}-{month}-{day}'.format(**form.data))
         )
 
+        patient = dict(name=u'{lastname} {firstname} {patronymic}'.format(**form.data),
+                       birthday=u'{day:02d}.{month:02d}.{year}'.format(**form.data))
+
         # запись на приём произошла успешно:
         if ticket and ticket.result is True and len(ticket.ticketUid.split('/')[0]) != 0:
             #doc_keys = ('policy_type', 'policy_number', 'doc_series', 'doc_number', 'client_id', 'series', 'number')
@@ -311,9 +314,7 @@ def registration(lpu_id, department_id, doctor_id):
             session['finish_time'] = ticket_end.strftime('%H:%M')
 
             session['document'] = document
-
-            session['patient'] = dict(name=u'{lastname} {firstname} {patronymic}'.format(**form.data),
-                                      birthday=u'{day:02d}.{month:02d}.{year}'.format(**form.data))
+            session['patient'] = patient
 
             ticket_hash = _save_ticket(ticket.ticketUid, lpu_info=lpu_info)
             session['ticket_hash'] = ticket_hash
@@ -331,6 +332,7 @@ def registration(lpu_id, department_id, doctor_id):
                                                                       session['doctor'].get('patronymic')),
                                           patinet_id=ticket.ticketUid.split('/')[1],
                                           ticket_id=ticket.ticketUid.split('/')[0],
+                                          patient=patient,
                                           date=timeslot.date().strftime('%d.%m.%Y'),
                                           start_time=ticket_start.strftime('%H:%M'),
                                           finish_time=ticket_end.strftime('%H:%M'))
@@ -346,6 +348,7 @@ def registration(lpu_id, department_id, doctor_id):
                                               lpu_id=lpu_id,
                                               doctor_id=doctor_id,
                                               doctor=session['doctor'],
+                                              patient=patient,
                                               message=u"Ошибка записи",
                                               date=timeslot.date().strftime('%d.%m.%Y'),
                                               start_time=ticket_start.strftime('%H:%M'),
@@ -358,6 +361,7 @@ def registration(lpu_id, department_id, doctor_id):
                                               lpu_id=lpu_id,
                                               doctor_id=doctor_id,
                                               doctor=session['doctor'],
+                                              patient=patient,
                                               message=ticket.message,
                                               date=timeslot.date().strftime('%d.%m.%Y'),
                                               start_time=ticket_start.strftime('%H:%M'),
