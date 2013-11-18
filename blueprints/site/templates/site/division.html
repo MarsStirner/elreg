@@ -10,6 +10,7 @@
         {% if lpu.email %}<dt>Электронная почта:</dt><dd><a href="mailto:{{ lpu.email }}">{{ lpu.email }}</a></dd>{% endif %}
     </dl>
 </blockquote>
+{% if lpu.buildings %}
 <div class="well">
 <div class="row-fluid">
 <div class="span3">
@@ -28,6 +29,9 @@
 </div>
 </div>
 </div>
+{% else %}
+        <div class="alert alert-error">Данные по подразделениям выбранного медицинского учреждения отсутствуют, попробуйте зайти на страницу позже или выберите другое медицинское учреждение.</div>
+{% endif %}
 <a href="{{ url_for('.lpu', okato=session.get('okato')) }}" class="btn btn-primary btn-large">К выбору ЛПУ</a>
 {% endblock %}
 {% block js %}

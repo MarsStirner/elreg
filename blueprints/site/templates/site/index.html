@@ -1,6 +1,7 @@
 {% extends "site/base.html" %}
 
 {% block content %}
+    {% if region_list%}
     <div class="alert alert-info"><h4>Укажите населенный пункт</h4>Выберите регион и населенный пункт, в котором предполагается посетить медицинское учреждение</div>
     <div class="row-fluid">
         {%- for columns in region_list|slice(3) -%}
@@ -16,4 +17,7 @@
     <p class="pull-right">
         <a href="{{ url_for('.search') }}" class="btn btn-primary btn-large" title="Поиск ЛПУ"><i class="icon-search icon-white"></i> Поиск ЛПУ</a>
     </p>
+    {% else %}
+        <div class="alert alert-error">Извините, на сайте ведутся работы по настройке, попробуйте зайти на сайт позже.</div>
+    {% endif %}
 {% endblock %}
