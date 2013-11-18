@@ -1,7 +1,7 @@
 <div class="control-group" style="position: relative;">
         {{ form.document_type.label(class="control-label") }}
         <div class="controls">
-            {{ form.document_type(id="doc_type_selector", class="span3", value='client_id') }}
+            {{ form.document_type(id="doc_type_selector", class="span3", value=session.get('document_type', '')) }}
         </div>
     <div id="doc_example" class="hide">
         <a href="javascript:void(0);" id="show_big_doc"><img src="" class="img-polaroid"></a>
@@ -38,11 +38,11 @@
     </div>
 </div>
 
-<div class="{% if doc_type != 'policy_type_4' %}hidden{% endif %} doc_div policy_type_4">
+<div class="{% if doc_type not in ('policy_type_1', 'policy_type_4') %}hidden{% endif %} doc_div policy_type_1 policy_type_4">
     <div class="control-group">
         {{ form.policy_number.label(class="control-label") }}
         <div class="controls">
-        {% if doc_type == 'policy_type_4' %}
+        {% if doc_type in ('policy_type_4', 'policy_type_4') %}
             {{ form.policy_number(class="span3", value=session.get('policy_number', ''), placeholder="1234567890123456", autocomplete="off") }}
         {% else %}
             {{ form.policy_number(class="span3", value=session.get('policy_number', ''), disabled=disabled, placeholder="1234567890123456", autocomplete="off") }}

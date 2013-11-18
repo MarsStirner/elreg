@@ -279,7 +279,7 @@ def registration(lpu_id, department_id, doctor_id):
                 document['number'] = form.doc_number.data.strip()
             elif document_type == 'client_id':
                 document['client_id'] = int(form.client_id.data.strip())
-            elif document_type == 'policy_type_4':
+            elif document_type in ('policy_type_1', 'policy_type_4'):
                 document['policy_type'] = int(document_type.replace('policy_type_', ''))
                 document['number'] = form.policy_number.data.strip()
 

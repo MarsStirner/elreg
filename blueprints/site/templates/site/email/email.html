@@ -22,6 +22,9 @@
             {% if data['document_type'] == 'policy_type_4' %}
             <tr><td>Полис ОМС:</td><td colspan="2">{{ data['policy_number'] }}</td></tr>
             {% endif %}
+            {% if data['document_type'] == 'policy_type_1' %}
+            <tr><td>Полис ОМС (временное свидетельство):</td><td colspan="2">{{ data['policy_number'] }}</td></tr>
+            {% endif %}
             {% if data['document_type'] == 'policy_type_3' %}
             <tr><td>Полис ДМС:</td><td colspan="2">{% if data['series'] %}{{ data['series'] }} {% endif %}{{ data['number'] }}</td></tr>
             {% endif %}

@@ -10,6 +10,9 @@
 {% if data['document_type'] in 'policy_type_4' %}
 Полис ОМС: {{ data['policy_number'] }}
 {% endif %}
+{% if data['document_type'] in 'policy_type_1' %}
+Полис ОМС (временное свидетельство): {{ data['policy_number'] }}
+{% endif %}
 {% if data['document_type'] == 'policy_type_3' %}
 Полис ДМС: {% if data['series'] %}{{ data['series'] }} {% endif %}{{ data['number'] }}
 {% endif %}
