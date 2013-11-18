@@ -66,7 +66,7 @@ def lpu(okato=None):
 @module.route('/medical_institution/search/', methods=['GET'])
 def search():
     session['step'] = 2
-    return render_template('{0}/lpu.html'.format(module.name))
+    return render_template('{0}/search.html'.format(module.name))
 
 
 @module.route('/medical_institution/ajax_search/', methods=['GET'])
