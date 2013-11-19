@@ -59,7 +59,7 @@ class List():
             hospitals = []
         return hospitals
 
-    def listDoctors(self, hospital_Uid = 0, speciality = 0):
+    def listDoctors(self, hospital_Uid=0, speciality=0):
         """
         Метод возвращает список врачей.
 

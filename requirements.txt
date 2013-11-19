@@ -1,5 +1,7 @@
 Flask
 Flask-Babel
+#Beaker
+#Flask-Beaker
 Flask-Login
 Flask-Principal
 Flask-SQLAlchemy

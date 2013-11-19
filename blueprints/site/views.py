@@ -64,9 +64,23 @@ def lpu(okato=None):
 
 
 @module.route('/medical_institution/search/', methods=['GET'])
-def search():
-    session['step'] = 2
-    return render_template('{0}/search.html'.format(module.name))
+def search_lpu():
+    session['step'] = 0
+    return render_template('{0}/search_lpu.html'.format(module.name))
+
+
+@module.route('/search/', methods=['GET', 'POST'])
+@module.route('/search/<okato>/', methods=['GET', 'POST'])
+@module.route('/search/<okato>/<int:lpu_id>/', methods=['GET', 'POST'])
+def search(okato=None, lpu_id=None):
+    session['step'] = 0
+    region_list = List().listRegions()
+    if not okato:
+        okato = 0
+    hospitals_list = List().listHospitals(okato)
+    return render_template('{0}/search.html'.format(module.name),
+                           region_list=region_list,
+                           hospitals=hospitals_list)
 
 
 @module.route('/medical_institution/ajax_search/', methods=['GET'])
@@ -107,7 +121,7 @@ def ajax_search():
                     region_list.append(region)
             # формирование словаря со значениями, удовлетворяющими поиску,
             # где ключ - uid ЛПУ, а значение - наименование ЛПУ
-            result = _search(region_list, search_gorod, result)
+            result = _search_lpu(region_list, search_gorod, result)
 
         ### поиск ЛПУ по названию района: ###
         if search_rayon:
@@ -119,7 +133,7 @@ def ajax_search():
                     region_list.append(region)
             # формирование словаря со значениями, удовлетворяющими поиску,
             # где ключ - uid ЛПУ, а значение - наименование ЛПУ
-            result = _search(region_list, search_rayon, result)
+            result = _search_lpu(region_list, search_rayon, result)
 
         # создание ответа в формате json из содержимого словаря result:
         return jsonify(result)
@@ -149,7 +163,7 @@ def tickets(lpu_id, department_id, doctor_id, start=None):
     session['doctor_id'] = doctor_id
 
     hospital_uid = '{0}/{1}'.format(lpu_id, department_id)
-    lpu_info = get_lpu('{0}/0'.format(lpu_id))
+    lpu_info = get_lpu(hospital_uid)
 
     today = date.today()
     now = datetime.now(tzlocal()).astimezone(tz=timezone(_config('TIME_ZONE'))).replace(tzinfo=None)
@@ -236,7 +250,7 @@ def registration(lpu_id, department_id, doctor_id):
 
     """
     hospital_uid = '{0}/{1}'.format(lpu_id, department_id)
-    lpu_info = get_lpu('{0}/0'.format(lpu_id))
+    lpu_info = get_lpu(hospital_uid)
 
     session['department_id'] = department_id
     session['doctor_id'] = doctor_id
@@ -323,13 +337,13 @@ def registration(lpu_id, department_id, doctor_id):
             if send_email and patient_email:
                 _send_ticket(patient_email, form.data, lpu_info, ticket_hash=ticket_hash)
 
-            log_message = render_template('{0}messages/success.txt'.format(module.name),
+            log_message = render_template('{0}/messages/success.txt'.format(module.name),
                                           lpu=lpu_info,
                                           lpu_id=lpu_id,
                                           doctor_id=doctor_id,
-                                          doctor='{0} {1} {2}'.format(session['doctor'].get('lastName'),
-                                                                      session['doctor'].get('firstName'),
-                                                                      session['doctor'].get('patronymic')),
+                                          doctor=u'{0} {1} {2}'.format(session['doctor'].get('lastName'),
+                                                                       session['doctor'].get('firstName'),
+                                                                       session['doctor'].get('patronymic')),
                                           patinet_id=ticket.ticketUid.split('/')[1],
                                           ticket_id=ticket.ticketUid.split('/')[0],
                                           patient=patient,
@@ -492,9 +506,9 @@ def get_lpu(hospital_uid):
         print e
     else:
         lpu_info = hospitals[0]
-        for build in getattr(lpu_info, 'buildings', list()):
-            build.name = build.name
-            build.address = build.address
+        #for build in getattr(lpu_info, 'buildings', list()):
+        #    build.name = build.name
+        #    build.address = build.address
     return lpu_info
 
 
@@ -559,7 +573,7 @@ def _save_ticket(ticket_uid, lpu_info):
     return uid
 
 
-def _search(region_list, search_input, result):
+def _search_lpu(region_list, search_input, result):
     """Поиск ЛПУ по названию города или по названию района в зависимости от того, что
     передается в переменной region_list.
 
