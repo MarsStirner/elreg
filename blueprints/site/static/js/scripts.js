@@ -24,9 +24,13 @@ $(document).ready(function () {
             dataType: 'json',
             success: function (data) {
                 var $items = ['<li class="nav-header">Выбор мед. специализации</li>'];
+                if(data['result'].length > 0){
                 $.each(data['result'], function(key, val) {
                     $items.push('<li><a class="speciality" href="' + href.replace('ajax_specialities', 'ajax_doctors') + '?sp=' + encodeURIComponent(val) + '">' + val.replace('(', '<br>(') + '</a></li>');
                 });
+                } else{
+                    $items.push('<li><div class="alert alert-error">Данные по специальностям врачей выбранного подразделения отсутствуют, попробуйте зайти на страницу позже или выберите другое подразделение.</div></li>')
+                }
                 $('ul.secondTable').html($($items.join('')).fadeIn('fast'));
                 $('body,html').animate({
                     scrollTop: 0
@@ -56,17 +60,21 @@ $(document).ready(function () {
             success: function (data) {
                 var $items = ['<li class="nav-header">Выбор Врача<span class="pull-right">Ближайшая свободная запись/Расписание</span></li>'];
                 var doctor;
-                $.each(data.result, function(key, val) {
-                    doctor = '<li class="clearfix"><a class="span7" href="' + val.schedule_href + '">' + val.name + '</a>';
-                    doctor += '<div class="btn-group pull-right">';
-                    if (val.tickets.length > 0){
-                       doctor += '<a href="' + val.tickets[0].href + '" class="btn btn-small btn-success">' + val.tickets[0].info + '</button>';
-                    }
-                    doctor += '<a href="' + val.schedule_href + '" class="btn btn-small btn-warning" type="button">Расписание</button>';
-                    doctor += '</div>';
-                    doctor += '</li>';
-                    $items.push(doctor);
-                });
+                if(data.result.length > 0){
+                    $.each(data.result, function(key, val) {
+                        doctor = '<li class="clearfix"><a class="span7" href="' + val.schedule_href + '">' + val.name + '</a>';
+                        doctor += '<div class="btn-group pull-right">';
+                        if (val.tickets.length > 0){
+                           doctor += '<a href="' + val.tickets[0].href + '" class="btn btn-small btn-success">' + val.tickets[0].info + '</button>';
+                        }
+                        doctor += '<a href="' + val.schedule_href + '" class="btn btn-small btn-warning" type="button">Расписание</button>';
+                        doctor += '</div>';
+                        doctor += '</li>';
+                        $items.push(doctor);
+                    });
+                } else {
+                    $items.push('<li><div class="alert alert-error">Данные по врачам выбранной специальности отсутствуют, попробуйте зайти на страницу позже или выберите другую специальность.</div></li>')
+                }
                 $('ul.thirdTable').html($($items.join('')).fadeIn('fast'));
                 $('body,html').animate({
                     scrollTop: 0
