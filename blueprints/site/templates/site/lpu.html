@@ -1,6 +1,7 @@
 {% extends "site/base.html" %}
 
 {% block content %}
+{% if hospitals_list %}
 <div class="alert alert-info"><h4>Выбор ЛПУ</h4>Выберите медицинское учреждение из списка ниже.</div>
 <div class="row-fluid">
     <div class="span12">
@@ -13,6 +14,9 @@
         </ul>
     </div>
 </div>
+{% else %}
+    <div class="alert alert-error">Данные по медицинским учреждениям выбранного муниципального образования отсутствуют, попробуйте зайти на страницу позже или выберите другое муниципальное образование.</div>
+{% endif %}
 <a href="{{ url_for('.index') }}" class="btn btn-large" title="На главную страницу"><i class="icon-arrow-left"></i> На главную</a>
 <p class="pull-right">
     <a href="{{ url_for('.search', region_id=request.view_args.get('okato')) }}" class="btn btn-large" title="Поиск врача"><i class="icon-search"></i> Поиск врача</a>
