@@ -36,7 +36,7 @@
             {% endif %}
             {% endif %}
             <tr><th colspan="3">ВЫ ЗАПИСАНЫ НА ПРИЕМ:</th></tr>
-            <tr><td>Лечебное учреждение:</td><td colspan="2">{{ lpu.name }}, {% if lpu.buildings[0] %}{{ lpu.buildings[0]|attr('name') }}{% if lpu.buildings[0]|attr('address') %} ({{ lpu.buildings[0]|attr('address') }}){% endif %}{% if lpu.buildings[0]|attr('phone') %}, телефон: {{ lpu.buildings[0]|attr('phone') }}{% endif %}{% endif %}</td></tr>
+            <tr><td>Лечебное учреждение:</td><td colspan="2">{{ lpu.name }}, {% if lpu|attr('buildings') and lpu.buildings[0] %}{{ lpu.buildings[0]|attr('name') }}{% if lpu.buildings[0]|attr('address') %} ({{ lpu.buildings[0]|attr('address') }}){% endif %}{% if lpu.buildings[0]|attr('phone') %}, телефон: {{ lpu.buildings[0]|attr('phone') }}{% endif %}{% endif %}</td></tr>
             <tr><td>Врач:</td><td colspan="2">
                 {% set doctor=session.get('doctor') %}
                 {{ doctor['lastName'] }} {{ doctor['firstName'] }} {{ doctor['patronymic'] }} ({{ doctor.get('speciality') }})

@@ -14,6 +14,7 @@
         {%- endfor -%}
     </div>
     <p class="pull-right">
-        <a href="{{ url_for('.search') }}" class="btn btn-primary btn-large" title="Поиск ЛПУ"><i class="icon-search icon-white"></i> Поиск ЛПУ</a>
+        <a href="{{ url_for('.search_lpu') }}" class="btn btn-large" title="Поиск ЛПУ"><i class="icon-search"></i> Поиск ЛПУ</a>
+        <a href="{{ url_for('.search') }}" class="btn btn-large" title="Поиск врача"><i class="icon-search"></i> Поиск врача</a>
     </p>
 {% endblock %}

@@ -13,5 +13,8 @@
         </ul>
     </div>
 </div>
-<a href="{{ url_for('.index') }}" class="btn btn-primary btn-large">Вернуться</a>
+<a href="{{ url_for('.index') }}" class="btn btn-large" title="На главную страницу"><i class="icon-arrow-left"></i> На главную</a>
+<p class="pull-right">
+    <a href="{{ url_for('.search', region_id=request.view_args.get('okato')) }}" class="btn btn-large" title="Поиск врача"><i class="icon-search"></i> Поиск врача</a>
+</p>
 {% endblock %}

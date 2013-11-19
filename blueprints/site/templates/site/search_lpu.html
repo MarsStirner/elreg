@@ -1,44 +1,28 @@
 {% extends "site/base.html" %}
 
 {% block content %}
-<div class="alert alert-info"><h4>Поиск врача</h4>Задайте параметры поиска</div>
+<div class="alert alert-info"><h4>Поиск ЛПУ</h4></div>
 <div class="well well-small">
     <div class="row-fluid">
-        <div class="span8">
-            <form id="form" action="{{ url_for('.search') }}" method="post" name="frm" class="form-horizontal search-form">
+        <div class="span6">
+            <form id="form" action="" method="post" name="frm" class="form-horizontal">
                 <fieldset>
                     <div class="control-group">
-                        <label class="control-label" for="region">Муниципальное образование:</label>
+                        <label class="control-label" for="search_lpu">Наименование ЛПУ:</label>
                         <div class="controls">
-                            <select name="region" id="region" class="span12">
-                            <option value="">- любое -</option>
-                            {% for region in region_list|sort(attribute='name') %}
-                                <option value="{{ region.code }}"{% if request.view_args.get('okato') == region.code|string %} selected="selected"{% endif %}>{{ region.name }}</option>
-                            {% endfor %}
-                            </select>
+                            <input type="text" name="search" id="search_lpu" maxlength="100" class="input-block-level" onkeyup="searchLpu()" />
                         </div>
                     </div>
                     <div class="control-group">
-                        <label class="control-label" for="lpu">Медицинское учреждение:</label>
+                        <label class="control-label" for="search_gorod">Город:</label>
                         <div class="controls">
-                            <select name="lpu" id="lpu" class="span12">
-                            <option value="">- любое -</option>
-                            {% for hospital in hospitals|sort(attribute='name') %}
-                                <option value="{{ hospital.uid }}"{% if '%s/0'|format(request.view_args.get('lpu_id')) == hospital.uid %} selected="selected"{% endif %}>{{ hospital.name }}</option>
-                            {% endfor %}
-                            </select>
+                            <input type="text" name="search" id="search_gorod" maxlength="100" class="input-block-level" onkeyup="searchGorod()" value="{{ current_region }}" />
                         </div>
                     </div>
                     <div class="control-group">
-                        <label class="control-label" for="speciality">Специальность:</label>
+                        <label class="control-label" for="search_rayon">Район:</label>
                         <div class="controls">
-                            <input type="text" name="speciality" id="speciality" maxlength="100" class="input-block-level" onkeyup="searchRayon()" />
-                        </div>
-                    </div>
-                    <div class="control-group">
-                        <label class="control-label" for="doctor">ФИО врача:</label>
-                        <div class="controls">
-                            <input type="text" name="doctor" id="doctor" maxlength="100" class="input-block-level" onkeyup="searchRayon()" />
+                            <input type="text" name="search" id="search_rayon" maxlength="100" class="input-block-level" onkeyup="searchRayon()" />
                         </div>
                     </div>
                 </fieldset>
@@ -50,15 +34,18 @@
 <div class="row-fluid">
     <div class="span12">
         <ul id="search_table" class="nav nav-tabs nav-stacked upper_case">
-        {% if doctors_list %}
-            {% for doctor in doctors_list %}
-            <li><a href="{{ url_for('.division', lpu_id=doctor.uid) }}">{{ doctor.name }}</a></li>
+        {% if hospitals_list %}
+            {% for hospital in hospitals_list %}
+            <li><a href="{{ url_for('.division', lpu_id=hospital.uid) }}">{{ hospital.name }}</a></li>
             {% endfor %}
         {% endif %}
         </ul>
     </div>
 </div>
-<a href="{{ request.referrer }}" class="btn btn-large"><i class="icon-arrow-left"></i> Вернуться</a>
+<a href="{{ url_for('.index') }}" class="btn btn-primary btn-large"><i class="icon-arrow-left icon-white"></i> Вернуться</a>
+<p class="pull-right">
+    <a href="{{ url_for('.search') }}" class="btn btn-primary btn-large" title="Поиск врача"><i class="icon-search icon-white"></i> Поиск врача</a>
+</p>
 
     <script type="text/javascript">
         function searchLpu() {
@@ -111,19 +98,5 @@
                 $("#search_table").html($items.join('')).fadeIn('fast');
             });
         }
-    </script>
-{% endblock %}
-{% block js %}
-    <script>
-    $(document).ready(function () {
-        $("body").on({
-            ajaxStart: function() {
-                $(this).addClass("loading");
-            },
-            ajaxStop: function() {
-                $(this).removeClass("loading");
-            }
-        });
-    });
     </script>
 {% endblock %}

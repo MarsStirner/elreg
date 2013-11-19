@@ -24,7 +24,7 @@
 {% endif %}
 {% endif %}
 ВЫ ЗАПИСАНЫ НА ПРИЕМ:
-Лечебное учреждение: {{ lpu.name }}, {% if lpu.buildings[0] %}{{ lpu.buildings[0]|attr('name') }}{% if lpu.buildings[0]|attr('address') %} ({{ lpu.buildings[0]|attr('address') }}){% endif %}{% if lpu.buildings[0]|attr('phone') %}, телефон: {{ lpu.buildings[0]|attr('phone') }}{% endif %}{% endif %}
+Лечебное учреждение: {{ lpu.name }}, {% if lpu.buildings[0] %}{{ lpu|attr('buildings') and lpu.buildings[0]|attr('name') }}{% if lpu.buildings[0]|attr('address') %} ({{ lpu.buildings[0]|attr('address') }}){% endif %}{% if lpu.buildings[0]|attr('phone') %}, телефон: {{ lpu.buildings[0]|attr('phone') }}{% endif %}{% endif %}
 Врач: {% set doctor=session.get('doctor') %}{{ doctor['lastName'] }} {{ doctor['firstName'] }} {{ doctor['patronymic'] }} ({{ doctor.get('speciality') }})
 Дата и время приёма: {{ session.get('date', '') }} {{ session.get('start_time', '') }} - {{ session.get('finish_time', '') }}
 ВНИМАНИЕ:

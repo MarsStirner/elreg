@@ -28,7 +28,10 @@
 </div>
 </div>
 </div>
-<a href="{{ url_for('.lpu', okato=session.get('okato')) }}" class="btn btn-primary btn-large">К выбору ЛПУ</a>
+<a href="{{ url_for('.lpu', okato=session.get('okato')) }}" class="btn btn-large"><i class="icon-arrow-left"></i> К выбору ЛПУ</a>
+<p class="pull-right">
+    <a href="{{ url_for('.search', okato=session.get('okato'), lpu_id=lpu_id) }}" class="btn btn-large" title="Поиск врача"><i class="icon-search"></i> Поиск врача</a>
+</p>
 {% endblock %}
 {% block js %}
     <script>
