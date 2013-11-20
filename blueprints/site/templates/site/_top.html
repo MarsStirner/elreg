@@ -54,7 +54,7 @@
             </div></li><!--
             --><li {% if session.get('step') > 5 %}class="prog_trckr_done"{% else %}class="prog_trckr_todo"{% endif %}><div style="position: relative;">
             {% if session.get('step') >= 5 %}<a href="{{ url_for('.registration', lpu_id=session.get('lpu_id'), department_id=session.get('department_id'), doctor_id=session.get('doctor_id')) }}">{% else %}<a class="muted">{% endif %}Шаг 5</a>
-            <div class="borderLeft {% if session.get('step') >= 4 %}prog_trckr_done{% else %}prog_trckr_todo{% endif %}"></div>
+            <div class="borderLeft {% if session.get('step') >= 5 %}prog_trckr_done{% else %}prog_trckr_todo{% endif %}"></div>
                 <div class="middleText">
                     {% if session.get('step') > 5 %}
                         <span class="prog_trckr_checkmark">&#10003;</span>
@@ -62,11 +62,11 @@
                         <span class="omicron">&Omicron;</span>
                     {% endif %}
                 </div>
-            <div class="borderRight {% if session.get('step') > 4 %}prog_trckr_done{% else %}prog_trckr_todo{% endif %}"></div>
+            <div class="borderRight {% if session.get('step') > 5 %}prog_trckr_done{% else %}prog_trckr_todo{% endif %}"></div>
             </div></li><!--
             --><li {% if session.get('step') > 6 %}class="prog_trckr_done"{% else %}class="prog_trckr_todo muted"{% endif %}><div style="position: relative;">
             {% if session.get('step') >= 6 %}<a class="muted" href="">{% else %}<a class="muted">{% endif %}Шаг 6</a>
-            <div class="borderLeft {% if session.get('step') >= 4 %}prog_trckr_done{% else %}prog_trckr_todo{% endif %}"></div>
+            <div class="borderLeft {% if session.get('step') >= 6 %}prog_trckr_done{% else %}prog_trckr_todo{% endif %}"></div>
                 <div class="middleText">
                     {% if session.get('step') > 6 %}
                         <span class="prog_trckr_checkmark">&#10003;</span>
@@ -74,7 +74,7 @@
                         <span class="omicron">&Omicron;</span>
                     {% endif %}
                 </div>
-            <div class="borderRight {% if session.get('step') > 4 %}prog_trckr_done{% else %}prog_trckr_todo{% endif %}"></div>
+            <div class="borderRight {% if session.get('step') > 6 %}prog_trckr_done{% else %}prog_trckr_todo{% endif %}"></div>
             </div></li>
         </ol>
         <ul class="prog_trckr_subscr" data-progtrckr-steps="7">
