@@ -73,7 +73,7 @@ def search_lpu():
 @module.route('/search/<okato>/', methods=['GET', 'POST'])
 @module.route('/search/<okato>/<int:lpu_id>/', methods=['GET', 'POST'])
 def search(okato=None, lpu_id=None):
-    session['step'] = 0
+    session['step'] = 1
     region_list = List().listRegions()
     if not okato:
         okato = 0

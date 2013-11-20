@@ -53,7 +53,7 @@
     </div>
 </div>
 
-<div class="row" id="search_result_row">
+<div class="row-fluid" id="search_result_row">
     <div class="alert alert-error hide span12" title="Ошибка поиска" id="error"></div>
     <div class="span12" id="search_result"></div>
 </div>
@@ -223,6 +223,7 @@
                 $speciality.closest('.control-group').removeClass('success').addClass('error');
                 $doctor.closest('.control-group').removeClass('success').addClass('error');
                 $error.text('Необходимо указать специализацию или ФИО врача').show();
+                return false;
             } else{
                 $speciality.closest('.control-group').removeClass('error');
                 $doctor.closest('.control-group').removeClass('error');
