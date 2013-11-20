@@ -78,6 +78,10 @@ def search(okato=None, lpu_id=None):
     if not okato:
         okato = 0
     hospitals_list = List().listHospitals(okato)
+    if hospitals_list:
+        for _lpu in hospitals_list:
+            setattr(_lpu, 'id', _lpu.uid.split('/')[0])
+    doctors = list()
     return render_template('{0}/search.html'.format(module.name),
                            region_list=region_list,
                            hospitals=hospitals_list)
@@ -341,10 +345,8 @@ def registration(lpu_id, department_id, doctor_id):
                                           lpu=lpu_info,
                                           lpu_id=lpu_id,
                                           doctor_id=doctor_id,
-                                          doctor=u'{0} {1} {2}'.format(session['doctor'].get('lastName'),
-                                                                       session['doctor'].get('firstName'),
-                                                                       session['doctor'].get('patronymic')),
-                                          patinet_id=ticket.ticketUid.split('/')[1],
+                                          doctor=session['doctor'],
+                                          patient_id=ticket.ticketUid.split('/')[1],
                                           ticket_id=ticket.ticketUid.split('/')[0],
                                           patient=patient,
                                           date=timeslot.date().strftime('%d.%m.%Y'),
@@ -413,6 +415,19 @@ def ticket_info():
     return render_template('{0}/ticket_info.html'.format(module.name), lpu=lpu_info)
 
 
+@module.route('/ajax_lpu/', methods=['GET'])
+@module.route('/ajax_lpu/<okato>', methods=['GET'])
+def get_lpu_list(okato=None):
+    data = list()
+    lpu_list = List().listHospitals(okato)
+    if lpu_list:
+        for _lpu in lpu_list:
+            data.append(dict(id=_lpu.uid.split('/')[0],
+                             name=_lpu.name))
+    return jsonify(result=data)
+
+
+@module.route('/ajax_specialities/', methods=['GET'])
 @module.route('/ajax_specialities/<int:lpu_id>/<int:department_id>/', methods=['GET'])
 def get_specialities(lpu_id, department_id):
     if not lpu_id or not department_id:
@@ -426,6 +441,41 @@ def get_specialities(lpu_id, department_id):
         data = list(set(data))
         data.sort()
     return jsonify(result=data)
+
+
+@module.route('/ajax_lpu_doctors/', methods=['GET'])
+@module.route('/ajax_lpu_doctors/<int:lpu_id>/', methods=['GET'])
+def get_lpu_doctors(lpu_id=None):
+    speciality = request.args.get('sp')
+    if not lpu_id:
+        abort(404)
+    hospital_uid = '{0}/0'.format(lpu_id)
+    params = dict(hospital_Uid=hospital_uid)
+    if speciality:
+        params['speciality'] = speciality
+    doctors_list = List().listDoctors(**params)
+    data = list()
+    for doctor in doctors_list:
+        data.append(dict(uid=doctor.uid,
+                         name=u' '.join([doctor.name.lastName, doctor.name.firstName, doctor.name.patronymic])))
+    return jsonify(result=data)
+
+
+@module.route('/ajax_lpu_specialities/', methods=['GET'])
+@module.route('/ajax_lpu_specialities/<int:lpu_id>/', methods=['GET'])
+def get_lpu_specialities(lpu_id=None):
+    if not lpu_id:
+        abort(404)
+    specialities = list()
+    doctors = list()
+    doctors_list = List().listDoctors(hospital_Uid='{0}/0'.format(lpu_id))
+    for doctor in doctors_list:
+        specialities.append(doctor.speciality)
+        doctors.append(dict(uid=doctor.uid,
+                            name=u' '.join([doctor.name.lastName, doctor.name.firstName, doctor.name.patronymic])))
+    specialities = list(set(specialities))
+    specialities.sort()
+    return jsonify(specialities=specialities, doctors=doctors)
 
 
 @module.route('/ajax_doctors/<int:lpu_id>/<int:department_id>/', methods=['GET'])
@@ -455,7 +505,7 @@ def get_doctors(lpu_id=None, department_id=None):
                                                       f=value['timeslotEnd'].strftime('%H%M')),
                                          info=value['timeslotStart'].strftime('%d.%m %H:%M')))
             data.append(dict(uid=doctor.uid,
-                             name=' '.join([doctor.name.lastName, doctor.name.firstName, doctor.name.patronymic]),
+                             name=u' '.join([doctor.name.lastName, doctor.name.firstName, doctor.name.patronymic]),
                              schedule_href=url_for('.tickets',
                                                    lpu_id=lpu_id,
                                                    department_id=department_id,
