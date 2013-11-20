@@ -602,6 +602,7 @@ def _send_ticket(patient_email, data, lpu_info, ticket_hash):
         mail.send(message)
     except Exception, e:
         print e
+        logger.error(u'Ошибка при отправке письма на адрес: {0}\n{1}'.format(patient_email, e))
         return False
     return True
 
