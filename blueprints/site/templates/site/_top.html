@@ -2,32 +2,87 @@
     {% if logo %}<div class="span1"><a href="{{ home_link|default('/') }}" title="На главную"><img src="{{ url_for('.static', filename=logo) }}"></a></div>{% endif %}
     <div class="span11 lead no-vmargin"><h2 class="no-vmargin">{{ site_name }}</h2>{{ region_name }}</div>
 </div>
-<div class="navbar top_path no_print">
-    <div class="navbar-inner">
-        <ul class="nav">
-            <li {% if session.get('step') == 1 %}class="active"{% endif %}>
-                {% if session.get('step') > 1 %}<a href="{{ url_for('.index') }}">{% else %}<a>{% endif %}<span class="label{% if session.get('step') >= 1 %} label-info{% endif %}">1</span> <big>МО</big></a>
-            </li>
-            <li class="divider-vertical"></li>
-            <li {% if session.get('step') == 2 %}class="active"{% endif %}>
-                {% if session.get('step') > 2 %}<a href="{{ url_for('.lpu', okato=session.get('okato')) }}">{% else %}<a>{% endif %}<span class="label{% if session.get('step') >= 2 %} label-info{% endif %}">2</span> <big>ЛПУ</big></a>
-            </li>
-            <li class="divider-vertical"></li>
-            <li {% if session.get('step') == 3 %}class="active"{% endif %}>
-                {% if session.get('step') > 3 %}<a href="{{ url_for('.division', lpu_id=session.get('lpu_id')) }}">{% else %}<a>{% endif %}<span class="label{% if session.get('step') >= 3 %} label-info{% endif %}">3</span> <big>Подразделение/Специализация/Врач</big></a>
-            </li>
-            <li class="divider-vertical"></li>
-            <li {% if session.get('step') == 4 %}class="active"{% endif %}>
-                {% if session.get('step') > 4 %}<a href="{{ url_for('.tickets', lpu_id=session.get('lpu_id'), department_id=session.get('department_id'), doctor_id=session.get('doctor_id')) }}">{% else %}<a>{% endif %}<span class="label{% if session.get('step') >= 4 %} label-info{% endif %}">4</span> <big>Время</big></a>
-            </li>
-            <li class="divider-vertical"></li>
-            <li {% if session.get('step') == 5 %}class="active"{% endif %}>
-                {% if session.get('step') > 5 %}<a href="{{ url_for('.registration', lpu_id=session.get('lpu_id'), department_id=session.get('department_id'), doctor_id=session.get('doctor_id')) }}">{% else %}<a>{% endif %}<span class="label{% if session.get('step') >= 5 %} label-info{% endif %}">5</span> <big>Пациент</big></a>
-            </li>
-            <li class="divider-vertical"></li>
-            <li {% if session.get('step') == 6 %}class="active"{% endif %}>
-                {% if session.get('step') > 6 %}<a href="">{% else %}<a>{% endif %}<span class="label{% if session.get('step') >= 6 %} label-info{% endif %}">6</span> <big>Запись</big></a>
-            </li>
+<div class="no_print prog_trckr_menu">
+        <ol class="prog_trckr" data-progtrckr-steps="6">
+            <li><div style="position: relative;">
+                {% if session.get('step') >= 1 %}<a href="{{ url_for('.index') }}">{% else %}<a class="muted">{% endif %} Шаг 1 </a>
+                <div class="borderLeft {% if session.get('step') >= 1 %}prog_trckr_done{% else %}prog_trckr_todo{% endif %}"></div>
+                <div class="middleText">
+                    {% if session.get('step') > 1 %}
+                        <span class="prog_trckr_checkmark">&#10003;</span>
+                    {% else %}
+                        <span class="omicron">&Omicron;</span>
+                    {% endif %}
+                </div>
+                <div class="borderRight {% if session.get('step') > 1 %}prog_trckr_done{% else %}prog_trckr_todo{% endif %}"></div>
+                </div></li><!--
+            --><li><div style="position: relative;">
+            {% if session.get('step') >= 2 %}<a href="{{ url_for('.lpu', okato=session.get('okato')) }}">{% else %}<a style="" class="muted">{% endif %} Шаг 2</a>
+            <div class="borderLeft {% if session.get('step') >= 2 %}prog_trckr_done{% else %}prog_trckr_todo{% endif %}"></div>
+                <div class="middleText">
+                    {% if session.get('step') > 2 %}
+                        <span class="prog_trckr_checkmark">&#10003;</span>
+                    {% else %}
+                        <span class="omicron">&Omicron;</span>
+                    {% endif %}
+                </div>
+            <div class="borderRight {% if session.get('step') > 2 %}prog_trckr_done{% else %}prog_trckr_todo{% endif %}"></div>
+            </div></li><!--
+            --><li {% if session.get('step') > 3%}class="prog_trckr_done"{% else %}class="prog_trckr_todo"{% endif %}><div style="position: relative;">
+            {% if session.get('step') >= 3 %}<a href="{{ url_for('.division', lpu_id=session.get('lpu_id')) }}">{% else %}<a class="muted">{% endif %}Шаг 3</a>
+            <div class="borderLeft {% if session.get('step') >= 3 %}prog_trckr_done{% else %}prog_trckr_todo{% endif %}"></div>
+                <div class="middleText">
+                    {% if session.get('step') > 3 %}
+                        <span class="prog_trckr_checkmark">&#10003;</span>
+                    {% else %}
+                        <span class="omicron">&Omicron;</span>
+                    {% endif %}
+                </div>
+            <div class="borderRight {% if session.get('step') > 3 %}prog_trckr_done{% else %}prog_trckr_todo{% endif %}"></div>
+            </div></li><!--
+            --><li {% if session.get('step') > 4 %}class="prog_trckr_done"{% else %}class="prog_trckr_todo"{% endif %}><div style="position: relative;">
+            {% if session.get('step') >= 4 %}<a href="{{ url_for('.tickets', lpu_id=session.get('lpu_id'), department_id=session.get('department_id'), doctor_id=session.get('doctor_id')) }}">{% else %}<a class="muted">{% endif %}Шаг 4</a>
+            <div class="borderLeft {% if session.get('step') >= 4 %}prog_trckr_done{% else %}prog_trckr_todo{% endif %}"></div>
+                <div class="middleText">
+                    {% if session.get('step') > 4 %}
+                        <span class="prog_trckr_checkmark">&#10003;</span>
+                    {% else %}
+                        <span class="omicron">&Omicron;</span>
+                    {% endif %}
+                </div>
+            <div class="borderRight {% if session.get('step') > 4 %}prog_trckr_done{% else %}prog_trckr_todo{% endif %}"></div>
+            </div></li><!--
+            --><li {% if session.get('step') > 5 %}class="prog_trckr_done"{% else %}class="prog_trckr_todo"{% endif %}><div style="position: relative;">
+            {% if session.get('step') >= 5 %}<a href="{{ url_for('.registration', lpu_id=session.get('lpu_id'), department_id=session.get('department_id'), doctor_id=session.get('doctor_id')) }}">{% else %}<a class="muted">{% endif %}Шаг 5</a>
+            <div class="borderLeft {% if session.get('step') >= 5 %}prog_trckr_done{% else %}prog_trckr_todo{% endif %}"></div>
+                <div class="middleText">
+                    {% if session.get('step') > 5 %}
+                        <span class="prog_trckr_checkmark">&#10003;</span>
+                    {% else %}
+                        <span class="omicron">&Omicron;</span>
+                    {% endif %}
+                </div>
+            <div class="borderRight {% if session.get('step') > 5 %}prog_trckr_done{% else %}prog_trckr_todo{% endif %}"></div>
+            </div></li><!--
+            --><li {% if session.get('step') > 6 %}class="prog_trckr_done"{% else %}class="prog_trckr_todo muted"{% endif %}><div style="position: relative;">
+            {% if session.get('step') >= 6 %}<a class="muted" href="">{% else %}<a class="muted">{% endif %}Шаг 6</a>
+            <div class="borderLeft {% if session.get('step') >= 6 %}prog_trckr_done{% else %}prog_trckr_todo{% endif %}"></div>
+                <div class="middleText">
+                    {% if session.get('step') > 6 %}
+                        <span class="prog_trckr_checkmark">&#10003;</span>
+                    {% else %}
+                        <span class="omicron">&Omicron;</span>
+                    {% endif %}
+                </div>
+            <div class="borderRight {% if session.get('step') > 6 %}prog_trckr_done{% else %}prog_trckr_todo{% endif %}"></div>
+            </div></li>
+        </ol>
+        <ul class="prog_trckr_subscr" data-progtrckr-steps="7">
+            <li class="muted"><small>Муниципальный округ</small></li><!--
+            --><li class="muted"><small>Медицинское учреждение</small></li><!--
+            --><li class="muted"><small>Врач</small></li><!--
+            --><li class="muted"><small>Время</small></li><!--
+            --><li class="muted"><small>Пациент</small></li><!--
+            --><li class="muted"><small>Запись</small></li>
         </ul>
-    </div>
 </div>
