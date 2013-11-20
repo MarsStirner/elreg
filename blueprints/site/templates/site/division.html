@@ -2,7 +2,7 @@
 
 {% block content %}
 <div class="alert alert-info"><h4>Выберите подразделение, специализацию и врача из списка ниже</h4></div>
-<blockquote>
+<blockquote class="red">
     <dl class="dl-horizontal">
         <dt>Лечебное учреждение:</dt><dd>{{ lpu.name }}</dd>
         {% if lpu.address %}<dd>{{ lpu.address }}</dd>{% endif %}

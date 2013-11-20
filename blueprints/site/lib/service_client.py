@@ -59,24 +59,24 @@ class List():
             hospitals = []
         return hospitals
 
-    def listDoctors(self, hospital_Uid=0, speciality=0):
+    def listDoctors(self, hospital_Uid=None, speciality=None, **kwargs):
         """
         Метод возвращает список врачей.
 
         """
         try:
+            params = dict()
             if hospital_Uid:
-                if speciality:
-                    doctors = self.client.service.listDoctors({
-                        'searchScope': {'hospitalUid': hospital_Uid, }, 'speciality': speciality
-                    }).doctors
-                else:
-                    doctors = self.client.service.listDoctors({'searchScope': {'hospitalUid': hospital_Uid, }}).doctors
-            else:
-                doctors = self.client.service.listDoctors().doctors
+                params['searchScope'] = {'hospitalUid': hospital_Uid}
+            if speciality:
+                params['speciality'] = speciality
+            lastname = kwargs.get('lastName')
+            if lastname:
+                params['lastName'] = lastname
+            doctors = self.client.service.listDoctors(params)
         except Exception, e:
             print e
-            doctors = []
+            doctors = None
         return doctors
 
 

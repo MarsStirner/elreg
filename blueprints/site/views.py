@@ -77,14 +77,19 @@ def search(okato=None, lpu_id=None):
     region_list = List().listRegions()
     if not okato:
         okato = 0
+    hospitals = list()
     hospitals_list = List().listHospitals(okato)
     if hospitals_list:
         for _lpu in hospitals_list:
-            setattr(_lpu, 'id', _lpu.uid.split('/')[0])
-    doctors = list()
+            tmp = _lpu.uid.split('/')
+            lpu_id, department_id = int(tmp[0]), int(tmp[1])
+            if department_id == 0:
+                setattr(_lpu, 'id', lpu_id)
+                hospitals.append(_lpu)
+
     return render_template('{0}/search.html'.format(module.name),
                            region_list=region_list,
-                           hospitals=hospitals_list)
+                           hospitals=hospitals)
 
 
 @module.route('/medical_institution/ajax_search/', methods=['GET'])
@@ -433,8 +438,8 @@ def get_specialities(lpu_id, department_id):
     if not lpu_id or not department_id:
         abort(404)
     data = list()
-    doctors_list = List().listDoctors(hospital_Uid='{0}/{1}'.format(lpu_id, department_id))
-    for doctor in doctors_list:
+    doctors = List().listDoctors(hospital_Uid='{0}/{1}'.format(lpu_id, department_id))
+    for doctor in getattr(doctors, 'doctors', []):
         # TODO: не нужно ли свести к ordered dict(id=>value)??
         #if doctor.hospitalUid == hospital_Uid:
         data.append(doctor.speciality)
@@ -453,11 +458,8 @@ def get_lpu_doctors(lpu_id=None):
     params = dict(hospital_Uid=hospital_uid)
     if speciality:
         params['speciality'] = speciality
-    doctors_list = List().listDoctors(**params)
-    data = list()
-    for doctor in doctors_list:
-        data.append(dict(uid=doctor.uid,
-                         name=u' '.join([doctor.name.lastName, doctor.name.firstName, doctor.name.patronymic])))
+    doctors = List().listDoctors(**params)
+    data = _prepare_doctors(doctors)
     return jsonify(result=data)
 
 
@@ -467,15 +469,34 @@ def get_lpu_specialities(lpu_id=None):
     if not lpu_id:
         abort(404)
     specialities = list()
-    doctors = list()
-    doctors_list = List().listDoctors(hospital_Uid='{0}/0'.format(lpu_id))
-    for doctor in doctors_list:
+    _doctors = List().listDoctors(hospital_Uid='{0}/0'.format(lpu_id))
+    for doctor in getattr(_doctors, 'doctors', []):
         specialities.append(doctor.speciality)
-        doctors.append(dict(uid=doctor.uid,
-                            name=u' '.join([doctor.name.lastName, doctor.name.firstName, doctor.name.patronymic])))
     specialities = list(set(specialities))
     specialities.sort()
+    doctors = _prepare_doctors(_doctors)
     return jsonify(specialities=specialities, doctors=doctors)
+
+
+@module.route('/ajax_find_doctors/', methods=['POST'])
+@module.route('/ajax_find_doctors/<int:lpu_id>/', methods=['POST'])
+def find_doctors(lpu_id=None):
+    # TODO: желательно перейти от наименования специальности к id
+    speciality = request.values.get('sp')
+    fio = request.values.get('fio', '')
+    lastName = fio.split(' ')[0].strip()
+    params = dict()
+    if lpu_id:
+        params['hospital_Uid'] = '{0}/0'.format(lpu_id)
+    if speciality:
+        params['speciality'] = speciality
+    if lastName:
+        params['lastName'] = lastName
+    data = list()
+    doctors = List().listDoctors(**params)
+    if doctors:
+        data = _prepare_doctors(doctors)
+    return jsonify(result=data)
 
 
 @module.route('/ajax_doctors/<int:lpu_id>/<int:department_id>/', methods=['GET'])
@@ -484,33 +505,9 @@ def get_doctors(lpu_id=None, department_id=None):
     speciality = request.args.get('sp')
     if not lpu_id or not department_id or not speciality:
         abort(404)
-    data = list()
     hospital_uid = '{0}/{1}'.format(lpu_id, department_id)
-    doctors_list = List().listDoctors(hospital_Uid=hospital_uid,
-                                      speciality=speciality)
-    start = datetime.now(tzlocal()).astimezone(tz=timezone(_config('TIME_ZONE'))).replace(tzinfo=None)
-    for doctor in doctors_list:
-        if doctor.speciality == speciality:
-            _tickets = list()
-            closest_tickets = Schedule().get_closest_tickets(hospital_uid, [doctor.uid], start=start)
-            if closest_tickets:
-                for key, value in enumerate(closest_tickets):
-                    _tickets.append(dict(href=url_for('.registration',
-                                                      lpu_id=lpu_id,
-                                                      department_id=department_id,
-                                                      doctor_id=doctor.uid,
-                                                      office=getattr(value, 'office', ''),
-                                                      d=value['timeslotStart'].strftime('%Y%m%d'),
-                                                      s=value['timeslotStart'].strftime('%H%M'),
-                                                      f=value['timeslotEnd'].strftime('%H%M')),
-                                         info=value['timeslotStart'].strftime('%d.%m %H:%M')))
-            data.append(dict(uid=doctor.uid,
-                             name=u' '.join([doctor.name.lastName, doctor.name.firstName, doctor.name.patronymic]),
-                             schedule_href=url_for('.tickets',
-                                                   lpu_id=lpu_id,
-                                                   department_id=department_id,
-                                                   doctor_id=doctor.uid),
-                             tickets=_tickets))
+    data = _get_doctors_with_tickets(hospital_Uid=hospital_uid,
+                                     speciality=speciality)
     return jsonify(result=data)
 
 
@@ -567,7 +564,7 @@ def _get_doctor_info(hospital_uid, doctor_id):
     doctors = List().listDoctors(hospital_Uid=hospital_uid)
 
     doctor_info = None
-    for doctor in doctors:
+    for doctor in getattr(doctors, 'doctors', []):
         if doctor_id and doctor.uid == doctor_id:
             doctor_info = dict(firstName=doctor.name.firstName,
                                lastName=doctor.name.lastName,
@@ -660,3 +657,54 @@ def _search_lpu(region_list, search_input, result):
                     adict[i[0]] = i[1]
         result = adict
     return result
+
+
+def _get_doctors_with_tickets(**kwargs):
+    speciality = kwargs.get('speciality')
+    data = list()
+    _doctors = List().listDoctors(**kwargs)
+    start = datetime.now(tzlocal()).astimezone(tz=timezone(_config('TIME_ZONE'))).replace(tzinfo=None)
+    for doctor in getattr(_doctors, 'doctors', []):
+        if speciality and doctor.speciality != speciality:
+            continue
+        hospital_uid = doctor.hospitalUid
+        lpu_id, department_id = hospital_uid.split('/')
+        _tickets = list()
+        closest_tickets = Schedule().get_closest_tickets(hospital_uid, [doctor.uid], start=start)
+        if closest_tickets:
+            for key, value in enumerate(closest_tickets):
+                _tickets.append(dict(href=url_for('.registration',
+                                                  lpu_id=lpu_id,
+                                                  department_id=department_id,
+                                                  doctor_id=doctor.uid,
+                                                  office=getattr(value, 'office', ''),
+                                                  d=value['timeslotStart'].strftime('%Y%m%d'),
+                                                  s=value['timeslotStart'].strftime('%H%M'),
+                                                  f=value['timeslotEnd'].strftime('%H%M')),
+                                     info=value['timeslotStart'].strftime('%d.%m %H:%M')))
+        data.append(dict(uid=doctor.uid,
+                         name=u' '.join([doctor.name.lastName, doctor.name.firstName, doctor.name.patronymic]),
+                         schedule_href=url_for('.tickets',
+                                               lpu_id=lpu_id,
+                                               department_id=department_id,
+                                               doctor_id=doctor.uid),
+                         tickets=_tickets))
+    return data
+
+
+def _prepare_doctors(doctors):
+    data = list()
+    for key, doctor in enumerate(getattr(doctors, 'doctors', [])):
+        tmp = doctor.hospitalUid.split('/')
+        lpu_id, department_id = tmp[0], tmp[1]
+        data.append(dict(uid=doctor.uid,
+                         name=u' '.join([doctor.name.lastName, doctor.name.firstName, doctor.name.patronymic]),
+                         speciality=doctor.speciality,
+                         hospitalUid=doctor.hospitalUid,
+                         schedule_href=url_for('.tickets',
+                                               lpu_id=lpu_id,
+                                               department_id=department_id,
+                                               doctor_id=doctor.uid),
+                         hospital=dict(name=doctors.hospitals[key].name,
+                                       address=doctors.hospitals[key].address)))
+    return data

@@ -3,7 +3,7 @@
 {% block content %}
 <div class="alert alert-info"><h4>Внесите данные пациента в поля для заполнения ниже</h4></div>
 <legend>Информация о записи</legend>
-<blockquote>
+<blockquote class="red">
     <dl class="dl-horizontal">
         <dt>Лечебное учреждение:</dt><dd>{{ lpu.name }}</dd>
         {% if lpu|attr('buildings') and lpu.buildings[0] %}<dd>{{ lpu.buildings[0]|attr('name') }}{% if lpu.buildings[0]|attr('address') %} ({{ lpu.buildings[0]|attr('address') }}){% endif %}</dd>{% endif %}
