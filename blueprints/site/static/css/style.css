@@ -11,6 +11,11 @@
     50% 50%
     no-repeat;
 }
+@media (max-width: 979px) and (min-width: 798px){
+.container, .navbar-static-top .container, .navbar-fixed-top .container, .navbar-fixed-bottom .container {
+    width: 95%;
+}
+}
 
 /* When the body has the loading class, we turn
    the scrollbar off with overflow:hidden */
@@ -105,4 +110,84 @@ ul.inline>li>label{
 }
 .search-form .controls {
     margin-left: 220px;
+ol.prog_trckr, ul.prog_trckr_subscr {
+    margin: 0px 0px 0px 0px;
+    padding: 0;
+    list-style-type: none;
+}
+
+ol.prog_trckr li {
+    display: inline-block;
+    text-align: center;
+    padding:0;
+    line-height: 3em;
+;
+}
+
+ol.prog_trckr[data-progtrckr-steps="6"] li { width: 16.5%; }
+
+ul.prog_trckr_subscr li {
+    width: 16.5%;
+    display: inline-block;
+    text-align: center;
+    line-height: 3em;
+}
+ul.prog_trckr_subscr li small{
+    white-space: nowrap;
+}
+
+ol.prog_trckr li a{
+    text-decoration:none;
+}
+
+.borderLeft  {
+    border-bottom: 2px solid silver;
+    position: absolute;
+    right:56%;
+    left: 0;
+    display: inline-block;
+    bottom: 0;
+ }
+
+.borderRight  {
+    border-bottom: 2px solid silver;
+    position: absolute;
+    left:56%;
+    right: 0;
+    bottom: 0;
+ }
+
+.middleText{
+    display: inline-block;
+    font-size:1.5em;
+    position: absolute;
+    right:44%;
+    left: 44%;
+    bottom: -50%;
+}
+
+.prog_trckr_checkmark{
+    border-radius: 18px;
+    border:none;
+    background: yellowgreen;
+    color: white;
+    padding: 0px 2px;
+    font-size: 15px;
+}
+
+.omicron{
+    background: white;
+    color: silver;
+}
+
+.prog_trckr_done {
+    border-bottom-color: yellowgreen;
+}
+
+.page-header {
+    margin-bottom: 10px;
+}
+
+.prog_trckr_menu{
+    margin-bottom: 10px;
 }
