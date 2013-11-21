@@ -120,6 +120,7 @@ ol.prog_trckr, ul.prog_trckr_subscr {
 
 ol.prog_trckr li {
     display: inline-block;
+    *display: inline;
     text-align: center;
     padding:0;
     line-height: 3em;
