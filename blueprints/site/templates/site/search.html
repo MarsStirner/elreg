@@ -191,10 +191,16 @@
         $region.change(function(){
             $('input#speciality').val("");
             $('input#doctor').val("");
-            filter_lpu($(this).val());
+            if($(this).val()){
+                filter_lpu($(this).val());
+            }
         });
         $lpu.change(function(){
-            get_specialities($(this).val());
+            $('input#speciality').val("");
+            $('input#doctor').val("");
+            if($(this).val()){
+                get_specialities($(this).val());
+            }
         });
         $speciality.focusin(function(){
             old_specilality = $speciality.val();
