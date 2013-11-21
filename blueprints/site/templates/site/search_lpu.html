@@ -46,7 +46,26 @@
 <p class="pull-right">
     <a href="{{ url_for('.search') }}" class="btn btn-large" title="Поиск врача"><i class="icon-search"></i> Поиск врача</a>
 </p>
-
+<!-- Modal -->
+<div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="myModalLabel">Запись online невозможна</h3>
+    </div>
+    <div class="modal-body">
+        <p>Запись к специалистам ПОКБ им. Н.Н. Бурденко осуществляется врачами в ЛПУ по месту жительства.</p>
+    </div>
+</div>
+<!-- Modal -->
+<div id="gor2Modal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="myModalLabel">Запись на приём в<br>ГБУЗ «Городская больница № 2»</h3>
+    </div>
+    <div class="modal-body">
+        <p>Для записи на прием перейдите по <a href="{{ url_for('.division', lpu_id=16) }}">ссылке</a>.</p>
+    </div>
+</div>
     <script type="text/javascript">
         function searchLpu() {
             $("#search_table").html("");
