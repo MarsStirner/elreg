@@ -1,4 +1,4 @@
-# -*- encoding: utf-8 -*-
+# -*- coding: utf-8 -*-
 from flask import render_template, abort, request, redirect, url_for, flash, session, current_app
 from flask.views import MethodView
 

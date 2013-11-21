@@ -1,4 +1,4 @@
-# -*- encoding: utf-8 -*-
+# -*- coding: utf-8 -*-
 from application.lib.utils import create_config_func
 from config import DEBUG
 from pysimplelogs.logger import SimpleLogger
