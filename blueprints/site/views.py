@@ -77,6 +77,10 @@ def search(okato=None, lpu_id=None):
     region_list = List().listRegions()
     if not okato:
         okato = 0
+    else:
+        session['step'] = 2
+    if lpu_id:
+        session['step'] = 3
     hospitals = list()
     hospitals_list = List().listHospitals(okato)
     if hospitals_list:
