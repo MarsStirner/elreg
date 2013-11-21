@@ -65,9 +65,9 @@ $(document).ready(function () {
                         doctor = '<li class="clearfix"><a class="span7" href="' + val.schedule_href + '">' + val.name + '</a>';
                         doctor += '<div class="btn-group pull-right">';
                         if (val.tickets.length > 0){
-                           doctor += '<a href="' + val.tickets[0].href + '" class="btn btn-small btn-success">' + val.tickets[0].info + '</button>';
+                           doctor += '<a href="' + val.tickets[0].href + '" class="btn btn-small btn-success">' + val.tickets[0].info + '</a>';
                         }
-                        doctor += '<a href="' + val.schedule_href + '" class="btn btn-small btn-warning" type="button">Расписание</button>';
+                        doctor += '<a href="' + val.schedule_href + '" class="btn btn-small btn-warning" type="button">Расписание</a>';
                         doctor += '</div>';
                         doctor += '</li>';
                         str += doctor;
