@@ -48,7 +48,7 @@
                     {% if cell and cell|attr('start') > now %}
                     <td class="{{ cell.status }}">
                         {% if cell.status == 'free' %}
-                            <a href="{{ url_for('.registration', lpu_id=lpu_id, department_id=department_id, doctor_id=doctor_id, d=cell.start|dateformat('yMd'), s=cell.start|datetimeformat('Hmm', rebase=False), f=cell.finish|datetimeformat('Hmm', rebase=False)) }}" class="btn btn-block btn-success">{{ cell.start|datetimeformat('H:mm', rebase=False) }}</a>
+                            <a href="{{ url_for('.registration', lpu_id=lpu_id, department_id=department_id, doctor_id=doctor_id, d=cell.start|dateformat('yMd'), s=cell.start|datetimeformat('Hmmss', rebase=False), f=cell.finish|datetimeformat('Hmmss', rebase=False)) }}" class="btn btn-block btn-success">{{ cell.start|datetimeformat('H:mm', rebase=False) }}</a>
                         {% elif cell.status == 'locked' or cell.status == 'disabled' %}
                             <span class="btn btn-block btn-danger disabled">{{ cell.start|datetimeformat('H:mm', rebase=False) }}</span>
                         {% else %}

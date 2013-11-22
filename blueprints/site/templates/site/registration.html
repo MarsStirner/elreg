@@ -100,12 +100,15 @@
     </div>
     <div class="control-group">
         {{ form.email.label(class="control-label") }}
-        <div class="controls">
+        <div class="controls row-fluid">
             {% if session.get('send_email', False) %}
-                {{ form.email(class="span4", autocomplete="off", value=session.get('email', ''), placeholder="example@email.ru") }}
+                {{ form.email(class="span6", autocomplete="off", value=session.get('email', ''), placeholder="example@email.ru") }}
             {% else %}
-                {{ form.email(class="span4", autocomplete="off", value=session.get('email', ''), placeholder="example@email.ru", disabled="disabled") }}
+                {{ form.email(class="span6", autocomplete="off", value=session.get('email', ''), placeholder="example@email.ru", disabled="disabled") }}
             {% endif %}
+        <br>
+        <span>- Вам будет отправлен талон на прием</span><br>
+        <span>- Вам будет отправлена ссылка для отмены записи на прием</span>
         </div>
     </div>
 

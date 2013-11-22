@@ -278,9 +278,9 @@ def registration(lpu_id, department_id, doctor_id):
 
     date_string = '{date}{time}'.format(date=request.args.get('d'), time=request.args.get('s'))
     try:
-        timeslot = datetime.strptime(date_string, '%Y%m%d%H%M').replace(tzinfo=timezone(_config('TIME_ZONE')))
-        ticket_start = datetime.strptime(request.args.get('s'), '%H%M').time()
-        ticket_end = datetime.strptime(request.args.get('f'), '%H%M').time()
+        timeslot = datetime.strptime(date_string, '%Y%m%d%H%M%S').replace(tzinfo=timezone(_config('TIME_ZONE')))
+        ticket_start = datetime.strptime(request.args.get('s'), '%H%M%S').time()
+        ticket_end = datetime.strptime(request.args.get('f'), '%H%M%S').time()
     except Exception, e:
         print e
         abort(404)
@@ -683,8 +683,8 @@ def _get_doctors_with_tickets(**kwargs):
                                                   doctor_id=doctor.uid,
                                                   office=getattr(value, 'office', ''),
                                                   d=value['timeslotStart'].strftime('%Y%m%d'),
-                                                  s=value['timeslotStart'].strftime('%H%M'),
-                                                  f=value['timeslotEnd'].strftime('%H%M')),
+                                                  s=value['timeslotStart'].strftime('%H%M%S'),
+                                                  f=value['timeslotEnd'].strftime('%H%M%S')),
                                      info=value['timeslotStart'].strftime('%d.%m %H:%M')))
         data.append(dict(uid=doctor.uid,
                          name=u' '.join([doctor.name.lastName, doctor.name.firstName, doctor.name.patronymic]),
