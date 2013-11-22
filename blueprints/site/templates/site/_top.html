@@ -80,7 +80,7 @@
                     {% endif %}
                 </div>
             </a>
-            <div class="borderRight {% if session.get('step') > 6 %}prog_trckr_done{% else %}prog_trckr_todo{% endif %}"></div>
+            <div class="borderRight {% if session.get('step') >= 6 %}prog_trckr_done{% else %}prog_trckr_todo{% endif %}"></div>
             </div></li>
         </ol>
         <ul class="prog_trckr_subscr" data-progtrckr-steps="7">
