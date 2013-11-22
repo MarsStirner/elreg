@@ -85,9 +85,11 @@
                         .end();
                 if(data['result'].length > 0){
                     $.each(data['result'], function(key, value) {
-                        $('#lpu_filter')
-                                .append($('<option>', { value : value['id'] })
-                                .text(value['name']));
+                        if (value['id'] != 5 && value['id'] != 15){
+                            $('#lpu_filter')
+                                    .append($('<option>', { value : value['id'] })
+                                    .text(value['name']));
+                        }
                     });
                 }
             }
