@@ -1,14 +1,14 @@
 {% extends "site/base.html" %}
 
 {% block content %}
-<div class="alert alert-info"><h4>Поиск ЛПУ</h4></div>
+<div class="alert alert-info"><h4>Поиск медицинского учреждения</h4>Задайте параметры поиска</div>
 <div class="well well-small">
     <div class="row-fluid">
         <div class="span6">
-            <form id="form" action="" method="post" name="frm" class="form-horizontal">
+            <form id="form" action="" method="post" name="frm" class="form-horizontal search-form no-vmargin">
                 <fieldset>
                     <div class="control-group">
-                        <label class="control-label" for="search_lpu">Наименование ЛПУ:</label>
+                        <label class="control-label" for="search_lpu">Медицинское учреждение:</label>
                         <div class="controls">
                             <input type="text" name="search" id="search_lpu" maxlength="100" class="input-block-level" onkeyup="searchLpu()" />
                         </div>
