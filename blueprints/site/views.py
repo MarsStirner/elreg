@@ -556,7 +556,8 @@ def get_lpu(hospital_uid):
     except Exception, e:
         print e
     else:
-        lpu_info = hospitals[0]
+        if len(hospitals) > 0:
+            lpu_info = hospitals[0]
         #for build in getattr(lpu_info, 'buildings', list()):
         #    build.name = build.name
         #    build.address = build.address
