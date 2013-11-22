@@ -20,7 +20,7 @@ app.config.update(
     MAIL_SERVER=_config('EMAIL_HOST'),
     MAIL_PORT=str(_config('EMAIL_PORT')),
     MAIL_USERNAME=_config('EMAIL_HOST_USER'),
-    MAIL_PASSWORD=_config('EMAIL_HOST_PASSWORD'),
+    MAIL_PASSWORD=str(_config('EMAIL_HOST_PASSWORD')),
     MAIL_USE_TLS=bool(_config('EMAIL_USE_TLS')),
     MAIL_USE_SSL=bool(_config('EMAIL_USE_SSL')),
     MAIL_DEFAULT_SENDER=_config('DEFAULT_FROM_EMAIL')
