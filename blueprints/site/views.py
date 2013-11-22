@@ -158,6 +158,10 @@ def division(lpu_id=None):
     """Логика страницы Подразделение/Специализация/Врач
     Выводится список подразделений для выбранного ЛПУ. Остальная логика
     """
+    if lpu_id == 5:
+        abort(404)
+    if lpu_id == 15:
+        return redirect(url_for('.division', lpu_id=16))
     session['step'] = 3
     session['lpu_id'] = lpu_id
     lpu_info = get_lpu('{0}/0'.format(lpu_id))
@@ -556,7 +560,8 @@ def get_lpu(hospital_uid):
     except Exception, e:
         print e
     else:
-        lpu_info = hospitals[0]
+        if len(hospitals) > 0:
+            lpu_info = hospitals[0]
         #for build in getattr(lpu_info, 'buildings', list()):
         #    build.name = build.name
         #    build.address = build.address
