@@ -593,7 +593,9 @@ def _generate_message(template, data, lpu_info, ticket_hash):
 
 def _send_ticket(patient_email, data, lpu_info, ticket_hash):
     mail = Mail(current_app)
-    message = Message(u'Уведомление о записи на приём', recipients=[patient_email])
+    message = Message(u'Уведомление о записи на приём',
+                      sender=_config('DEFAULT_FROM_EMAIL'),
+                      recipients=[patient_email])
 
     message.body = _generate_message('{0}/email/email.txt'.format(module.name),
                                      data, lpu_info, ticket_hash=ticket_hash)
@@ -604,7 +606,8 @@ def _send_ticket(patient_email, data, lpu_info, ticket_hash):
         mail.send(message)
     except Exception, e:
         print e
-        logger.error(u'Ошибка при отправке письма на адрес: {0}\n{1}'.format(patient_email, e))
+        logger.error(u'Ошибка при отправке письма на адрес: {0}\n{1}'.format(patient_email, e),
+                     extra=dict(tags=[u'отправка письма', 'elreg']))
         return False
     return True
 
