@@ -5,6 +5,7 @@ from flask.ext.login import LoginManager, current_user
 from application.app import app
 from ..database import db
 from ..models import Settings, Users, Roles
+from pysimplelogs.logger import SimpleLogger
 
 
 def public_endpoint(function):
@@ -72,3 +73,12 @@ def stringValidation(string):
         if string.find(i) != -1:
             return False
     return True
+
+
+_config = create_config_func()
+from version import version
+from config import DEBUG
+logger = SimpleLogger.get_logger(_config('SIMPLELOGS_URL'),
+                                 'elreg.app',
+                                 dict(name='elreg.app', version=version),
+                                 DEBUG)
