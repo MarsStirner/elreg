@@ -2,6 +2,7 @@
 from flask import Flask
 from flask.ext.principal import Principal
 from flask.ext.babel import Babel
+from flask_mail import Mail
 import pytz
 from database import db
 import config
@@ -25,6 +26,8 @@ app.config.update(
     MAIL_USE_SSL=bool(_config('EMAIL_USE_SSL')),
     MAIL_DEFAULT_SENDER=_config('DEFAULT_FROM_EMAIL')
 )
+
+mail = Mail(app)
 
 
 @babel.timezoneselector

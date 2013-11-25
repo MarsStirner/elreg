@@ -7,10 +7,8 @@ from flask import (render_template,
                    url_for,
                    flash,
                    session,
-                   current_app,
                    jsonify)
 from jinja2 import Environment, PackageLoader
-from flask_mail import Mail, Message
 from datetime import datetime, timedelta, date
 from pytz import timezone
 from dateutil.tz import tzlocal
@@ -24,8 +22,8 @@ from .context_processors import header
 from application.app import db
 from application.models import Tickets
 
-
 from .lib.utils import _config, logger
+from emails import send_ticket
 
 
 @module.route('/', methods=['GET'])
@@ -348,7 +346,13 @@ def registration(lpu_id, department_id, doctor_id):
 
             # формирование и отправка письма:
             if send_email and patient_email:
-                _send_ticket(patient_email, form.data, lpu_info, ticket_hash=ticket_hash)
+                dequeue_link = '{0}://{1}{2}'.format(request.scheme,
+                                                     request.host,
+                                                     url_for('.dequeue',
+                                                             lpu_id=session.get('lpu_id'),
+                                                             department_id=session.get('department_id'),
+                                                             uid=ticket_hash))
+                send_ticket(patient_email, form.data, lpu_info, dequeue_link=dequeue_link, session_data=session)
 
             log_message = render_template('{0}/messages/success.txt'.format(module.name),
                                           lpu=lpu_info,
@@ -577,39 +581,6 @@ def _get_doctor_info(hospital_uid, doctor_id):
                                speciality=doctor.speciality)
             break
     return doctor_info
-
-
-def _generate_message(template, data, lpu_info, ticket_hash):
-    env = Environment(loader=PackageLoader(module.import_name,  module.template_folder))
-    template = env.get_template(template)
-    dequeue_link = '{0}://{1}{2}'.format(request.scheme,
-                                         request.host,
-                                         url_for('.dequeue',
-                                                 lpu_id=session.get('lpu_id'),
-                                                 department_id=session.get('department_id'),
-                                                 uid=ticket_hash))
-    return template.render(data=data, session=session, lpu=lpu_info, dequeue_link=dequeue_link)
-
-
-def _send_ticket(patient_email, data, lpu_info, ticket_hash):
-    mail = Mail(current_app)
-    message = Message(u'Уведомление о записи на приём',
-                      sender=_config('DEFAULT_FROM_EMAIL'),
-                      recipients=[patient_email])
-
-    message.body = _generate_message('{0}/email/email.txt'.format(module.name),
-                                     data, lpu_info, ticket_hash=ticket_hash)
-    message.html = _generate_message('{0}/email/email.html'.format(module.name),
-                                     data, lpu_info, ticket_hash=ticket_hash)
-
-    try:
-        mail.send(message)
-    except Exception, e:
-        print e
-        logger.error(u'Ошибка при отправке письма на адрес: {0}\n{1}'.format(patient_email, e),
-                     extra=dict(tags=[u'отправка письма', 'elreg']))
-        return False
-    return True
 
 
 def _del_session(key):
