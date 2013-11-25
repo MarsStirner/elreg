@@ -14,7 +14,7 @@ from application.app import app, db, login_manager
 from models import Settings, Users, Roles
 from lib.user import User
 from forms import EditUserForm, LoginForm
-from lib.utils import admin_permission, public_endpoint
+from lib.utils import admin_permission, public_endpoint, logger
 
 from lib.captcha.views import get_captcha_image
 get_captcha_image = public_endpoint(get_captcha_image)
@@ -203,6 +203,7 @@ def delete_user(user_id):
 
 @app.errorhandler(403)
 def authorisation_failed(e):
+    logger.error(e, extra=dict(tags=[u'authorisation_failed (403)', 'elreg']))
     flash(u'У вас недостаточно привилегий для доступа к функционалу')
     return render_template('user/denied.html')
 
@@ -210,6 +211,12 @@ def authorisation_failed(e):
 @app.errorhandler(404)
 def page_not_found(e):
     return render_template('404.html')
+
+
+@app.errorhandler(500)
+def internal_error(e):
+    logger.error(e, extra=dict(tags=[u'internal_error (500)', 'elreg']))
+    return render_template('500.html'), 500
 
 
 #########################################

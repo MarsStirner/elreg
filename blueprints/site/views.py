@@ -267,6 +267,7 @@ def registration(lpu_id, department_id, doctor_id):
     hospital_uid = '{0}/{1}'.format(lpu_id, department_id)
     lpu_info = get_lpu(hospital_uid)
 
+    session['lpu_id'] = lpu_id
     session['department_id'] = department_id
     session['doctor_id'] = doctor_id
 
@@ -290,9 +291,9 @@ def registration(lpu_id, department_id, doctor_id):
     session['step'] = 5
 
     form = EnqueuePatientForm(request.form, **dict(session))
-    if form.validate_on_submit():
+    if request.method == 'POST':
         session.update(form.data)
-
+    if form.validate_on_submit():
         document_type = form.document_type.data.strip()
         document = dict()
         if not document_type:
@@ -333,7 +334,7 @@ def registration(lpu_id, department_id, doctor_id):
                        birthday=u'{day:02d}.{month:02d}.{year}'.format(**form.data))
 
         # запись на приём произошла успешно:
-        if ticket and ticket.result is True and len(ticket.ticketUid.split('/')[0]) != 0:
+        if ticket and getattr(ticket, 'result', False) is True and len(ticket.ticketUid.split('/')[0]) != 0:
             #doc_keys = ('policy_type', 'policy_number', 'doc_series', 'doc_number', 'client_id', 'series', 'number')
             #[_del_session(key) for key in doc_keys]
 
@@ -372,7 +373,7 @@ def registration(lpu_id, department_id, doctor_id):
             logger.info(log_message, extra=dict(tags=[u'успешная запись', 'elreg']))
 
             return redirect(url_for('.ticket_info'))
-        elif ticket:
+        elif ticket and hasattr(ticket, 'result'):
             # ошибка записи на приём:
             if ticket.result is True:
                 flash(u"Ошибка записи", 'error')
@@ -406,8 +407,9 @@ def registration(lpu_id, department_id, doctor_id):
                                           lpu=lpu_info,
                                           lpu_id=lpu_id,
                                           doctor_id=doctor_id,
+                                          patient=patient,
                                           doctor=session['doctor'],
-                                          message=u'Не удалось соединиться с ИС',
+                                          message=getattr(ticket, 'message', u'Не удалось соединиться с ИС'),
                                           date=timeslot.date().strftime('%d.%m.%Y'),
                                           start_time=ticket_start.strftime('%H:%M'),
                                           finish_time=ticket_end.strftime('%H:%M'))

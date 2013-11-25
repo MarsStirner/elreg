@@ -163,7 +163,7 @@ class Schedule():
             })
         except Exception, e:
             print e
-            ticket = []
+            ticket = e
         return ticket
 
     def dequeue(self, hospitalUid, ticketUid):

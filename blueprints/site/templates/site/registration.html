@@ -17,7 +17,7 @@
   {% if errors %}
     <div class="alert alert-error" title="Ошибка записи">
         <strong>Ошибка записи!</strong>
-        <ul class="unstyled">
+        <ul class="unstyled no-vmargin">
         {% for error in errors %}
           <li>{{ error }}</li>
         {% endfor %}
@@ -28,7 +28,7 @@
 {% if form.errors %}
 <div class="alert alert-error" title="Ошибка заполнения формы">
     <strong>Форма заполнена некорректно</strong>
-    <ul class="unstyled">
+    <ul class="unstyled no-vmargin">
         {% for field_name in form.errors %}
             {% for error in form.errors[field_name] %}
                 <li>{{ form[field_name].label(class="inline") }}: {{ error }}</li>
@@ -40,7 +40,7 @@
 {% with messages = get_flashed_messages(category_filter=["info"]) %}
   {% if messages %}
     <div class="alert alert-success" title="Сообщение">
-        <ul class="unstyled">
+        <ul class="unstyled no-vmargin">
         {% for message in messages %}
           <li>{{ message }}</li>
         {% endfor %}
@@ -48,7 +48,7 @@
     </div>
   {% endif %}
 {% endwith %}
-<div class="well">
+<div class="well well-small">
 <form id="patient_form" action="" method="post" name="frm" class="form-horizontal">
     {{ form.csrf_token }}
     <input type="hidden" name="ticket" value="{{ ticket }}" />
@@ -127,7 +127,7 @@
     <div class="row-fluid">
         <div class="span7">
             <label for="confirm">
-                {{ form.confirm(id="confirm") }} Я даю своё согласие на автоматизированную обработку указанной информации, распространяющейся на осуществление всех действий с ней, включая сбор, передачу по сетям связи общего назначения, накопление, хранение, обновление, изменение, использование, обезличивание, блокирование, уничтожение и обработку посредством внесения в электронную базу данных, систематизации, включения в списки и отчетные формы.
+                <input id="confirm" name="confirm" type="checkbox" value="y"> Я даю своё согласие на автоматизированную обработку указанной информации, распространяющейся на осуществление всех действий с ней, включая сбор, передачу по сетям связи общего назначения, накопление, хранение, обновление, изменение, использование, обезличивание, блокирование, уничтожение и обработку посредством внесения в электронную базу данных, систематизации, включения в списки и отчетные формы.
             </label>
         </div>
     </div>
