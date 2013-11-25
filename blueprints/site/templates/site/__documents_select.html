@@ -42,7 +42,7 @@
     <div class="control-group">
         {{ form.policy_number.label(class="control-label") }}
         <div class="controls">
-        {% if doc_type in ('policy_type_4', 'policy_type_4') %}
+        {% if doc_type in ('policy_type_1', 'policy_type_4') %}
             {{ form.policy_number(class="span3", value=session.get('policy_number', ''), placeholder="1234567890123456", autocomplete="off") }}
         {% else %}
             {{ form.policy_number(class="span3", value=session.get('policy_number', ''), disabled=disabled, placeholder="1234567890123456", autocomplete="off") }}
