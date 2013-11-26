@@ -528,7 +528,7 @@ def dequeue(lpu_id, department_id, uid):
         abort(404)
     _del_session('step')
     ticket_info = ticket.info
-    patient_id, ticket_id = ticket.ticket_uid.split('/')
+    ticket_id, patient_id = ticket.ticket_uid.split('/')
     if request.method == 'POST':
         result = Schedule().dequeue(hospitalUid='{0}/{1}'.format(lpu_id, department_id),
                                     ticketUid=ticket.ticket_uid)
