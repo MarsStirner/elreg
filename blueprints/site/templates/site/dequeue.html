@@ -13,7 +13,7 @@
         {% endfor %}
         </ul>
     </div>
-    <p><a href="{{ url_for('.index') }}" class="btn btn-primary btn-large">На главную</a></p>
+    <p><a href="{{ url_for('.index') }}" class="btn btn-large"><i class="icon-ok icon-arrow-left"></i> На главную</a></p>
   {% endif %}
 {% endwith %}
 {% with messages = get_flashed_messages(category_filter=["success"]) %}
@@ -25,7 +25,7 @@
         {% endfor %}
         </ul>
     </div>
-    <p><a href="{{ url_for('.index') }}" class="btn btn-primary btn-large">На главную</a></p>
+    <p><a href="{{ url_for('.index') }}" class="btn btn-large"><i class="icon-ok icon-arrow-left"></i> На главную</a></p>
   {% endif %}
 {% endwith %}
 {% if request.method == 'GET' %}
