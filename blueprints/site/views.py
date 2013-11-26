@@ -528,6 +528,7 @@ def dequeue(lpu_id, department_id, uid):
         abort(404)
     _del_session('step')
     ticket_info = ticket.info
+    patient_id, ticket_id = ticket.ticket_uid.split('/')
     if request.method == 'POST':
         result = Schedule().dequeue(hospitalUid='{0}/{1}'.format(lpu_id, department_id),
                                     ticketUid=ticket.ticket_uid)
@@ -538,6 +539,8 @@ def dequeue(lpu_id, department_id, uid):
             db.session.commit()
             log_message = render_template('{0}/messages/dequeue.txt'.format(module.name),
                                           ticket_info=ticket_info,
+                                          patient_id=patient_id,
+                                          ticket_id=ticket_id,
                                           message=u'Произведена отмена записи')
             logger.info(log_message, extra=dict(tags=[u'отмена записи', 'elreg']))
         elif result:
@@ -547,6 +550,8 @@ def dequeue(lpu_id, department_id, uid):
             db.session.commit()
             log_message = render_template('{0}/messages/dequeue.txt'.format(module.name),
                                           ticket_info=ticket_info,
+                                          patient_id=patient_id,
+                                          ticket_id=ticket_id,
                                           message=u'Запись не существует или отменена ранее')
             logger.info(log_message, extra=dict(tags=[u'отмена записи', 'elreg']))
         else:
@@ -558,6 +563,8 @@ def dequeue(lpu_id, department_id, uid):
 
             log_message = render_template('{0}/messages/dequeue.txt'.format(module.name),
                                           ticket_info=ticket_info,
+                                          patient_id=patient_id,
+                                          ticket_id=ticket_id,
                                           message=u'Ошибка отмены записи')
             logger.error(log_message, extra=dict(tags=[u'отмена записи', 'elreg']))
     return render_template('{0}/dequeue.html'.format(module.name), ticket_info=ticket_info)
