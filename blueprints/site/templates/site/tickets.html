@@ -77,7 +77,7 @@
     </table>
 </div>
 {% else %}
-<legend>Расписание на текущую неделю отсутствует ({{ dates[0]|dateformat('d.M.y') }} - {{ dates[6]|dateformat('d.M.y') }})</legend>
+<legend>Расписание на текущую неделю отсутствует ({{ dates[0]|dateformat('dd.M.y') }} - {{ dates[6]|dateformat('dd.M.y') }})</legend>
 {% endif %}
 <p>
     <a href="{{ url_for('.division', lpu_id=lpu_id) }}" class="btn btn-large" title="Выбрать врача"><i class="icon-ok icon-arrow-left"></i> Выбрать врача</a>

@@ -58,6 +58,6 @@ class Tickets(db.Model):
     uid = db.Column(db.Unicode(100))
     ticket_uid = db.Column(db.Unicode(20))
     info = db.Column(db.UnicodeText())
-    created = db.Column(db.DateTime(), default=datetime.now())
+    created = db.Column(db.DateTime(), default=datetime.now)
     updated = db.Column(db.DateTime(), nullable=True)
     is_active = db.Column(db.Boolean(), default=True)
