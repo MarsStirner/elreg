@@ -1,0 +1,3 @@
+{{ message }}
+Информация о записи: {{ ticket_info|safe|striptags }}
+Ссылка отмены: {{ request.scheme }}://{{ request.host }}{{ request.full_path }}

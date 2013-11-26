@@ -3,7 +3,7 @@ from datetime import datetime
 from suds.client import Client
 from suds.sax.text import Text
 from config import DEBUG
-from ..lib.utils import _config
+from ..lib.utils import _config, logger
 from pytz import timezone
 from dateutil.tz import tzlocal
 
@@ -40,6 +40,7 @@ class List():
             regions = self.client.service.listRegions().regions
         except Exception, e:
             print e
+            logger.error(e, extra=dict(tags=[u'получение списка регионов', 'elreg']))
             regions = []
         return regions
 
@@ -56,6 +57,8 @@ class List():
                 hospitals = self.client.service.listHospitals().hospitals
         except Exception, e:
             print e
+            logger.error(u'okato:{0} \nError: {1}'.format(okato, e),
+                         extra=dict(tags=[u'получение списка ЛПУ', 'elreg']))
             hospitals = []
         return hospitals
 
@@ -64,8 +67,8 @@ class List():
         Метод возвращает список врачей.
 
         """
+        params = dict()
         try:
-            params = dict()
             if hospital_Uid:
                 params['searchScope'] = {'hospitalUid': hospital_Uid}
             if speciality:
@@ -76,6 +79,8 @@ class List():
             doctors = self.client.service.listDoctors(params)
         except Exception, e:
             print e
+            logger.error(u'params:{0} \nError: {1}'.format(unicode(params), e),
+                         extra=dict(tags=[u'получение списка врачей', 'elreg']))
             doctors = None
         return doctors
 
@@ -93,7 +98,7 @@ class Info():
 
     def getHospitalInfo(self, hospitalUid=0):
         """
-        Метод возвращает инвормацию об ЛПУ.
+        Метод возвращает информацию об ЛПУ.
 
         """
         try:
@@ -103,6 +108,8 @@ class Info():
                 info_list = self.client.service.getHospitalInfo().info
         except Exception, e:
             print e
+            logger.error(u'hospitalUid:{0} \nError: {1}'.format(hospitalUid, e),
+                         extra=dict(tags=[u'информация об ЛПУ', 'elreg']))
             info_list = []
         return info_list
 
@@ -123,6 +130,7 @@ class Schedule():
         Метод возвращает расписания врачей.
 
         """
+        params = dict()
         try:
             params = {'hospitalUid': hospitalUid, 'doctorUid': doctorUid}
             if startDate and endDate:
@@ -130,6 +138,8 @@ class Schedule():
             ticket = self.client.service.getScheduleInfo(params).timeslots
         except Exception, e:
             print e
+            logger.error(u'params:{0} \nError: {1}'.format(unicode(params), e),
+                         extra=dict(tags=[u'получение расписания', 'elreg']))
             ticket = []
         return ticket
 
@@ -142,6 +152,8 @@ class Schedule():
             ticket = self.client.service.getTicketStatus({'hospitalUid': hospitalUid, 'ticketUid': ticketUid})
         except Exception, e:
             print e
+            logger.error(u'hospitalUid: {0} ticketUid: {1} \nError: {2}'.format(hospitalUid, ticketUid, e),
+                         extra=dict(tags=[u'TicketStatus', 'elreg']))
             ticket = []
         return ticket
 
@@ -163,6 +175,7 @@ class Schedule():
             })
         except Exception, e:
             print e
+            logger.error(e, extra=dict(tags=[u'запись на приём', 'elreg']))
             ticket = e
         return ticket
 
@@ -176,6 +189,8 @@ class Schedule():
             })
         except Exception, e:
             print e
+            logger.error(u'hospitalUid: {0} ticketUid: {1} \nError: {2}'.format(hospitalUid, ticketUid, e),
+                         extra=dict(tags=[u'отмена записи', 'elreg']))
             result = None
         return result
 
@@ -184,13 +199,15 @@ class Schedule():
         Метод возвращает информацию о ближайших талончиках.
 
         """
+        params = dict()
         if start is None:
             start = datetime.now(tzlocal()).astimezone(tz=timezone(_config('TIME_ZONE'))).replace(tzinfo=None)
         try:
-            tickets = self.client.service.getClosestTickets({'hospitalUid': hospitalUid,
-                                                            'doctors': doctors,
-                                                            'start': start}).tickets
+            params = {'hospitalUid': hospitalUid, 'doctors': doctors, 'start': start}
+            tickets = self.client.service.getClosestTickets(params).tickets
         except Exception, e:
             print e
+            logger.error(u'params: {0} \nError: {1}'.format(unicode(params), e),
+                         extra=dict(tags=[u'ближайший талон', 'elreg']))
             tickets = []
         return tickets

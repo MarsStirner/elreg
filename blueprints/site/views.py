@@ -536,17 +536,30 @@ def dequeue(lpu_id, department_id, uid):
             ticket.is_active = False
             ticket.updated = datetime.now()
             db.session.commit()
+            log_message = render_template('{0}/messages/dequeue.txt'.format(module.name),
+                                          ticket_info=ticket_info,
+                                          message=u'Произведена отмена записи')
+            logger.info(log_message, extra=dict(tags=[u'отмена записи', 'elreg']))
         elif result:
             flash(u'''Запись не существует или уже отменена''', category='error')
             ticket.is_active = False
             ticket.updated = datetime.now()
             db.session.commit()
+            log_message = render_template('{0}/messages/dequeue.txt'.format(module.name),
+                                          ticket_info=ticket_info,
+                                          message=u'Запись не существует или отменена ранее')
+            logger.info(log_message, extra=dict(tags=[u'отмена записи', 'elreg']))
         else:
-                flash(u'''Отмена записи произошла с ошибкой,
-                      <a href="{0}">попробуйте ещё раз</a>
-                      или сообщите об отмене записи лечебному учреждению по контактным данным,
-                      указанным в талоне'''
-                      .format(url_for('.dequeue', lpu_id=lpu_id, department_id=department_id, uid=uid)), category='error')
+            flash(u'''Отмена записи произошла с ошибкой,
+                  <a href="{0}">попробуйте ещё раз</a>
+                  или сообщите об отмене записи лечебному учреждению по контактным данным,
+                  указанным в талоне'''
+                  .format(url_for('.dequeue', lpu_id=lpu_id, department_id=department_id, uid=uid)), category='error')
+
+            log_message = render_template('{0}/messages/dequeue.txt'.format(module.name),
+                                          ticket_info=ticket_info,
+                                          message=u'Ошибка отмены записи')
+            logger.error(log_message, extra=dict(tags=[u'отмена записи', 'elreg']))
     return render_template('{0}/dequeue.html'.format(module.name), ticket_info=ticket_info)
 
 
