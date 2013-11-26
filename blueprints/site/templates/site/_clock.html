@@ -1,0 +1,10 @@
+<div class="clock alert alert-info hide visible-desktop">
+<div id="Date"></div>
+
+<ul>
+	<li id="hours">{{ now|datetimeformat('HH', rebase=False) }}</li>
+    <li id="point">:</li>
+    <li id="min">{{ now|datetimeformat('mm', rebase=False) }}</li>
+</ul>
+
+</div>

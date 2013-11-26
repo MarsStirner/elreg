@@ -245,7 +245,7 @@ def tickets(lpu_id, department_id, doctor_id, start=None):
                            prev_monday=(monday - timedelta(days=7)).strftime('%Y%m%d'),
                            next_monday=(monday + timedelta(days=7)).strftime('%Y%m%d'),
                            #now=datetime.now(tz=timezone(_config('TIME_ZONE'))),
-                           now=now)
+                           )
 
 
 @module.route('/patient/<int:lpu_id>/<int:department_id>/<int:doctor_id>/', methods=['POST', 'GET'])
