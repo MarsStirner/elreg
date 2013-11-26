@@ -61,3 +61,17 @@ class Tickets(db.Model):
     created = db.Column(db.DateTime(), default=datetime.now())
     updated = db.Column(db.DateTime(), nullable=True)
     is_active = db.Column(db.Boolean(), default=True)
+
+
+class TicketsBlocked(db.Model):
+    __tablename__ = '%s_tickets_blocked' % TABLE_PREFIX
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    lpu_id = db.Column(db.Integer, nullable=False)
+    department_id = db.Column(db.Integer, nullable=False)
+    doctor_id = db.Column(db.Integer, nullable=False)
+    ticket_uid = db.Column(db.Unicode(20))
+    info = db.Column(db.UnicodeText())
+    created = db.Column(db.DateTime(), default=datetime.now())
+    updated = db.Column(db.DateTime(), nullable=True)
+    is_active = db.Column(db.Boolean(), default=True)
