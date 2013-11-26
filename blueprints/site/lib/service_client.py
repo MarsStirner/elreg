@@ -135,7 +135,8 @@ class Schedule():
             params = {'hospitalUid': hospitalUid, 'doctorUid': doctorUid}
             if startDate and endDate:
                 params.update(dict(startDate=startDate, endDate=endDate))
-            ticket = self.client.service.getScheduleInfo(params).timeslots
+            result = self.client.service.getScheduleInfo(params)
+            ticket = getattr(result, 'timeslots', [])
         except Exception, e:
             print e
             logger.error(u'params:{0} \nError: {1}'.format(unicode(params), e),
@@ -204,7 +205,8 @@ class Schedule():
             start = datetime.now(tzlocal()).astimezone(tz=timezone(_config('TIME_ZONE'))).replace(tzinfo=None)
         try:
             params = {'hospitalUid': hospitalUid, 'doctors': doctors, 'start': start}
-            tickets = self.client.service.getClosestTickets(params).tickets
+            result = self.client.service.getClosestTickets(params)
+            tickets = getattr(result, 'tickets', [])
         except Exception, e:
             print e
             logger.error(u'params: {0} \nError: {1}'.format(unicode(params), e),
