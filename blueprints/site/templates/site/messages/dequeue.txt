@@ -1,0 +1,5 @@
+{{ message }}
+Информация о записи: {{ ticket_info|safe|striptags }}
+ID пациента: {{ patient_id }}
+ID талончика: {{ ticket_id }}
+Ссылка отмены: {{ request.scheme }}://{{ request.host }}{{ request.full_path }}
