@@ -20,7 +20,7 @@ from .app import module
 from .lib.service_client import List, Info, Schedule
 from .context_processors import header
 from application.app import db
-from application.models import Tickets
+from application.models import Tickets, TicketsBlocked
 
 from .lib.utils import _config, logger
 from emails import send_ticket
@@ -285,6 +285,9 @@ def registration(lpu_id, department_id, doctor_id):
         abort(404)
 
     session['step'] = 5
+
+    # Блокируем талончик
+    block_ticket(lpu_id, department_id, doctor_id, timeslot)
 
     form = EnqueuePatientForm(request.form, **dict(session))
     if request.method == 'POST':
@@ -620,6 +623,17 @@ def _save_ticket(ticket_uid, lpu_info):
     db.session.add(ticket)
     db.session.commit()
     return uid
+
+
+def block_ticket(lpu_id, department_id, doctor_id, timeslot, time_index=None):
+    ticket = TicketsBlocked(lpu_id=lpu_id,
+                            department_id=department_id,
+                            doctor_id=doctor_id,
+                            timeslot=timeslot,
+                            timeIndex=time_index,
+                            is_blocked=True)
+    db.session.add(ticket)
+    db.session.commit()
 
 
 def _search_lpu(region_list, search_input, result):

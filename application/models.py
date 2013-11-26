@@ -58,7 +58,7 @@ class Tickets(db.Model):
     uid = db.Column(db.Unicode(100))
     ticket_uid = db.Column(db.Unicode(20))
     info = db.Column(db.UnicodeText())
-    created = db.Column(db.DateTime(), default=datetime.now())
+    created = db.Column(db.DateTime(), default=datetime.now)
     updated = db.Column(db.DateTime(), nullable=True)
     is_active = db.Column(db.Boolean(), default=True)
 
@@ -72,6 +72,6 @@ class TicketsBlocked(db.Model):
     doctor_id = db.Column(db.Integer, nullable=False, index=True)
     timeslot = db.Column(db.DateTime(), nullable=False)
     timeIndex = db.Column(db.Integer, nullable=True)
-    created = db.Column(db.DateTime(), default=datetime.now())
+    created = db.Column(db.DateTime(), default=datetime.now)
     is_blocked = db.Column(db.Boolean(), default=True)
     updated = db.Column(db.DateTime(), nullable=True)
