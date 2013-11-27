@@ -25,7 +25,7 @@ from .context_processors import header
 from application.app import db
 from application.models import Tickets, TicketsBlocked
 
-from .lib.utils import _config, logger
+from .lib.utils import _config, logger, datetime_now
 from .emails import send_ticket
 from .config import BLOCK_TICKET_TIME
 
@@ -556,7 +556,7 @@ def dequeue(lpu_id, department_id, uid):
         if result and result['success']:
             flash(u'Отмена записи произведена успешно', category='success')
             ticket.is_active = False
-            ticket.updated = datetime.now()
+            ticket.updated = datetime_now()
             db.session.commit()
             log_message = render_template('{0}/messages/dequeue.txt'.format(module.name),
                                           ticket_info=ticket_info,
@@ -567,7 +567,7 @@ def dequeue(lpu_id, department_id, uid):
         elif result:
             flash(u'''Запись не существует или уже отменена''', category='error')
             ticket.is_active = False
-            ticket.updated = datetime.now()
+            ticket.updated = datetime_now()
             db.session.commit()
             log_message = render_template('{0}/messages/dequeue.txt'.format(module.name),
                                           ticket_info=ticket_info,

@@ -12,7 +12,7 @@ from service_client import List, Info, Schedule
 from application.app import db
 from application.models import Tickets, TicketsBlocked
 from ..app import module
-from utils import _config, logger
+from utils import _config, logger, datetime_now
 from ..config import BLOCK_TICKET_TIME
 
 
@@ -57,7 +57,7 @@ def save_ticket(ticket_uid, lpu_info):
     env = Environment(loader=PackageLoader(module.import_name,  module.template_folder))
     template = env.get_template('{0}/_ticket.html'.format(module.name))
     info = template.render(lpu=lpu_info, session=session)
-    ticket = Tickets(uid=uid, ticket_uid=ticket_uid, info=info)
+    ticket = Tickets(uid=uid, ticket_uid=ticket_uid, info=info, created=datetime_now())
     db.session.add(ticket)
     db.session.commit()
     return uid
@@ -167,16 +167,17 @@ def block_ticket(lpu_id, department_id, doctor_id, timeslot, date, start, end, t
                             timeslot=timeslot,
                             timeIndex=time_index,
                             ticket_uid=ticket_uid[0:40],
+                            created=datetime_now(),
                             status='blocked')
     db.session.add(ticket)
     db.session.commit()
-    block_until = datetime.now() + timedelta(seconds=BLOCK_TICKET_TIME)
+    block_until = datetime_now() + timedelta(seconds=BLOCK_TICKET_TIME)
     return dict(block_until=block_until, ticket_uid=ticket_uid)
 
 
 def get_blocked_tickets(lpu_id, department_id, doctor_id):
     tickets = dict()
-    block_diff_datetime = datetime.now() - timedelta(seconds=BLOCK_TICKET_TIME)
+    block_diff_datetime = datetime_now() - timedelta(seconds=BLOCK_TICKET_TIME)
     result = db.session.query(TicketsBlocked).filter(TicketsBlocked.lpu_id == lpu_id,
                                                      TicketsBlocked.department_id == department_id,
                                                      TicketsBlocked.doctor_id == doctor_id,
@@ -189,7 +190,7 @@ def get_blocked_tickets(lpu_id, department_id, doctor_id):
 
 
 def check_blocked_ticket(lpu_id, department_id, doctor_id, timeslot):
-    block_diff_datetime = datetime.now() - timedelta(seconds=BLOCK_TICKET_TIME)
+    block_diff_datetime = datetime_now() - timedelta(seconds=BLOCK_TICKET_TIME)
     ticket = (db.session.query(TicketsBlocked)
               .filter(TicketsBlocked.lpu_id == lpu_id,
                       TicketsBlocked.department_id == department_id,
@@ -202,7 +203,7 @@ def check_blocked_ticket(lpu_id, department_id, doctor_id, timeslot):
 
 
 def get_blocked_ticket_by_uid(ticket_uid):
-    block_diff_datetime = datetime.now() - timedelta(seconds=BLOCK_TICKET_TIME)
+    block_diff_datetime = datetime_now() - timedelta(seconds=BLOCK_TICKET_TIME)
     ticket = (db.session.query(TicketsBlocked)
               .filter(TicketsBlocked.ticket_uid == ticket_uid)
               .order_by(TicketsBlocked.created.desc())
@@ -211,7 +212,7 @@ def get_blocked_ticket_by_uid(ticket_uid):
         if ticket.created < block_diff_datetime:
             ticket.status = 'free'
             change_ticket_status(ticket.ticket_uid, 'free')
-        if ticket.timeslot < datetime.now():
+        if ticket.timeslot < datetime_now():
             ticket.status = 'disabled'
             change_ticket_status(ticket.ticket_uid, 'disabled')
     return ticket
@@ -226,7 +227,7 @@ def change_ticket_status(ticket_uid, status='free'):
     try:
         (db.session.query(TicketsBlocked)
          .filter(TicketsBlocked.ticket_uid == ticket_uid)
-         .update({TicketsBlocked.status: status, TicketsBlocked.updated: datetime.now()}))
+         .update({TicketsBlocked.status: status, TicketsBlocked.updated: datetime_now()}))
         db.session.commit()
     except Exception, e:
         print e
@@ -236,7 +237,7 @@ def async_clear_blocked_tickets():
     @copy_current_request_context
     def clear_blocked_tickets():
         try:
-            clear_date = datetime.now() + timedelta(days=100)
+            clear_date = datetime_now() + timedelta(days=100)
             db.session.query(TicketsBlocked).filter(TicketsBlocked.created > clear_date).delete()
         except Exception, e:
             print e
