@@ -1,5 +1,5 @@
 <div class="clock alert alert-info hide visible-desktop">
-<div id="Date"></div>
+<div class="date">{{ now|dateformat('EEEE', rebase=False)|title }} {{ now|dateformat('dd.M.y', rebase=False) }}</div>
 
 <ul>
 	<li id="hours">{{ now|datetimeformat('HH', rebase=False) }}</li>
