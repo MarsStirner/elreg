@@ -18,9 +18,11 @@ from forms import EnqueuePatientForm
 
 from .app import module
 from .lib.service_client import List, Info, Schedule
+from .lib.data import del_session, get_doctor_info, get_doctors_with_tickets, get_lpu, save_ticket
+from .lib.data import prepare_doctors, search_lpu, block_ticket
 from .context_processors import header
 from application.app import db
-from application.models import Tickets, TicketsBlocked
+from application.models import Tickets
 
 from .lib.utils import _config, logger
 from emails import send_ticket
@@ -132,7 +134,7 @@ def ajax_search():
                     region_list.append(region)
             # формирование словаря со значениями, удовлетворяющими поиску,
             # где ключ - uid ЛПУ, а значение - наименование ЛПУ
-            result = _search_lpu(region_list, search_gorod, result)
+            result = search_lpu(region_list, search_gorod, result)
 
         ### поиск ЛПУ по названию района: ###
         if search_rayon:
@@ -144,7 +146,7 @@ def ajax_search():
                     region_list.append(region)
             # формирование словаря со значениями, удовлетворяющими поиску,
             # где ключ - uid ЛПУ, а значение - наименование ЛПУ
-            result = _search_lpu(region_list, search_rayon, result)
+            result = search_lpu(region_list, search_rayon, result)
 
         # создание ответа в формате json из содержимого словаря result:
         return jsonify(result)
@@ -196,7 +198,7 @@ def tickets(lpu_id, department_id, doctor_id, start=None):
     if tickets:
         office = getattr(tickets[0], 'office', '')
 
-    doctor_info = _get_doctor_info(hospital_uid, doctor_id)
+    doctor_info = get_doctor_info(hospital_uid, doctor_id)
 
     times = []  # Список времен начала записи текущей недели
     dates = []  # Список дат текущей недели
@@ -245,7 +247,7 @@ def tickets(lpu_id, department_id, doctor_id, start=None):
                            prev_monday=(monday - timedelta(days=7)).strftime('%Y%m%d'),
                            next_monday=(monday + timedelta(days=7)).strftime('%Y%m%d'),
                            #now=datetime.now(tz=timezone(_config('TIME_ZONE'))),
-                           )
+                           now=now)
 
 
 @module.route('/patient/<int:lpu_id>/<int:department_id>/<int:doctor_id>/', methods=['POST', 'GET'])
@@ -271,7 +273,7 @@ def registration(lpu_id, department_id, doctor_id):
         session['office'] = request.args.get('office')
 
     if 'doctor' not in session:
-        session['doctor'] = _get_doctor_info(hospital_uid, doctor_id)
+        session['doctor'] = get_doctor_info(hospital_uid, doctor_id)
 
     timeslot, ticket_start, ticket_end = None, None, None
 
@@ -345,7 +347,7 @@ def registration(lpu_id, department_id, doctor_id):
             session['document'] = document
             session['patient'] = patient
 
-            ticket_hash = _save_ticket(ticket.ticketUid, lpu_info=lpu_info)
+            ticket_hash = save_ticket(ticket.ticketUid, lpu_info=lpu_info)
             session['ticket_hash'] = ticket_hash
 
             # формирование и отправка письма:
@@ -472,7 +474,7 @@ def get_lpu_doctors(lpu_id=None):
     if speciality:
         params['speciality'] = speciality
     doctors = List().listDoctors(**params)
-    data = _prepare_doctors(doctors)
+    data = prepare_doctors(doctors)
     return jsonify(result=data)
 
 
@@ -487,7 +489,7 @@ def get_lpu_specialities(lpu_id=None):
         specialities.append(doctor.speciality)
     specialities = list(set(specialities))
     specialities.sort()
-    doctors = _prepare_doctors(_doctors)
+    doctors = prepare_doctors(_doctors)
     return jsonify(specialities=specialities, doctors=doctors)
 
 
@@ -508,7 +510,7 @@ def find_doctors(lpu_id=None):
     data = list()
     doctors = List().listDoctors(**params)
     if doctors:
-        data = _prepare_doctors(doctors)
+        data = prepare_doctors(doctors)
     return jsonify(result=data)
 
 
@@ -519,7 +521,7 @@ def get_doctors(lpu_id=None, department_id=None):
     if not lpu_id or not department_id or not speciality:
         abort(404)
     hospital_uid = '{0}/{1}'.format(lpu_id, department_id)
-    data = _get_doctors_with_tickets(hospital_Uid=hospital_uid,
+    data = get_doctors_with_tickets(hospital_Uid=hospital_uid,
                                      speciality=speciality)
     return jsonify(result=data)
 
@@ -529,7 +531,7 @@ def dequeue(lpu_id, department_id, uid):
     ticket = db.session.query(Tickets).filter(Tickets.uid == uid, Tickets.is_active == True).first()
     if not ticket:
         abort(404)
-    _del_session('step')
+    del_session('step')
     ticket_info = ticket.info
     ticket_id, patient_id = ticket.ticket_uid.split('/')
     if request.method == 'POST':
@@ -576,150 +578,3 @@ def dequeue(lpu_id, department_id, uid):
 @module.errorhandler(404)
 def page_not_found(e):
     return render_template('{0}/404.html'.format(module.name)), 404
-
-
-def get_lpu(hospital_uid):
-    lpu_info = None
-    try:
-        hospitals = Info().getHospitalInfo(hospitalUid=hospital_uid)
-    except Exception, e:
-        print e
-    else:
-        if len(hospitals) > 0:
-            lpu_info = hospitals[0]
-        #for build in getattr(lpu_info, 'buildings', list()):
-        #    build.name = build.name
-        #    build.address = build.address
-    return lpu_info
-
-
-def _get_doctor_info(hospital_uid, doctor_id):
-    # TODO: хорошо бы иметь метод получения врача по uid
-    doctors = List().listDoctors(hospital_Uid=hospital_uid)
-
-    doctor_info = None
-    for doctor in getattr(doctors, 'doctors', []):
-        if doctor_id and doctor.uid == doctor_id:
-            doctor_info = dict(firstName=doctor.name.firstName,
-                               lastName=doctor.name.lastName,
-                               patronymic=doctor.name.patronymic,
-                               speciality=doctor.speciality)
-            break
-    return doctor_info
-
-
-def _del_session(key):
-    if key in session:
-        del session[key]
-
-
-def _save_ticket(ticket_uid, lpu_info):
-    import hashlib
-    uid = hashlib.md5(ticket_uid).hexdigest()
-    env = Environment(loader=PackageLoader(module.import_name,  module.template_folder))
-    template = env.get_template('{0}/_ticket.html'.format(module.name))
-    info = template.render(lpu=lpu_info, session=session)
-    ticket = Tickets(uid=uid, ticket_uid=ticket_uid, info=info)
-    db.session.add(ticket)
-    db.session.commit()
-    return uid
-
-
-def block_ticket(lpu_id, department_id, doctor_id, timeslot, time_index=None):
-    ticket = TicketsBlocked(lpu_id=lpu_id,
-                            department_id=department_id,
-                            doctor_id=doctor_id,
-                            timeslot=timeslot,
-                            timeIndex=time_index,
-                            is_blocked=True)
-    db.session.add(ticket)
-    db.session.commit()
-
-
-def _search_lpu(region_list, search_input, result):
-    """Поиск ЛПУ по названию города или по названию района в зависимости от того, что
-    передается в переменной region_list.
-
-    """
-    tmp_list, tmp_dict, lpu_dict = [], {}, {}
-    # получение списка введенных пользователем слов
-    search_list = search_input.lower().split(' ')
-
-    # формирование временного списка кортежей [(регион, код ОКАТО), ...]
-    for i in region_list:
-        tmp_list.append((i.name.lower(), i.code))
-
-    # формирование словаря result со значениями, удовлетворяющими поиску,
-    # где ключ - uid ЛПУ, а значение - наименование ЛПУ
-    for (region, code) in tmp_list:
-        flag = True
-        for i in search_list:
-            if region.find(i) == -1:
-                flag = False
-        if flag:
-            tmp_dict[code] = region
-    for i in tmp_dict.keys():
-        hospitals_list = List().listHospitals(i)
-        for j in hospitals_list:
-            lpu_dict[j.uid.split('/')[0]] = j.name
-    if not result:
-        result = lpu_dict
-    else:
-        adict = {}
-        for i in result.items():
-            for j in lpu_dict.keys():
-                if i[0] == j:
-                    adict[i[0]] = i[1]
-        result = adict
-    return result
-
-
-def _get_doctors_with_tickets(**kwargs):
-    speciality = kwargs.get('speciality')
-    data = list()
-    _doctors = List().listDoctors(**kwargs)
-    start = datetime.now(tzlocal()).astimezone(tz=timezone(_config('TIME_ZONE'))).replace(tzinfo=None)
-    for doctor in getattr(_doctors, 'doctors', []):
-        if speciality and doctor.speciality != speciality:
-            continue
-        hospital_uid = doctor.hospitalUid
-        lpu_id, department_id = hospital_uid.split('/')
-        _tickets = list()
-        closest_tickets = Schedule().get_closest_tickets(hospital_uid, [doctor.uid], start=start)
-        if closest_tickets:
-            for key, value in enumerate(closest_tickets):
-                _tickets.append(dict(href=url_for('.registration',
-                                                  lpu_id=lpu_id,
-                                                  department_id=department_id,
-                                                  doctor_id=doctor.uid,
-                                                  office=getattr(value, 'office', ''),
-                                                  d=value['timeslotStart'].strftime('%Y%m%d'),
-                                                  s=value['timeslotStart'].strftime('%H%M%S'),
-                                                  f=value['timeslotEnd'].strftime('%H%M%S')),
-                                     info=value['timeslotStart'].strftime('%d.%m %H:%M')))
-        data.append(dict(uid=doctor.uid,
-                         name=u' '.join([doctor.name.lastName, doctor.name.firstName, doctor.name.patronymic]),
-                         schedule_href=url_for('.tickets',
-                                               lpu_id=lpu_id,
-                                               department_id=department_id,
-                                               doctor_id=doctor.uid),
-                         tickets=_tickets))
-    return data
-
-
-def _prepare_doctors(doctors):
-    data = list()
-    for key, doctor in enumerate(getattr(doctors, 'doctors', [])):
-        tmp = doctor.hospitalUid.split('/')
-        lpu_id, department_id = tmp[0], tmp[1]
-        data.append(dict(uid=doctor.uid,
-                         name=u' '.join([doctor.name.lastName, doctor.name.firstName, doctor.name.patronymic]),
-                         speciality=doctor.speciality,
-                         hospitalUid=doctor.hospitalUid,
-                         schedule_href=url_for('.tickets',
-                                               lpu_id=lpu_id,
-                                               department_id=department_id,
-                                               doctor_id=doctor.uid),
-                         hospital=dict(name=doctors.hospitals[key].name,
-                                       address=doctors.hospitals[key].address)))
-    return data
