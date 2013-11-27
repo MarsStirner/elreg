@@ -18,11 +18,11 @@ from forms import EnqueuePatientForm
 
 from .app import module
 from .lib.service_client import List, Info, Schedule
-from .lib.data import del_session, get_doctor_info, get_doctors_with_tickets, get_lpu, save_ticket
-from .lib.data import prepare_doctors, search_lpu, block_ticket
+from .lib.data import block_ticket, del_session, get_doctor_info, get_doctors_with_tickets, get_lpu, save_ticket
+from .lib.data import prepare_doctors, search_lpu
 from .context_processors import header
 from application.app import db
-from application.models import Tickets
+from application.models import Tickets, TicketsBlocked
 
 from .lib.utils import _config, logger
 from emails import send_ticket
@@ -247,7 +247,7 @@ def tickets(lpu_id, department_id, doctor_id, start=None):
                            prev_monday=(monday - timedelta(days=7)).strftime('%Y%m%d'),
                            next_monday=(monday + timedelta(days=7)).strftime('%Y%m%d'),
                            #now=datetime.now(tz=timezone(_config('TIME_ZONE'))),
-                           now=now)
+                           )
 
 
 @module.route('/patient/<int:lpu_id>/<int:department_id>/<int:doctor_id>/', methods=['POST', 'GET'])

@@ -6,7 +6,7 @@ from flask import url_for, session
 from jinja2 import Environment, PackageLoader
 from service_client import List, Info, Schedule
 from application.app import db
-from application.models import Tickets
+from application.models import Tickets, TicketsBlocked
 from ..app import module
 from utils import _config, logger
 
@@ -145,3 +145,13 @@ def prepare_doctors(doctors):
                          hospital=dict(name=doctors.hospitals[key].name,
                                        address=doctors.hospitals[key].address)))
     return data
+
+def block_ticket(lpu_id, department_id, doctor_id, timeslot, time_index=None):
+    ticket = TicketsBlocked(lpu_id=lpu_id,
+                            department_id=department_id,
+                            doctor_id=doctor_id,
+                            timeslot=timeslot,
+                            timeIndex=time_index,
+                            is_blocked=True)
+    db.session.add(ticket)
+    db.session.commit()
