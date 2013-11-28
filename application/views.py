@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
+import os
+from ast import literal_eval
 from flask import render_template, abort, request, redirect, url_for, flash, session, current_app
 from flask.views import MethodView
 
 from jinja2 import TemplateNotFound
 from flask_wtf import Form
-from wtforms import TextField, PasswordField, IntegerField
+from wtforms import StringField, PasswordField, IntegerField, SelectField, BooleanField, FileField, TextAreaField
 from wtforms.validators import Required
 from flask.ext.principal import Identity, AnonymousIdentity, identity_changed
 from flask.ext.principal import identity_loaded, Permission, RoleNeed, UserNeed
@@ -15,6 +17,14 @@ from models import Settings, Users, Roles
 from lib.user import User
 from forms import EditUserForm, LoginForm
 from lib.utils import admin_permission, public_endpoint, logger
+
+try:
+    import json
+except ImportError:
+    try:
+        import simplejson as json
+    except ImportError:
+        raise ImportError
 
 from lib.captcha.views import get_captcha_image
 get_captcha_image = public_endpoint(get_captcha_image)
@@ -48,6 +58,35 @@ def index():
     return render_template('index.html')
 
 
+def _get_field_class(value_type):
+    if value_type == 'string':
+        _cls = StringField
+    elif value_type == 'bool':
+        _cls = BooleanField
+    elif value_type == 'enum':
+        _cls = SelectField
+    elif value_type == 'number':
+        _cls = IntegerField
+    elif value_type == 'image':
+        _cls = FileField
+    elif value_type == 'password':
+        _cls = StringField
+    elif value_type == 'text':
+        _cls = TextAreaField
+    else:
+        _cls = StringField
+    return _cls
+
+
+def _create_field(variable):
+    _cls = _get_field_class(variable.value_type)
+    if variable.value_type == 'enum':
+        obj = _cls(variable.code, default="", description=variable.name, choices=json.loads(variable.defaults))
+    else:
+        obj = _cls(variable.code, default="", description=variable.name)
+    return obj
+
+
 @app.route('/admin/settings/', methods=['GET', 'POST'])
 @admin_permission.require(http_exception=403)
 def settings():
@@ -56,18 +95,30 @@ def settings():
             pass
 
         variables = db.session.query(Settings).order_by('id').all()
+        values = dict()
         for variable in variables:
             setattr(ConfigVariablesForm,
                     variable.code,
-                    TextField(variable.code, default="", description=variable.name))
+                    _create_field(variable))
+            values[variable.code] = variable.value
+            if variable.value_type == 'bool':
+                if values[variable.code]:
+                    values[variable.code] = bool(literal_eval(values[variable.code]))
+                else:
+                    values[variable.code] = False
 
-        form = ConfigVariablesForm()
-        for variable in variables:
-            form[variable.code].value = variable.value if variable.value is not None else ""
+        form = ConfigVariablesForm(request.form, **values)
+        #for variable in variables:
+        #    form[variable.code].value = variable.value if variable.value is not None else ""
 
         if form.validate_on_submit():
             for variable in variables:
                 variable.value = form.data[variable.code]
+                if variable.value_type == 'image' and request.files[form[variable.code].name]:
+                    image_data = request.files[form[variable.code].name].read()
+                    open(os.path.join(app.static_folder, 'i', request.files[form[variable.code].name].filename), 'w').write(image_data)
+                    variable.value = request.files[form[variable.code].name].filename
+
             db.session.commit()
             flash(u'Настройки изменены')
             return redirect(url_for('settings'))

@@ -3,8 +3,8 @@
 {% block title %} > Настройки{% endblock %}
 
 {% block content %}
-    <form class="form-horizontal" method="post">
-        {{ form.hidden_tag() }}
+    <form class="form-horizontal" method="post" enctype="multipart/form-data">
+        {{ form.csrf_token }}
         <legend>Настройки</legend>
 
         {% with messages = get_flashed_messages() %}
@@ -22,7 +22,11 @@
                 <div class="control-group">
                     <label class="control-label">{{ field.description|safe }}</label>
                     <div class="controls">
-                        {{ field(value=field.value, placeholder="Введите "+field.description, title="Необходимо заполнить это поле!") }}
+                        {% if field.type in ('StringField', 'SelectField') %}
+                            {{ field(class="span4", title="Необходимо заполнить это поле!") }}
+                        {% else %}
+                            {{ field(title="Необходимо заполнить это поле!") }}
+                        {% endif %}
                     </div>
                 </div>
             {% endif %}
