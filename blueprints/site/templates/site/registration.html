@@ -151,9 +151,10 @@ $(document).ready(function () {
             url: "{{ url_for('.unblock_ticket', uid=blocked_ticket['ticket_uid']) }}",
             crossDomain: true,
             type: 'POST',
-            cache: false // обязательно для IE
-        }).done(function(){
-            window.location.href = url;
+            cache: false, // обязательно для IE
+            success: function(){
+                window.location.href = url;
+            }
         });
     });
 });

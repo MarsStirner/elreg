@@ -146,8 +146,8 @@ function blocked_ticket_worker($slot){
         url: "{{ url_for('.get_blocked_ticket') }}" + uid + '/',
         crossDomain: true,
         type: 'POST',
-        cache: false // обязательно для IE
-        }).done(function(data){
+        cache: false,
+        success: function(data){
               if(data['result']){
                   var ticket = data['result'];
                   if (ticket['status'] == 'blocked'){
@@ -173,6 +173,7 @@ function blocked_ticket_worker($slot){
                       });
                   }
               }
+          }
     });
 }
 function free_ticket_worker($slot, event){
@@ -183,8 +184,8 @@ function free_ticket_worker($slot, event){
     url: url,
     crossDomain: true,
     type: 'POST',
-    cache: false // обязательно для IE
-    }).done(function(data){
+    cache: false,
+    success: function(data){
           if(data['result']){
               var ticket = data['result'];
               if (ticket['status'] == 'free'){
@@ -213,6 +214,7 @@ function free_ticket_worker($slot, event){
           } else {
               window.location.href = $slot.attr('href');
           }
+      }
     });
 }
 $(document).ready(function () {
