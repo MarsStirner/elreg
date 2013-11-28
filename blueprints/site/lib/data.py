@@ -153,7 +153,7 @@ def prepare_doctors(doctors):
 
 
 def gen_blocked_ticket_uid(lpu_id, department_id, doctor_id, timeslot, time_index=None):
-    return hashlib.md5(u'{0}{1}{2}{3}'.format(lpu_id, department_id, doctor_id, str(timeslot))).hexdigest()
+    return unicode(hashlib.md5(u'{0}{1}{2}{3}'.format(lpu_id, department_id, doctor_id, str(timeslot))).hexdigest())
 
 
 def block_ticket(lpu_id, department_id, doctor_id, timeslot, date, start, end, time_index=None):
@@ -225,9 +225,10 @@ def delete_blocked_ticket(ticket_uid):
 
 def change_ticket_status(ticket_uid, status='free'):
     try:
-        (db.session.query(TicketsBlocked)
-         .filter(TicketsBlocked.ticket_uid == ticket_uid)
-         .update({TicketsBlocked.status: status, TicketsBlocked.updated: datetime_now()}))
+        updated = datetime_now()
+        result = (db.session.query(TicketsBlocked)
+                  .filter(TicketsBlocked.ticket_uid == ticket_uid)
+                  .update({'status': status, 'updated': updated}))
         db.session.commit()
     except Exception, e:
         print e
