@@ -24,6 +24,8 @@
                     <div class="controls" style="position: relative;">
                         {% if field.type in ('StringField', 'SelectField') %}
                             {{ field(class="span4", title="Необходимо заполнить это поле!") }}
+                        {% elif field.type in ('TextAreaField') %}
+                            {{ field(class="span10", rows="7", title="Необходимо заполнить это поле!") }}
                         {% elif field.type in ('FileField') %}
                             {{ field(class="span4", title="Необходимо заполнить это поле!") }}
                             {% if field.data %}
