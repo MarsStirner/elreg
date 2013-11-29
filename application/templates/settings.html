@@ -3,8 +3,8 @@
 {% block title %} > Настройки{% endblock %}
 
 {% block content %}
-    <form class="form-horizontal" method="post">
-        {{ form.hidden_tag() }}
+    <form class="form-horizontal" method="post" enctype="multipart/form-data">
+        {{ form.csrf_token }}
         <legend>Настройки</legend>
 
         {% with messages = get_flashed_messages() %}
@@ -21,8 +21,21 @@
             {% if field.type != "CSRFTokenField" %}
                 <div class="control-group">
                     <label class="control-label">{{ field.description|safe }}</label>
-                    <div class="controls">
-                        {{ field(value=field.value, placeholder="Введите "+field.description, title="Необходимо заполнить это поле!") }}
+                    <div class="controls" style="position: relative;">
+                        {% if field.type in ('StringField', 'SelectField') %}
+                            {{ field(class="span4", title="Необходимо заполнить это поле!") }}
+                        {% elif field.type in ('TextAreaField') %}
+                            {{ field(class="span10", rows="7", title="Необходимо заполнить это поле!") }}
+                        {% elif field.type in ('FileField') %}
+                            {{ field(class="span4", title="Необходимо заполнить это поле!") }}
+                            {% if field.data %}
+                                <div style="position: absolute; right:40%; top: -50px;">
+                                    <img src="{{ url_for('static', filename='i/%s'|format(field.data)) }}">
+                                </div>
+                            {% endif %}
+                        {% else %}
+                            {{ field(title="Необходимо заполнить это поле!") }}
+                        {% endif %}
                     </div>
                 </div>
             {% endif %}
@@ -30,7 +43,8 @@
 
         <div class="control-group">
             <div class="controls">
-                <button type="submit" class="btn btn-primary">Сохранить</button>
+                <button type="submit" class="btn btn-success btn-large">Сохранить</button>
+                <a href="{{ url_for('index') }}" class="btn btn-large">Отменить</a>
             </div>
         </div>
     </form>

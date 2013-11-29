@@ -9,4 +9,5 @@ def header():
                 region_name=_config('REGION_NAME'),
                 logo=_config('LOGO_FILE'),
                 now=datetime_now(),
+                counter=_config('COUNTER_CODE'),
                 home_link=_config('HOME_LINK'))

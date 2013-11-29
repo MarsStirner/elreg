@@ -19,3 +19,6 @@
 
 {#<script src="{{ url_for('static', filename='js/intro.js') }}"></script>#}
 {#<script src="{{ url_for('static', filename='js/help.js') }}"></script>#}
+{% if counter %}
+<div id="counter">{{ counter|safe }}</div>
+{% endif %}
