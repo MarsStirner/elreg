@@ -12,6 +12,8 @@
             <li><a href="javascript:void(0);" onclick="$('#myModal').modal();">{{ hospital.name }}</a></li>
             {% elif hospital.uid == '15' %}
             <li><a href="javascript:void(0);" onclick="$('#gor2Modal').modal();">{{ hospital.name }}</a></li>
+            {% elif hospital.uid == '8' %}
+            <li><a href="javascript:void(0);" onclick="$('#lpu8Modal').modal();">{{ hospital.name }}</a></li>
             {% else %}
             <li><a href="{{ url_for('.division', lpu_id=hospital.uid) }}">{{ hospital.name }}</a></li>
             {% endif %}
@@ -34,13 +36,23 @@
     </div>
 </div>
 <!-- Modal -->
-<div id="gor2Modal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div id="gor2Modal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="gor2ModalLabel" aria-hidden="true">
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-        <h3 id="myModalLabel">Запись на приём в<br>ГБУЗ «Городская больница № 2»</h3>
+        <h3 id="gor2ModalLabel">Запись на приём в<br>ГБУЗ «Городская больница № 2»</h3>
     </div>
     <div class="modal-body">
         <p>Для записи на прием перейдите по <a href="{{ url_for('.division', lpu_id=16) }}">ссылке</a>.</p>
+    </div>
+</div>
+<!-- Modal -->
+<div id="lpu8Modal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="lpu8ModalLabel" aria-hidden="true">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="lpu8ModalLabel">Запись на приём в<br>ГБУЗ «Центр по профилактике и борьбе со СПИД и инфекционными заболеваниями»</h3>
+    </div>
+    <div class="modal-body">
+        <p>Для записи на прием перейдите по <a href="{{ url_for('.division', lpu_id=3) }}">ссылке</a>.</p>
     </div>
 </div>
 <a href="{{ url_for('.index') }}" class="btn btn-large" title="На главную страницу"><i class="icon-arrow-left"></i> На главную</a>
