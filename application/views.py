@@ -113,11 +113,13 @@ def settings():
 
         if form.validate_on_submit():
             for variable in variables:
-                variable.value = form.data[variable.code]
-                if variable.value_type == 'image' and request.files[form[variable.code].name]:
-                    image_data = request.files[form[variable.code].name].read()
-                    open(os.path.join(app.static_folder, 'i', request.files[form[variable.code].name].filename), 'w').write(image_data)
-                    variable.value = request.files[form[variable.code].name].filename
+                if variable.value_type == 'image':
+                    if request.files[form[variable.code].name]:
+                        image_data = request.files[form[variable.code].name].read()
+                        open(os.path.join(app.static_folder, 'i', request.files[form[variable.code].name].filename), 'w').write(image_data)
+                        variable.value = request.files[form[variable.code].name].filename
+                else:
+                    variable.value = form.data[variable.code]
 
             db.session.commit()
             flash(u'Настройки изменены')
