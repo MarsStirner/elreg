@@ -55,6 +55,16 @@
         <p>Для записи на прием перейдите по <a href="{{ url_for('.division', lpu_id=3) }}">ссылке</a>.</p>
     </div>
 </div>
+<!-- Modal -->
+<div id="lpu36Modal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="lpu36ModalLabel" aria-hidden="true">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="lpu36ModalLabel">Запись на приём в<br>ГБУЗ «Малосердобинская ЦРБ»</h3>
+    </div>
+    <div class="modal-body">
+        <p>Для записи на прием перейдите по <a href="{{ url_for('.division', lpu_id=33) }}">ссылке</a>.</p>
+    </div>
+</div>
 <a href="{{ url_for('.index') }}" class="btn btn-large" title="На главную страницу"><i class="icon-arrow-left"></i> На главную</a>
 <p class="pull-right">
     <a href="{{ url_for('.search', okato=request.view_args.get('okato')) }}" class="btn btn-large" title="Поиск врача"><i class="icon-search"></i> Поиск врача</a>

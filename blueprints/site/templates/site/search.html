@@ -87,7 +87,7 @@
                         .end();
                 if(data['result'].length > 0){
                     $.each(data['result'], function(key, value) {
-                        if (value['id'] != 5 && value['id'] != 15 && value['id'] != 8){
+                        if (value['id'] != 5 && value['id'] != 15 && value['id'] != 8 && value['id'] != 36){
                             $('#lpu_filter')
                                     .append($('<option>', { value : value['id'] })
                                     .text(value['name']));
