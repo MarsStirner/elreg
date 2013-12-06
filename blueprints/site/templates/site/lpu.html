@@ -14,6 +14,8 @@
             <li><a href="javascript:void(0);" onclick="$('#gor2Modal').modal();">{{ hospital.name }}</a></li>
             {% elif hospital.uid == '8' %}
             <li><a href="javascript:void(0);" onclick="$('#lpu8Modal').modal();">{{ hospital.name }}</a></li>
+            {% elif hospital.uid == '36' %}
+            <li><a href="javascript:void(0);" onclick="$('#lpu36Modal').modal();">{{ hospital.name }}</a></li>
             {% else %}
             <li><a href="{{ url_for('.division', lpu_id=hospital.uid) }}">{{ hospital.name }}</a></li>
             {% endif %}
