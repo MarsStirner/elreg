@@ -16,6 +16,8 @@
             <li><a href="javascript:void(0);" onclick="$('#lpu8Modal').modal();">{{ hospital.name }}</a></li>
             {% elif hospital.uid == '36' %}
             <li><a href="javascript:void(0);" onclick="$('#lpu36Modal').modal();">{{ hospital.name }}</a></li>
+            {% elif hospital.uid == '28' %}
+            <li><a href="javascript:void(0);" onclick="$('#lpu28Modal').modal();">{{ hospital.name }}</a></li>
             {% else %}
             <li><a href="{{ url_for('.division', lpu_id=hospital.uid) }}">{{ hospital.name }}</a></li>
             {% endif %}
@@ -65,6 +67,16 @@
     </div>
     <div class="modal-body">
         <p>Для записи на прием перейдите по <a href="{{ url_for('.division', lpu_id=33) }}">ссылке</a>.</p>
+    </div>
+</div>
+<!-- Modal -->
+<div id="lpu28Modal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="lpu28ModalLabel" aria-hidden="true">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="lpu28ModalLabel">Запись на приём в<br>ГБУЗ «Вадинская ЦРБ»</h3>
+    </div>
+    <div class="modal-body">
+        <p>Для записи на прием перейдите по <a href="{{ url_for('.division', lpu_id=40) }}">ссылке</a>.</p>
     </div>
 </div>
 <a href="{{ url_for('.index') }}" class="btn btn-large" title="На главную страницу"><i class="icon-arrow-left"></i> На главную</a>

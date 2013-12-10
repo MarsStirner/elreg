@@ -24,7 +24,7 @@
                             <select name="lpu" id="lpu_filter" class="span12">
                             <option value="">- любое -</option>
                             {% for hospital in hospitals|sort(attribute='name') %}
-                                {% if hospital.id not in (5, 15) %}
+                                {% if hospital.id not in (5, 15, 8, 28, 36) %}
                                 <option value="{{ hospital.id }}"{% if '%s/0'|format(request.view_args.get('lpu_id')) == hospital.uid or '%s/0'|format(request.args.get('lpu_id')) == hospital.uid %} selected="selected"{% endif %}>{{ hospital.name }}</option>
                                 {% endif %}
                             {% endfor %}
@@ -87,7 +87,7 @@
                         .end();
                 if(data['result'].length > 0){
                     $.each(data['result'], function(key, value) {
-                        if (value['id'] != 5 && value['id'] != 15 && value['id'] != 8 && value['id'] != 36){
+                        if (value['id'] != 5 && value['id'] != 15 && value['id'] != 8 && value['id'] != 36 && value['id'] != 28){
                             $('#lpu_filter')
                                     .append($('<option>', { value : value['id'] })
                                     .text(value['name']));

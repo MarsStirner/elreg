@@ -86,6 +86,16 @@
         <p>Для записи на прием перейдите по <a href="{{ url_for('.division', lpu_id=33) }}">ссылке</a>.</p>
     </div>
 </div>
+<!-- Modal -->
+<div id="lpu28Modal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="lpu28ModalLabel" aria-hidden="true">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="lpu28ModalLabel">Запись на приём в<br>ГБУЗ «Вадинская ЦРБ»</h3>
+    </div>
+    <div class="modal-body">
+        <p>Для записи на прием перейдите по <a href="{{ url_for('.division', lpu_id=40) }}">ссылке</a>.</p>
+    </div>
+</div>
     <script type="text/javascript">
         function searchLpu() {
             $("#search_table").html("");
@@ -106,6 +116,8 @@
                         $items.push('<li><a href="javascript:void(0);" onclick="$(\'#lpu8Modal\').modal();">' + val + '</a></li>');
                     }else if (key == '36'){
                         $items.push('<li><a href="javascript:void(0);" onclick="$(\'#lpu36Modal\').modal();">' + val + '</a></li>');
+                    }else if (key == '28'){
+                        $items.push('<li><a href="javascript:void(0);" onclick="$(\'#lpu28Modal\').modal();">' + val + '</a></li>');
                     }else{
                         $items.push('<li><a href="{{ url_for('.division') }}' + key + '/">' + val + '</a></li>');
                     }
@@ -129,6 +141,12 @@
                         $items.push('<li><a href="javascript:void(0);" onclick="$(\'#myModal\').modal();">' + val + '</a></li>');
                     }else if (key == '15'){
                         $items.push('<li><a href="javascript:void(0);" onclick="$(\'#gor2Modal\').modal();">' + val + '</a></li>');
+                    }else if (key == '8'){
+                        $items.push('<li><a href="javascript:void(0);" onclick="$(\'#lpu8Modal\').modal();">' + val + '</a></li>');
+                    }else if (key == '36'){
+                        $items.push('<li><a href="javascript:void(0);" onclick="$(\'#lpu36Modal\').modal();">' + val + '</a></li>');
+                    }else if (key == '28'){
+                        $items.push('<li><a href="javascript:void(0);" onclick="$(\'#lpu28Modal\').modal();">' + val + '</a></li>');
                     }else{
                         $items.push('<li><a href="{{ url_for('.division') }}' + key + '/">' + val + '</a></li>');
                     }
@@ -148,7 +166,19 @@
             $.getJSON('{{ url_for('.ajax_search') }}', {search_lpu: search_lpu, search_gorod: search_gorod, search_rayon: search_rayon}, function(data) {
                 var $items = [];
                 $.each(data, function(key, val) {
-                    $items.push('<li><a href="{{ url_for('.division') }}' + key + '/">' + val + '</a></li>');
+                    if (key == '5'){
+                        $items.push('<li><a href="javascript:void(0);" onclick="$(\'#myModal\').modal();">' + val + '</a></li>');
+                    }else if (key == '15'){
+                        $items.push('<li><a href="javascript:void(0);" onclick="$(\'#gor2Modal\').modal();">' + val + '</a></li>');
+                    }else if (key == '8'){
+                        $items.push('<li><a href="javascript:void(0);" onclick="$(\'#lpu8Modal\').modal();">' + val + '</a></li>');
+                    }else if (key == '36'){
+                        $items.push('<li><a href="javascript:void(0);" onclick="$(\'#lpu36Modal\').modal();">' + val + '</a></li>');
+                    }else if (key == '28'){
+                        $items.push('<li><a href="javascript:void(0);" onclick="$(\'#lpu28Modal\').modal();">' + val + '</a></li>');
+                    }else{
+                        $items.push('<li><a href="{{ url_for('.division') }}' + key + '/">' + val + '</a></li>');
+                    }
                 });
                 $("#search_table").html($items.join('')).fadeIn('fast');
             });
