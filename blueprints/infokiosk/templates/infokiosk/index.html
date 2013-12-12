@@ -1,0 +1,20 @@
+{% extends "infokiosk/base.html" %}
+
+{% block content %}
+    <div class="well well-small">Выберите регион и населенный пункт, в котором предполагается посетить медицинское учреждение</div>
+    {% if region_list%}
+    <div class="row-fluid">
+        {%- for columns in region_list|slice(3) -%}
+        <div class="span4">
+            <ul class="unstyled menu">
+            {%- for region in columns -%}
+            <li><a href ="{{ url_for('.lpu', okato=region.code) }}" class="btn btn-large btn-info span12"><h1>{{ region.name }}</h1></a></li>
+            {%- endfor -%}
+            </ul>
+        </div>
+        {%- endfor -%}
+    </div>
+    {% else %}
+        <div class="alert alert-error">Извините, ведутся работы по настройке, попробуйте зайти позже.</div>
+    {% endif %}
+{% endblock %}

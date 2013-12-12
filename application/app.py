@@ -35,7 +35,9 @@ def get_timezone():
     return pytz.timezone(_config('TIME_ZONE'))
 
 from blueprints.site.app import module as site
+from blueprints.infokiosk.app import module as infokiosk
 app.register_blueprint(site)
+app.register_blueprint(infokiosk, url_prefix='/{0}'.format(infokiosk.name))
 
 from lib.utils import login_manager
 Principal(app)

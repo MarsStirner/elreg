@@ -1,0 +1,145 @@
+{% extends "infokiosk/base.html" %}
+
+{% block content %}
+<div class="alert alert-info"><h4>Внесите данные пациента в поля для заполнения ниже</h4></div>
+<legend>Информация о записи</legend>
+<blockquote class="red">
+    <dl class="dl-horizontal">
+        <dt>Лечебное учреждение:</dt><dd>{{ lpu.name }}</dd>
+        {% if lpu|attr('buildings') and lpu.buildings[0] %}<dd>{{ lpu.buildings[0]|attr('name') }}{% if lpu.buildings[0]|attr('address') %} ({{ lpu.buildings[0]|attr('address') }}){% endif %}</dd>{% endif %}
+        {% if lpu.phone %}<dt>Телефон:</dt><dd>{{ lpu.phone }}</dd>{% endif %}
+        {% if lpu.email %}<dt>Электронная почта:</dt><dd><a href="mailto:{{ lpu.email }}">{{ lpu.email }}</a></dd>{% endif %}
+        <dt>Специализация:</dt><dd>{{ doctor.get('speciality') }}</dd>
+        <dt>Врач:</dt><dd>{% if doctor %}{{ doctor.get('lastName') }} {{ doctor.get('firstName') }} {{ doctor.get('patronymic') }}{% else %}&nbsp;{% endif %}</dd>
+        {%- set office=session.get('office') -%}
+        {% if office %}<dt>Кабинет:</dt><dd>{{ office }}</dd>{% endif %}
+        <dt>Дата и время приёма:</dt><dd>{{ date|dateformat('dd.M.y', rebase=False) }} {{ start_time|datetimeformat('H:mm', rebase=False) }} - {{ finish_time|datetimeformat('H:mm', rebase=False) }}</dd>
+    </dl>
+</blockquote>
+{% with errors = get_flashed_messages(category_filter=["error"]) %}
+  {% if errors %}
+    <div class="alert alert-error" title="Ошибка записи">
+        <strong>Ошибка записи!</strong>
+        <ul class="unstyled no-vmargin">
+        {% for error in errors %}
+          <li>{{ error }}</li>
+        {% endfor %}
+        </ul>
+    </div>
+  {% endif %}
+{% endwith %}
+{% if form.errors %}
+<div class="alert alert-error" title="Ошибка заполнения формы">
+    <strong>Форма заполнена некорректно</strong>
+    <ul class="unstyled no-vmargin">
+        {% for field_name in form.errors %}
+            {% for error in form.errors[field_name] %}
+                <li>{{ form[field_name].label(class="inline") }}: {{ error }}</li>
+            {% endfor %}
+        {% endfor %}
+    </ul>
+</div>
+{% endif %}
+{% with messages = get_flashed_messages(category_filter=["info"]) %}
+  {% if messages %}
+    <div class="alert alert-success" title="Сообщение">
+        <ul class="unstyled no-vmargin">
+        {% for message in messages %}
+          <li>{{ message }}</li>
+        {% endfor %}
+        </ul>
+    </div>
+  {% endif %}
+{% endwith %}
+<div class="well well-small">
+<form id="patient_form" action="" method="post" name="frm" class="form-horizontal">
+    {{ form.csrf_token }}
+    <input type="hidden" name="ticket" value="{{ ticket }}" />
+    <input type="hidden" name="flag" value="True" />
+
+    <legend><big>Данные посетителя</big></legend>
+    <div class="control-group">
+        {{ form.lastname.label(class="control-label") }}
+        <div class="controls">
+            {{ form.lastname(class="span4", autocomplete="off", value=session.get('lastname', ''), placeholder="Иванов") }}
+        </div>
+    </div>
+    <div class="control-group">
+        {{ form.firstname.label(class="control-label") }}
+        <div class="controls">
+            {{ form.firstname(class="span4", autocomplete="off", value=session.get('firstname', ''), placeholder="Иван") }}
+        </div>
+    </div>
+
+    <div class="control-group">
+        {{ form.patronymic.label(class="control-label") }}
+        <div class="controls">
+            {{ form.patronymic(class="span4", autocomplete="off", value=session.get('patronymic', ''), placeholder="Иванович") }}
+        </div>
+    </div>
+
+    <div class="control-group">
+        <label class="control-label" for="dd">Дата рождения<span class="text-error">*</span></label>
+        <div class="controls">
+            {{ form.day(class="day_month", id="dd", autocomplete="on", value=session.get('day', ''), maxlength=2, placeholder="01") }}
+            {{ form.month(class="day_month", id="mm", autocomplete="on", value=session.get('month', ''), maxlength=2, placeholder="12") }}
+            {{ form.year(class="year", id="yy", autocomplete="on", value=session.get('year', ''), maxlength=4, placeholder="2001") }}
+        </div>
+    </div>
+
+    <div class="control-group">
+        {{ form.gender.label(class="control-label") }}
+        <div class="controls">
+            {{ form.gender(class="inline clearfix", value=session.get('gender', '')) }}
+        </div>
+    </div>
+
+    {% include 'infokiosk/__documents_select.html' %}
+
+    <div class="control-group">
+        <div class="controls">
+            {{ form.send_email(id="chb") }} - отправить информацию о записи на электронный адрес
+        </div>
+    </div>
+    <div class="control-group">
+        {{ form.email.label(class="control-label") }}
+        <div class="controls">
+            {% if session.get('send_email', False) %}
+                {{ form.email(class="span4", autocomplete="off", value=session.get('email', ''), placeholder="example@email.ru") }}
+            {% else %}
+                {{ form.email(class="span4", autocomplete="off", value=session.get('email', ''), placeholder="example@email.ru", disabled="disabled") }}
+            {% endif %}
+        <br>
+        <span>- Вам будет отправлен талон на прием</span><br>
+        <span>- Вам будет отправлена ссылка для отмены записи на прием</span>
+        </div>
+    </div>
+
+    <div class="control-group">
+        {{ form.captcha.label(class="control-label") }}
+        <div class="controls">
+            {{ form.captcha(class="span1", value="") }}
+        </div>
+    </div>
+
+    <div class="control-group">
+        <div class="controls">
+            <span class="text-error">* - поля, обязательные для заполнения</span>
+        </div>
+    </div>
+    <div class="row-fluid">
+        <div class="span7">
+            <label for="confirm">
+                <input id="confirm" name="confirm" type="checkbox" value="y"> Я даю своё согласие на автоматизированную обработку указанной информации, распространяющейся на осуществление всех действий с ней, включая сбор, передачу по сетям связи общего назначения, накопление, хранение, обновление, изменение, использование, обезличивание, блокирование, уничтожение и обработку посредством внесения в электронную базу данных, систематизации, включения в списки и отчетные формы.
+            </label>
+        </div>
+    </div>
+
+    <div class="form-actions">
+        <button type="submit" id="button-submit" class="btn btn-success disabled" disabled>Подтвердить</button>
+        <a href="{{ url_for('.tickets', lpu_id=request.view_args.get('lpu_id'), department_id=request.view_args.get('department_id'), doctor_id=request.view_args.get('doctor_id')) }}" class="btn">Отменить</a>
+    </div>
+</form>
+</div>
+<a href="{{ url_for('.tickets', lpu_id=request.view_args.get('lpu_id'), department_id=request.view_args.get('department_id'), doctor_id=request.view_args.get('doctor_id')) }}" class="btn btn-large"><i class="icon-arrow-left"></i> К расписанию</a>
+{% endblock %}

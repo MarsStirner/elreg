@@ -4,7 +4,7 @@ from flask import copy_current_request_context
 from jinja2 import Environment, PackageLoader
 from flask_mail import Message
 from application.app import mail
-from .lib.utils import _config, logger
+from ..site.lib.utils import _config, logger
 from .app import module
 
 

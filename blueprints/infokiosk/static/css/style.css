@@ -1,6 +1,23 @@
 body{
     font-size: 22px;
 }
+@media (max-width: 979px) and (min-width: 798px){
+.container, .navbar-static-top .container, .navbar-fixed-top .container, .navbar-fixed-bottom .container {
+    width: 95%;
+}
+}
+
+.no-vmargin{
+    margin-top:0!important;
+    margin-bottom: 0!important;
+}
 .btn-large{
     font-size: 30px;
+}
+.menu {
+    margin-bottom: 10px;
+}
+.menu a.btn-large{
+    width: 100%;
+    line-height: 40px;
 }

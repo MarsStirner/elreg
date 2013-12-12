@@ -1,0 +1,19 @@
+{% extends "infokiosk/base.html" %}
+
+{% block content %}
+{% if hospitals_list %}
+<div class="well well-small">Выберите медицинское учреждение из списка ниже</div>
+    {% if hospitals_list %}
+        {% for hospital in hospitals_list %}
+        <div class="row-fluid menu">
+            <div class="span12">
+                <a href="{{ url_for('.division', lpu_id=hospital.uid) }}" class="btn btn-large btn-info span12">{{ hospital.name }}</a>
+            </div>
+        </div>
+        {% endfor %}
+    {% endif %}
+{% else %}
+    <div class="alert alert-error">Данные по медицинским учреждениям выбранного муниципального образования отсутствуют, попробуйте зайти на страницу позже или выберите другое муниципальное образование.</div>
+{% endif %}
+<a href="{{ url_for('.index') }}" class="btn btn-large" title="На главную страницу"><i class="icon-arrow-left"></i> На главную</a>
+{% endblock %}

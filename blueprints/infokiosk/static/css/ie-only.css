@@ -1,0 +1,6 @@
+.container,
+.navbar-static-top .container,
+.navbar-fixed-top .container,
+.navbar-fixed-bottom .container {
+    width:expression(document.body.clientWidth > 1100? "1170px": "auto" );
+}

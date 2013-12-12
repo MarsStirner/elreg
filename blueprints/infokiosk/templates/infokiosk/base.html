@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="ru">
+	<head>
+        {% include 'infokiosk/_header.html' %}
+	</head>
+	<body>
+    <div class="container">
+    <header class="no_print">
+        {% include 'infokiosk/_top.html' %}
+    </header>
+    <section>
+		{% block content %}{% endblock %}
+    </section>
+	</div>
+      {% include 'infokiosk/_footer.html' %}
+      {% block js %}{% endblock %}
+	</body>
+</html>

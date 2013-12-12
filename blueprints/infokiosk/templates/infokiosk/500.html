@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="ru">
+	<head>
+        {% include 'infokiosk/_header.html' %}
+        <title>Страница недоступна</title>
+	</head>
+	<body>
+    <div class="container">
+    <section>
+		{% block content %}
+        <legend><h3>Страница недоступна</h3></legend>
+        <p>Извините, запрошенная страница недоступна из-за неполадок на сервере.</p>
+        <p>Инженеры извещены, зайдите, пожалуйста, позже.</p>
+        <h4><a href="{{ url_for('.index') }}" title="На главную страницу">На главную</a></h4>
+        {% endblock %}
+    </section>
+	</div>
+      {% include 'infokiosk/_footer.html' %}
+	</body>
+</html>
