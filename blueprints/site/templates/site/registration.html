@@ -11,6 +11,8 @@
         {% if lpu.email %}<dt>Электронная почта:</dt><dd><a href="mailto:{{ lpu.email }}">{{ lpu.email }}</a></dd>{% endif %}
         <dt>Специализация:</dt><dd>{{ doctor.get('speciality') }}</dd>
         <dt>Врач:</dt><dd>{% if doctor %}{{ doctor.get('lastName') }} {{ doctor.get('firstName') }} {{ doctor.get('patronymic') }}{% else %}&nbsp;{% endif %}</dd>
+        {%- set office=session.get('office') -%}
+        {% if office %}<dt>Кабинет:</dt><dd>{{ office }}</dd>{% endif %}
         <dt>Дата и время приёма:</dt><dd>{{ date|dateformat('dd.M.y', rebase=False) }} {{ start_time|datetimeformat('H:mm', rebase=False) }} - {{ finish_time|datetimeformat('H:mm', rebase=False) }}</dd>
     </dl>
 </blockquote>
