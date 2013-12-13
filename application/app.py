@@ -22,8 +22,8 @@ app.config.update(
     MAIL_PORT=str(_config('EMAIL_PORT')),
     MAIL_USERNAME=_config('EMAIL_HOST_USER'),
     MAIL_PASSWORD=str(_config('EMAIL_HOST_PASSWORD')),
-    MAIL_USE_TLS=bool(_config('EMAIL_USE_TLS')),
-    MAIL_USE_SSL=bool(_config('EMAIL_USE_SSL')),
+    MAIL_USE_TLS=bool(int(_config('EMAIL_USE_TLS'))) if _config('EMAIL_USE_TLS') else False,
+    MAIL_USE_SSL=bool(int(_config('EMAIL_USE_SSL'))) if _config('EMAIL_USE_SSL') else False,
     MAIL_DEFAULT_SENDER=_config('DEFAULT_FROM_EMAIL')
 )
 

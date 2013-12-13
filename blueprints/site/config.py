@@ -6,3 +6,5 @@ MODULE_NAME = os.path.basename(os.path.dirname(__file__))
 
 # Русское название модуля для отображения в главном меню
 RUS_NAME = u'Электронная регистратура'
+
+BLOCK_TICKET_TIME = 600
