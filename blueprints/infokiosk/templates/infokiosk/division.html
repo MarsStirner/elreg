@@ -1,7 +1,8 @@
 {% extends "infokiosk/base.html" %}
 
 {% block content %}
-<div class="alert alert-info"><h4>Выберите подразделение, специализацию и врача из списка ниже</h4></div>
+<legend><h2>{{ lpu.name }}</h2><div class="pull-right"><small>Телефон: {{ lpu.phone }}</small></div></legend>
+<div class="well well-small">Выберите подразделение, специализацию и врача из списка ниже</div>
 <blockquote class="red">
     <dl class="dl-horizontal">
         <dt>Лечебное учреждение:</dt><dd>{{ lpu.name }}</dd>

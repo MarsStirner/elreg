@@ -21,3 +21,6 @@ body{
     width: 100%;
     line-height: 40px;
 }
+.btn-large [class^="icon-"], [class*=" icon-"] {
+margin-top: 9px;
+}
