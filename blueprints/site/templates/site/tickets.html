@@ -26,9 +26,8 @@
         <caption>
             <div class="row-fluid">
                 <div class="span3"><p class="lead"><big>Расписание врача:</big></p></div>
-                <div class="span4 offset5 text-right">
+                <div class="span3 offset6">
                     <button type="button" class="btn btn-mini btn-success">Свободно</button>
-                    <button type="button" class="btn btn-mini btn-warning" title="Заблокирован на 10 минут другим пациентом">Заблокирован</button>
                     <button type="button" class="btn btn-mini btn-danger disabled">Занято</button>
                     <button type="button" class="btn btn-mini btn-inverse disabled">Приём окончен</button>
                 </div>
@@ -50,11 +49,7 @@
                     {% if cell and cell|attr('start') > now %}
                     <td class="{{ cell.status }}">
                         {% if cell.status == 'free' %}
-                            {% if cell.start not in blocked.keys() %}
                             <a href="{{ url_for('.registration', lpu_id=lpu_id, department_id=department_id, doctor_id=doctor_id, d=cell.start|dateformat('yyyyMMdd'), s=cell.start|datetimeformat('HHmmss', rebase=False), f=cell.finish|datetimeformat('HHmmss', rebase=False)) }}" class="btn btn-block btn-success">{{ cell.start|datetimeformat('HH:mm', rebase=False) }}</a>
-                            {% else %}
-                            <a class="btn btn-block btn-warning blocked_ticket" data-uid="{{ blocked[cell.start]['ticket_uid'] }}" data-blocked="{{ blocked[cell.start]['block_until']|datetimeformat('HH:mm dd.MM.yyyy', rebase=False) }}">{{ cell.start|datetimeformat('HH:mm', rebase=False) }}</a>
-                            {% endif %}
                         {% elif cell.status == 'locked' or cell.status == 'disabled' %}
                             <span class="btn btn-block btn-danger disabled">{{ cell.start|datetimeformat('HH:mm', rebase=False) }}</span>
                         {% else %}
@@ -87,143 +82,4 @@
 <p>
     <a href="{{ url_for('.division', lpu_id=lpu_id) }}" class="btn btn-large" title="Выбрать врача"><i class="icon-ok icon-arrow-left"></i> Выбрать врача</a>
 </p>
-<!-- Modal -->
-<div id="block_modal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="block_modalLabel" aria-hidden="true">
-    <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-        <h3 id="block_modalLabel">Талон заблокирован</h3>
-    </div>
-    <div class="modal-body">
-        <p>Выбранный Вами талон заблокирован другим пациентом до <b id="block_time"></b>.<br>
-           По истечении времени блокировки талон может быть освобождён.<br>
-           Вы можете выбрать любой другой свободный талон.</p>
-    </div>
-</div>
-<!-- Modal -->
-<div id="locked_modal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="locked_modalLabel" aria-hidden="true">
-    <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-        <h3 id="locked_modalLabel">Талон занят</h3>
-    </div>
-    <div class="modal-body">
-        <p>Выбранный Вами талон занят другим пациентом.<br>
-           Вы можете выбрать любой другой свободный талон.</p>
-    </div>
-</div>
-<!-- Modal -->
-<div id="disabled_modal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="disabled_modalLabel" aria-hidden="true">
-    <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-        <h3 id="disabled_modalLabel">Талон просрочен</h3>
-    </div>
-    <div class="modal-body">
-        <p>Выбранный Вами талон просрочен.<br>
-           Вы можете выбрать любой другой свободный талон.</p>
-    </div>
-</div>
-<!-- Modal -->
-<div id="success_modal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="success_modalLabel" aria-hidden="true">
-    <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-        <h3 id="success_modalLabel">Талон разблокирован</h3>
-    </div>
-    <div class="modal-body">
-        <p>Выбранный Вами талон разблокирован.<br>
-           Хотите ли Вы выбрать его для записи на приём?</p>
-    </div>
-    <div class="modal-footer">
-        <button class="btn" data-dismiss="modal" aria-hidden="true">Нет, выбрать другой</button>
-        <a class="btn btn-success" id="choose_ticket">Да, выбрать этот</a>
-    </div>
-</div>
-{% endblock %}
-{% block js %}
-<script type="text/javascript">
-function blocked_ticket_worker($slot){
-    $('#block_time').text($slot.attr('data-blocked'));
-    var uid = $slot.attr('data-uid');
-    $.ajax({
-        url: "{{ url_for('.get_blocked_ticket') }}" + uid + '/',
-        crossDomain: true,
-        type: 'POST',
-        cache: false,
-        success: function(data){
-              if(data['result']){
-                  var ticket = data['result'];
-                  if (ticket['status'] == 'blocked'){
-                      $('#block_time').text(ticket['block_until']);
-                      $('#block_modal').modal();
-                  } else if(ticket['status'] == 'locked'){
-                      $slot.removeClass('btn-warning').removeClass('blocked_ticket');
-                      $slot.addClass('btn-danger').addClass('disabled');
-                      $slot.unbind("click");
-                      $('#locked_modal').modal();
-                  } else if(ticket['status'] == 'disabled'){
-                      $slot.removeClass('btn-warning').removeClass('blocked_ticket');
-                      $slot.addClass('btn-inverse').addClass('disabled');
-                      $slot.unbind("click");
-                      $('#disabled_modal').modal();
-                  } else if(ticket['status'] == 'free'){
-                      $slot.removeClass('btn-warning').removeClass('blocked_ticket');
-                      $slot.addClass('btn-success');
-                      $slot.attr('href', ticket['url']);
-                      $('#choose_ticket').attr('href', ticket['url']);
-                      $slot.click(function(event){
-                          free_ticket_worker($(this), event);
-                      });
-                  }
-              }
-          }
-    });
-}
-function free_ticket_worker($slot, event){
-    event.preventDefault();
-    var url = $slot.attr('href');
-    url = url.replace('{{ url_for('.registration') }}', '{{ url_for('.check_ticket') }}');
-  $.ajax({
-    url: url,
-    crossDomain: true,
-    type: 'POST',
-    cache: false,
-    success: function(data){
-          if(data['result']){
-              var ticket = data['result'];
-              if (ticket['status'] == 'free'){
-                  window.location.href = $slot.attr('href');
-              } else if(ticket['status'] == 'locked'){
-                  $slot.removeClass('btn-success').addClass('btn-danger').addClass('disabled');
-                  $slot.unbind("click");
-                  $slot.removeAttr('href');
-                  $('#locked_modal').modal();
-              } else if(ticket['status'] == 'disabled'){
-                  $slot.removeClass('btn-success').addClass('btn-inverse').addClass('disabled');
-                  $slot.unbind("click");
-                  $slot.removeAttr('href');
-                  $('#disabled_modal').modal();
-              } else if(ticket['status'] == 'blocked'){
-                  $slot.removeClass('btn-success').addClass('btn-warning').addClass('blocked_ticket');
-                  $slot.removeAttr('href');
-                  $slot.attr('data-uid', ticket['uid']);
-                  $slot.attr('data-blocked', ticket['block_until']);
-                  $('#block_time').text(ticket['block_until']);
-                  $('#block_modal').modal();
-                  $slot.click(function(){
-                      blocked_ticket_worker($(this));
-                  });
-              }
-          } else {
-              window.location.href = $slot.attr('href');
-          }
-      }
-    });
-}
-$(document).ready(function () {
-    $('.blocked_ticket').click(function(){
-        blocked_ticket_worker($(this));
-    });
-    $('.btn-success').click(function(event){
-        free_ticket_worker($(this), event);
-    });
-});
-</script>
 {% endblock %}
