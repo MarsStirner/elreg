@@ -1,42 +1,26 @@
 {% extends "infokiosk/base.html" %}
 
 {% block content %}
-<legend><h2>{{ lpu.name }}</h2><div class="pull-right"><small>Телефон: {{ lpu.phone }}</small></div></legend>
-<div class="well well-small">Выберите подразделение, специализацию и врача из списка ниже</div>
-<blockquote class="red">
-    <dl class="dl-horizontal">
-        <dt>Лечебное учреждение:</dt><dd>{{ lpu.name }}</dd>
-        {% if lpu.address %}<dd>{{ lpu.address }}</dd>{% endif %}
-        {% if lpu.phone %}<dt>Телефон:</dt><dd>{{ lpu.phone }}</dd>{% endif %}
-        {% if lpu.email %}<dt>Электронная почта:</dt><dd><a href="mailto:{{ lpu.email }}">{{ lpu.email }}</a></dd>{% endif %}
-    </dl>
+<blockquote class="red">{{ lpu.name }}
+{% if lpu.address %}<br />{{ lpu.address }}{% endif %}
+{% if lpu.phone %}<br /><small>Телефон: {{ lpu.phone }}</small>{% endif %}
 </blockquote>
+<div class="well well-small">Выберите подразделение из представленного списка</div>
 {% if lpu.buildings %}
-<div class="well">
 <div class="row-fluid">
-<div class="span3">
-    <ul class="firstTable nav nav-pills nav-stacked">
-        <li class="nav-header">Выбор подразделения</li>
-        {% for division in lpu.buildings %}
-            <li><a id="{{ division.id }}" href="{{ url_for('.get_specialities', lpu_id=lpu_id, department_id=division.id) }}" class="division">{{ division.name }}{% if division.address %}<br>({{ division.address }}){% endif %}</a></li>
-        {% endfor %}
-    </ul>
-</div>
-<div class="span4">
-    <ul class="secondTable nav nav-pills nav-stacked"></ul>
-</div>
-<div class="span5">
-    <ul class="thirdTable nav nav-pills nav-stacked"></ul>
-</div>
-</div>
+    {%- for columns in lpu.buildings|slice(3) -%}
+    <div class="span4">
+        <ul class="unstyled menu">
+        {%- for division in columns -%}
+        <li class="clearfix"><a id="{{ division.id }}" href ="{{ url_for('.specialities', lpu_id=lpu_id, department_id=division.id) }}" class="btn btn-large btn-info span12">{{ division.name }}{% if division.address %}<br><small>({{ division.address }})</small>{% endif %}</a></li>
+        {%- endfor -%}
+        </ul>
+    </div>
+    {%- endfor -%}
 </div>
 {% else %}
     <div class="alert alert-error">Данные по подразделениям выбранного медицинского учреждения отсутствуют, попробуйте зайти на страницу позже или выберите другое медицинское учреждение.</div>
 {% endif %}
-<a href="{{ url_for('.lpu', okato=session.get('okato')) }}" class="btn btn-large"><i class="icon-arrow-left"></i> К выбору мед.учреждения</a>
-<p class="pull-right">
-    <a href="{{ url_for('.search', okato=session.get('okato'), lpu_id=lpu_id) }}" class="btn btn-large" title="Поиск врача"><i class="icon-search"></i> Поиск врача</a>
-</p>
 {% endblock %}
 {% block js %}
     <script>

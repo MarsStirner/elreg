@@ -1,3 +1,13 @@
+html, body {height: 100%;}
+#bottom, #push {height:60px;}
+#footer {height:60px;}
+#wrap {
+    min-height: 100%; height: auto !important; height: 100%; margin: 0 auto -60px;
+}
+#wrap > #container {
+    /*padding-top: 10px;*/
+}
+
 body{
     font-size: 22px;
 }
@@ -14,13 +24,20 @@ body{
 .btn-large{
     font-size: 30px;
 }
-.menu {
+.menu, .menu > li{
     margin-bottom: 10px;
 }
 .menu a.btn-large{
     width: 100%;
-    line-height: 40px;
+    line-height: 30px;
 }
 .btn-large [class^="icon-"], [class*=" icon-"] {
 margin-top: 9px;
+}
+
+blockquote.red {
+    border-color: #B94A48;
+}
+blockquote{
+    line-height: 24px;
 }

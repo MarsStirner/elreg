@@ -8,7 +8,7 @@
         <div class="span4">
             <ul class="unstyled menu">
             {%- for region in columns -%}
-            <li><a href ="{{ url_for('.lpu', okato=region.code) }}" class="btn btn-large btn-info span12"><h1>{{ region.name }}</h1></a></li>
+            <li class="clearfix"><a href ="{{ url_for('.lpu', okato=region.code) }}" class="btn btn-large btn-info span12"><h1>{{ region.name }}</h1></a></li>
             {%- endfor -%}
             </ul>
         </div>

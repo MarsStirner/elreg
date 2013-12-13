@@ -1,0 +1,19 @@
+    <div id="footer">
+        <div class="container">
+            {%- if session.get('step') == 2 -%}
+                <a href="{{ url_for('.index') }}" class="btn btn-large" title="На главную страницу"><i class="icon-chevron-left"></i> В начало</a>
+            {%- elif session.get('step') == 3 -%}
+                <a href="{{ url_for('.index') }}" class="btn btn-large"><i class="icon-chevron-left"></i> В начало</a>
+                <a href="{{ url_for('.lpu', okato=session.get('okato')) }}" class="btn btn-large"><i class="icon-chevron-left"></i> К выбору мед.учреждения</a>
+            {%- elif session.get('step') == 4 -%}
+                <a href="{{ url_for('.index') }}" class="btn btn-large"><i class="icon-chevron-left"></i> В начало</a>
+                <a href="{{ url_for('.division', lpu_id=session.get('lpu_id')) }}" class="btn btn-large"><i class="icon-chevron-left"></i> К выбору подразделения</a>
+            {%- elif session.get('step') == 5 -%}
+                <a href="{{ url_for('.index') }}" class="btn btn-large"><i class="icon-chevron-left"></i> В начало</a>
+                <a href="{{ url_for('.specialities', lpu_id=session.get('lpu_id'), department_id=session.get('department_id')) }}" class="btn btn-large"><i class="icon-chevron-left"></i> К выбору специализации</a>
+            {%- elif session.get('step') == 6 -%}
+            {%- elif session.get('step') == 7 -%}
+            {%- elif session.get('step') == 8 -%}
+            {%- endif -%}
+        </div>
+    </div>

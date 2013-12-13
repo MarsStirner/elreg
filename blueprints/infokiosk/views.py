@@ -167,10 +167,60 @@ def division(lpu_id=None):
                            lpu=lpu_info)
 
 
+@module.route('/specialities/<int:lpu_id>/<int:department_id>/', methods=['GET'])
+def specialities(lpu_id, department_id):
+    if not lpu_id or not department_id:
+        abort(404)
+    session['step'] = 4
+    session['department_id'] = department_id
+    hospital_uid = '{0}/{1}'.format(lpu_id, department_id)
+    lpu_info = get_lpu(hospital_uid)
+    data = list()
+    doctors = List().listDoctors(hospital_Uid='{0}/{1}'.format(lpu_id, department_id))
+    for doctor in getattr(doctors, 'doctors', []):
+        # TODO: не нужно ли свести к ordered dict(id=>value)??
+        #if doctor.hospitalUid == hospital_Uid:
+        data.append(doctor.speciality)
+        data = list(set(data))
+        data.sort()
+    return render_template('{0}/specialities.html'.format(module.name),
+                           specialities=data,
+                           lpu=lpu_info,
+                           department_id=department_id,
+                           lpu_id=lpu_id)
+
+
+@module.route('/doctors/<int:lpu_id>/<int:department_id>/', methods=['GET'])
+def doctors(lpu_id=None, department_id=None):
+    # TODO: желательно перейти от наименования специальности к id
+    speciality = request.args.get('sp')
+    if not lpu_id or not department_id or not speciality:
+        abort(404)
+    session['step'] = 5
+    hospital_uid = '{0}/{1}'.format(lpu_id, department_id)
+    lpu_info = get_lpu(hospital_uid)
+    data = list()
+    _doctors = List().listDoctors(hospital_Uid=hospital_uid, speciality=speciality)
+    for doctor in getattr(_doctors, 'doctors', []):
+        if speciality and doctor.speciality != speciality:
+            continue
+        hospital_uid = doctor.hospitalUid
+        lpu_id, department_id = hospital_uid.split('/')
+
+        data.append(dict(uid=doctor.uid,
+                         name=u' '.join([doctor.name.lastName, doctor.name.firstName, doctor.name.patronymic])))
+    return render_template('{0}/doctors.html'.format(module.name),
+                           doctors=data,
+                           lpu=lpu_info,
+                           department_id=department_id,
+                           lpu_id=lpu_id,
+                           speciality=speciality)
+
+
 @module.route('/time/<int:lpu_id>/<int:department_id>/<int:doctor_id>/', methods=['GET'])
 @module.route('/time/<int:lpu_id>/<int:department_id>/<int:doctor_id>/<start>/', methods=['GET'])
 def tickets(lpu_id, department_id, doctor_id, start=None):
-    session['step'] = 4
+    session['step'] = 6
     session['lpu_id'] = lpu_id
     session['department_id'] = department_id
     session['doctor_id'] = doctor_id
@@ -444,22 +494,6 @@ def get_lpu_list(okato=None):
     return jsonify(result=data)
 
 
-@module.route('/ajax_specialities/', methods=['GET'])
-@module.route('/ajax_specialities/<int:lpu_id>/<int:department_id>/', methods=['GET'])
-def get_specialities(lpu_id, department_id):
-    if not lpu_id or not department_id:
-        abort(404)
-    data = list()
-    doctors = List().listDoctors(hospital_Uid='{0}/{1}'.format(lpu_id, department_id))
-    for doctor in getattr(doctors, 'doctors', []):
-        # TODO: не нужно ли свести к ordered dict(id=>value)??
-        #if doctor.hospitalUid == hospital_Uid:
-        data.append(doctor.speciality)
-        data = list(set(data))
-        data.sort()
-    return jsonify(result=data)
-
-
 @module.route('/ajax_lpu_doctors/', methods=['GET'])
 @module.route('/ajax_lpu_doctors/<int:lpu_id>/', methods=['GET'])
 def get_lpu_doctors(lpu_id=None):
@@ -510,17 +544,6 @@ def find_doctors(lpu_id=None):
         data = prepare_doctors(doctors)
     return jsonify(result=data)
 
-
-@module.route('/ajax_doctors/<int:lpu_id>/<int:department_id>/', methods=['GET'])
-def get_doctors(lpu_id=None, department_id=None):
-    # TODO: желательно перейти от наименования специальности к id
-    speciality = request.args.get('sp')
-    if not lpu_id or not department_id or not speciality:
-        abort(404)
-    hospital_uid = '{0}/{1}'.format(lpu_id, department_id)
-    data = get_doctors_with_tickets(hospital_Uid=hospital_uid,
-                                     speciality=speciality)
-    return jsonify(result=data)
 
 
 @module.route('/dequeue/<int:lpu_id>/<int:department_id>/<uid>/', methods=['GET', 'POST'])
