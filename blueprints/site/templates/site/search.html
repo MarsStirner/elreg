@@ -32,7 +32,8 @@
                     <div class="control-group">
                         <label class="control-label" for="speciality">Специальность:</label>
                         <div class="controls">
-                            <input type="text" name="speciality" id="speciality" maxlength="100" class="input-block-level" autocomplete="off" />
+                            <select id="speciality" class="span12">
+                            </select>
                         </div>
                     </div>
                     <div class="control-group">
@@ -70,6 +71,7 @@
                 $(this).removeClass("loading");
             }
         });
+        $("#speciality").select2();
     });
     var _doctors;
     function filter_lpu(okato){
@@ -108,15 +110,13 @@
     }
 
     function update_specialities(specialities){
-        var input_val = [];
-        var $input = $('input#speciality');
         if(specialities.length > 0){
+            var str = "<option value=''> </option>"
             $.each(specialities, function(key, value) {
-                input_val[input_val.length] = value;
+                str += "<option>"+value+"</option>"
             });
+            $('select#speciality').html(str);
         }
-        $input.val("");
-        $input.data('typeahead').source = input_val;
     }
 
     function get_person(lpu_id, speciality){
@@ -178,7 +178,7 @@
     $(document).ready(function(){
         var $region = $('select#region_filter');
         var $lpu = $('select#lpu_filter');
-        var $speciality = $('input#speciality');
+        var $speciality = $('select#speciality');
         var $doctor = $('input#doctor');
         var $error = $('#error');
         var $lpu_uid = $lpu.val();
@@ -189,14 +189,14 @@
             get_specialities($lpu_uid);
         }
         $region.change(function(){
-            $('input#speciality').val("");
+            $('select#speciality').val('').trigger("change");
             $('input#doctor').val("");
             if($(this).val()){
                 filter_lpu($(this).val());
             }
         });
         $lpu.change(function(){
-            $('input#speciality').val("");
+            $('select#speciality').val('').trigger("change");
             $('input#doctor').val("");
             if($(this).val()){
                 get_specialities($(this).val());
