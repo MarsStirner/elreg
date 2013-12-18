@@ -153,7 +153,9 @@ ol.prog_trckr li a{
     left: 0;
     display: inline-block;
     *display: inline;
+    *zoom:1;
     bottom: 0;
+    *bottom: 10px;
  }
 
 .borderRight  {
@@ -162,6 +164,7 @@ ol.prog_trckr li a{
     left:56%;
     right: 0;
     bottom: 0;
+    *bottom: 10px;
  }
 
 .middleText{
@@ -171,6 +174,7 @@ ol.prog_trckr li a{
     right:44%;
     left: 44%;
     bottom: -50%;
+    *bottom: -10px;
 }
 
 .prog_trckr_checkmark{
