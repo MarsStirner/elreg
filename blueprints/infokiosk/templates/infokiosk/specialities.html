@@ -11,7 +11,7 @@
     <div class="span6">
         <ul class="unstyled menu">
         {%- for speciality in columns -%}
-        <li class="clearfix"><a href ="{{ url_for('.doctors', lpu_id=lpu_id, department_id=department_id, sp=speciality) }}" class="btn btn-large btn-info span12">{{ speciality|replace('(', '<br><small>(')|replace(')',')</small>')|safe }}</a></li>
+        <li class="clearfix"><a href="{{ url_for('.doctors', lpu_id=lpu_id, department_id=department_id, sp=speciality) }}" class="btn btn-large btn-info span12">{{ speciality|replace('(', '<br><small>(')|replace(')',')</small>')|safe }}</a></li>
         {%- endfor -%}
         </ul>
     </div>

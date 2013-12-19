@@ -230,73 +230,67 @@ def tickets(lpu_id, department_id, doctor_id, start=None):
 
     today = date.today()
     now = datetime.now(tzlocal()).astimezone(tz=timezone(_config('TIME_ZONE'))).replace(tzinfo=None)
-    monday = None
+    start_date = today
 
     if start is not None:
         try:
-            monday = datetime.strptime(start, '%Y%m%d').date()
+            start_date = datetime.strptime(start, '%Y%m%d').date()
+            if start_date.month == today.month:
+                start_date = today
         except ValueError, e:
             print e
-    if monday is None:
-        monday = today - timedelta(days=date.isoweekday(today) - 1)
+
+    last_date = datetime(start_date.year + (start_date.month/12),
+                         (start_date.month % 12) + 1,
+                         1).date() - timedelta(days=1)
+
+    closest_first_day = start_date - timedelta(days=(min(start_date.day, start_date.isoweekday()) - 1))
 
     tickets = Schedule().getScheduleInfo(hospitalUid=hospital_uid,
                                          doctorUid=doctor_id,
-                                         startDate=monday,
-                                         endDate=monday+timedelta(days=6))
+                                         startDate=start_date,
+                                         endDate=last_date)
     office = None
     if tickets:
         office = getattr(tickets[0], 'office', '')
 
     doctor_info = get_doctor_info(hospital_uid, doctor_id)
 
-    times = []  # Список времен начала записи текущей недели
     dates = []  # Список дат текущей недели
 
-    for i in xrange(7):
-        new_day = monday + timedelta(days=i)
-        dates.append(new_day)
-        if tickets:
-            for j in tickets:
-                if new_day == j.start.date():
-                    times.append(j.start.time())
-        times = list(set(times))
-        times.sort()
+    date_tickets = dict()
+    for ticket in tickets:
+        if ticket.start.date() not in date_tickets:
+            date_tickets[ticket.start.date()] = list()
+        date_tickets[ticket.start.date()].append(ticket)
 
-    ticket_table = []
-    if times:
-        current_ticket_list = []
-        if tickets:
-            for i in tickets:
-                if i.start.date() in dates:
-                    current_ticket_list.append(i)
-        for i in times:
-            add_to_table = False
-            tmp_list = [0] * 7
-            for j in current_ticket_list:
-                if j.start.time() == i:
-                    tmp_list[dates.index(j.start.date())] = j
-                    if j.start > now and j.status in ('free', 'locked', 'disabled'):
-                        add_to_table = True
-
-            if add_to_table:
-                ticket_table.append(tmp_list)
+    for i in xrange((last_date - closest_first_day).days + 1):
+        _date = closest_first_day + timedelta(days=i)
+        has_tickets = False
+        if _date in date_tickets.keys():
+            has_tickets = True
+        dates.append(dict(date=_date, has_tickets=has_tickets))
 
     session['doctor'] = doctor_info
     session['office'] = office
+    prev_month = datetime(start_date.year - (1 if start_date.month == 1 else 0),
+                          start_date.month - 1 if start_date.month > 1 else 12,
+                          1)
+
     return render_template('{0}/tickets.html'.format(module.name),
                            dates=dates,
-                           times=times,
+                           date_tickets=date_tickets,
                            lpu=lpu_info,
                            lpu_id=lpu_id,
                            department_id=department_id,
                            doctor_id=doctor_id,
                            doctor=doctor_info,
                            office=office,
-                           ticket_table=ticket_table,
-                           prev_monday=(monday - timedelta(days=7)).strftime('%Y%m%d'),
-                           next_monday=(monday + timedelta(days=7)).strftime('%Y%m%d'),
-                           #now=datetime.now(tz=timezone(_config('TIME_ZONE'))),
+                           closest_first_day=closest_first_day,
+                           prev_month=prev_month,
+                           next_month=datetime(start_date.year + (start_date.month / 12),
+                                               (start_date.month % 12) + 1,
+                                               1),
                            now=now)
 
 

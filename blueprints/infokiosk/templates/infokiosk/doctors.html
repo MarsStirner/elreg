@@ -12,7 +12,7 @@
     <div class="span6">
         <ul class="unstyled menu">
         {%- for doctor in columns -%}
-        <li class="clearfix"><a href ="{{ url_for('.tickets', lpu_id=lpu_id, department_id=department_id, doctor_id=doctor.uid) }}" class="btn btn-large btn-info span12"><small>{{ doctor.name }}</small></a></li>
+        <li class="clearfix"><a href="{{ url_for('.tickets', lpu_id=lpu_id, department_id=department_id, doctor_id=doctor.uid) }}" class="btn btn-large btn-info span12"><small>{{ doctor.name }}</small></a></li>
         {%- endfor -%}
         </ul>
     </div>

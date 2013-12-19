@@ -12,7 +12,7 @@
     <div class="span4">
         <ul class="unstyled menu">
         {%- for division in columns -%}
-        <li class="clearfix"><a id="{{ division.id }}" href ="{{ url_for('.specialities', lpu_id=lpu_id, department_id=division.id) }}" class="btn btn-large btn-info span12">{{ division.name }}{% if division.address %}<br><small>({{ division.address }})</small>{% endif %}</a></li>
+        <li class="clearfix"><a id="{{ division.id }}" href="{{ url_for('.specialities', lpu_id=lpu_id, department_id=division.id) }}" class="btn btn-large btn-info span12">{{ division.name }}{% if division.address %}<br><small>({{ division.address }})</small>{% endif %}</a></li>
         {%- endfor -%}
         </ul>
     </div>

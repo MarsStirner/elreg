@@ -22,7 +22,7 @@ body{
     margin-bottom: 0!important;
 }
 .btn-large{
-    font-size: 30px;
+    font-size: 28px;
 }
 .menu, .menu > li{
     margin-bottom: 10px;
@@ -32,7 +32,7 @@ body{
     line-height: 30px;
 }
 .btn-large [class^="icon-"], [class*=" icon-"] {
-margin-top: 9px;
+margin-top: 7px;
 }
 
 blockquote.red {
@@ -40,4 +40,16 @@ blockquote.red {
 }
 blockquote{
     line-height: 24px;
+}
+th.text-center {
+    text-align: center!important;
+}
+table.no-border td, table.no-border th{
+    border: none;
+}
+.margin-bottom-10{
+    margin-bottom: 10px;
+}
+table#days caption{
+    margin: 0 5px;
 }

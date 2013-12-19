@@ -12,6 +12,8 @@
                 <a href="{{ url_for('.index') }}" class="btn btn-large"><i class="icon-chevron-left"></i> В начало</a>
                 <a href="{{ url_for('.specialities', lpu_id=session.get('lpu_id'), department_id=session.get('department_id')) }}" class="btn btn-large"><i class="icon-chevron-left"></i> К выбору специализации</a>
             {%- elif session.get('step') == 6 -%}
+                <a href="{{ url_for('.index') }}" class="btn btn-large"><i class="icon-chevron-left"></i> В начало</a>
+                <a href="{{ url_for('.doctors', lpu_id=session.get('lpu_id'), department_id=session.get('department_id'), sp=doctor.speciality) }}" class="btn btn-large"><i class="icon-chevron-left"></i> К выбору врача</a>
             {%- elif session.get('step') == 7 -%}
             {%- elif session.get('step') == 8 -%}
             {%- endif -%}

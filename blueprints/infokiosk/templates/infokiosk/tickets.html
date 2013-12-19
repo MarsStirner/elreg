@@ -1,85 +1,93 @@
 {% extends "infokiosk/base.html" %}
 
 {% block content %}
-<div class="alert alert-info"><h4>Выберите нужное свободное время из расписания врача, расположенного ниже</h4></div>
-<blockquote class="red">
-    <dl class="dl-horizontal">
-        <dt>Лечебное учреждение:</dt><dd>{{ lpu.name }}</dd>
-        {% if lpu|attr('buildings') and lpu.buildings[0] %}<dd>{{ lpu.buildings[0]|attr('name') }}{% if lpu.buildings[0]|attr('address') %} ({{ lpu.buildings[0]|attr('address') }}){% endif %}</dd>{% endif %}
-        {% if lpu.phone %}<dt>Телефон:</dt><dd>{{ lpu.phone }}</dd>{% endif %}
-        {% if lpu.email %}<dt>Электронная почта:</dt><dd><a href="mailto:{{ lpu.email }}">{{ lpu.email }}</a></dd>{% endif %}
-        <dt>Специализация:</dt><dd>{{ doctor.get('speciality') }}</dd>
-        <dt>Врач:</dt><dd>{% if doctor %}{{ doctor.get('lastName') }} {{ doctor.get('firstName') }} {{ doctor.get('patronymic') }}{% else %}&nbsp;{% endif %}</dd>
-        {% if ticket_table and office is defined %}
-            <dt>Кабинет:</dt><dd>{{ office }}</dd>
-        {% endif %}
-    </dl>
+<blockquote class="red">{{ lpu.name }}{% if lpu|attr('buildings') and lpu.buildings[0] %}, {{ lpu.buildings[0]|attr('name') }}{% if lpu.buildings[0]|attr('address') %} ({{ lpu.buildings[0]|attr('address') }}){% endif %}{% endif %}<br />
+{% if lpu.phone %}<small>Телефон: {{ lpu.phone }}</small>{% endif %}
+{% if doctor.speciality %}<small>{{ doctor.speciality }}</small>{% endif %}
+{% if doctor %}{{ doctor.get('lastName') }} {{ doctor.get('firstName') }} {{ doctor.get('patronymic') }}{% endif %}{% if ticket_table and office is defined %} (кабинет: {{ office }}){% endif %}
 </blockquote>
+<div class="well well-small">Выберите день и время приёма</div>
 <div class="row-fluid">
-    <a href="{{ url_for('.tickets', lpu_id=lpu_id, department_id=department_id, doctor_id=doctor_id, start=prev_monday) }}" class="btn btn-info pull-left" title="Предыдущая неделя">Предыдущая неделя</a>
-    <a href="{{ url_for('.tickets', lpu_id=lpu_id, department_id=department_id, doctor_id=doctor_id, start=next_monday) }}" class="btn btn-info pull-right" title="Следующая неделя">Следующая неделя</a>
-</div>
-<br>
-{% if ticket_table %}
-<div class="well well-small">
-    <table class="table table-condensed">
-        <caption>
-            <div class="row-fluid">
-                <div class="span3"><p class="lead"><big>Расписание врача:</big></p></div>
-                <div class="span3 offset6">
-                    <button type="button" class="btn btn-mini btn-success">Свободно</button>
-                    <button type="button" class="btn btn-mini btn-danger disabled">Занято</button>
-                    <button type="button" class="btn btn-mini btn-inverse disabled">Приём окончен</button>
-                </div>
-            </div>
-        </caption>
+<div class="span6">
+    <table class="table table-condensed no-border" id="days">
+        <caption><div class="pull-left"><a href="{{ url_for('.tickets', lpu_id=lpu_id, department_id=department_id, doctor_id=doctor_id, start=prev_month|dateformat('yyyyMMdd')) }}" class="btn btn-large{% if prev_month.month<now.month %} disabled{% endif %}"><i class="icon-chevron-left"></i></a></div><div class="pull-right"><a href="{{ url_for('.tickets', lpu_id=lpu_id, department_id=department_id, doctor_id=doctor_id, start=next_month|dateformat('yyyyMMdd')) }}" class="btn btn-large"><i class="icon-chevron-right"></i></a></div><h3>{{ closest_first_day|dateformat('LLLL') }}</h3></caption>
         <thead>
             <tr>
-            {% for date in dates %}
-                <th class="th-centered">
-                    {{ date|dateformat('dd.M.y') }}, {{ date|dateformat('E') }}.
-                </th>
-            {% endfor %}
+                <th class="text-center">пн</th>
+                <th class="text-center">вт</th>
+                <th class="text-center">ср</th>
+                <th class="text-center">чт</th>
+                <th class="text-center">пт</th>
+                <th class="text-center">сб</th>
+                <th class="text-center">вс</th>
             </tr>
         </thead>
         <tbody>
-        {% for row in ticket_table %}
+        {%- for day in dates -%}
+            {%- if loop.first -%}
             <tr>
-                {% for cell in row %}
-                    {% if cell and cell|attr('start') > now %}
-                    <td class="{{ cell.status }}">
-                        {% if cell.status == 'free' %}
-                            <a href="{{ url_for('.registration', lpu_id=lpu_id, department_id=department_id, doctor_id=doctor_id, d=cell.start|dateformat('yyyyMMdd'), s=cell.start|datetimeformat('HHmmss', rebase=False), f=cell.finish|datetimeformat('HHmmss', rebase=False)) }}" class="btn btn-block btn-success">{{ cell.start|datetimeformat('HH:mm', rebase=False) }}</a>
-                        {% elif cell.status == 'locked' or cell.status == 'disabled' %}
-                            <span class="btn btn-block btn-danger disabled">{{ cell.start|datetimeformat('HH:mm', rebase=False) }}</span>
-                        {% else %}
-                            <span class="btn btn-block btn-danger disabled{% if cell.start|datetimeformat('HH:mm', rebase=False) %} btn-inverse{% endif %}">{{ cell.start|datetimeformat('H:mm', rebase=False)|default("&nbsp;") }}</span>
-                        {% endif %}
-                    {% elif cell %}
-                    <td align="center">
-                        <span class="btn btn-block btn-danger disabled{% if cell.start|datetimeformat('HH:mm', rebase=False) %} btn-inverse{% endif %}">{{ cell.start|datetimeformat('H:mm', rebase=False)|default("&nbsp;") }}</span>
-                    {% else %}
-                    <td align="center">
-                        <span class="btn btn-block disabled">&nbsp;</span>
-                    {% endif %}
-                    </td>
-                {% endfor %}
+                {%- for i in range(closest_first_day.weekday()) -%}
+                <td></td>
+                {%- endfor -%}
+            {%- endif -%}
+            {%- if day.date < now.date() or day.has_tickets == False -%}
+                <td class="muted"><button class="btn btn-large disabled" >{{ day.date|dateformat('dd') }}</button></td>
+            {%- elif day.date == now.date() -%}
+                <td><button class="btn btn-warning btn-large" onclick="show_tickets(this, '{{ day.date|dateformat('yyyyMMdd') }}');">{{ day.date|dateformat('dd') }}</button></td>
+            {%- else -%}
+                <td><button class="btn btn-info btn-large" onclick="show_tickets(this, '{{ day.date|dateformat('yyyyMMdd') }}');">{{ day.date|dateformat('dd') }}</button></td>
+            {%- endif -%}
+            {%- if loop.last -%}
+                {%- for i in range(7 - day.date.isoweekday()) -%}
+                <td></td>
+                {%- endfor -%}
             </tr>
-        {% endfor %}
+            {%- elif day.date.isoweekday() == 7 -%}
+            </tr>
             <tr>
-                {% for date in dates %}
-                    <th class="th-centered">
-                        {{ date|dateformat('dd.M.y') }}, {{ date|dateformat('E') }}.
-                    </th>
-                {% endfor %}
-            </tr>
+            {%- endif -%}
+        {%- endfor -%}
         </tbody>
     </table>
 </div>
-{% else %}
-<legend>Расписание на текущую неделю отсутствует ({{ dates[0]|dateformat('dd.M.y') }} - {{ dates[6]|dateformat('dd.M.y') }})</legend>
-{% endif %}
-<p>
-    <a href="{{ url_for('.division', lpu_id=lpu_id) }}" class="btn btn-large" title="Выбрать врача"><i class="icon-ok icon-arrow-left"></i> Выбрать врача</a>
-</p>
+<div class="span5 offset1">
+    {%- for _date, tickets in date_tickets.iteritems() -%}
+        <div class="tickets{% if _date != now.date() %} hide{% endif %}" id="tkt_{{ _date|dateformat('yyyyMMdd') }}">
+            <legend id="selected_day">{{ _date|dateformat('dd MMMM') }}</legend>
+        {% if tickets %}
+            {%- set step=0 -%}
+            {%- for ticket in tickets -%}
+                {% if loop.first %}
+                <div class="row-fluid margin-bottom-10">
+                {% endif %}
+                {%- if ticket and ticket|attr('start') >= now and ticket.status == 'free' -%}
+                    {%- if step != 0 and step%4 == 0 -%}
+                        </div>
+                        <div class="row-fluid margin-bottom-10">
+                    {%- endif -%}
+                    <a href="{{ url_for('.registration', lpu_id=lpu_id, department_id=department_id, doctor_id=doctor_id, d=ticket.start|dateformat('yyyyMMdd'), s=ticket.start|datetimeformat('HHmmss', rebase=False), f=ticket.finish|datetimeformat('HHmmss', rebase=False)) }}" class="btn btn-success span3 btn-large">{{ ticket.start|datetimeformat('HH:mm', rebase=False) }}</a>
+                    {% set step=step + 1 %}
+                {%- endif -%}
+                {%- if loop.last -%}
+                </div>
+                {%- endif -%}
+            {%- endfor -%}
+        {%- else -%}
+            Нет свободных талонов
+        {%- endif -%}
+        </div>
+    {%- endfor -%}
+</div>
+</div>
+{#<legend>Расписание на текущую неделю отсутствует ({{ dates[0]|dateformat('dd.M.y') }} - {{ dates[6]|dateformat('dd.M.y') }})</legend>#}
+{% endblock %}
+{% block js %}
+<script type="text/javascript">
+    function show_tickets(btn, day){
+        $('#days').find('.btn-warning').removeClass('btn-warning').addClass('btn-info');
+        $(btn).removeClass('btn-info').addClass('btn-warning');
+        $('.tickets').hide();
+        $('#tkt_'+day).show();
+    }
+</script>
 {% endblock %}
