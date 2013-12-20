@@ -3,6 +3,7 @@ from flask import Flask
 from flask.ext.principal import Principal
 from flask.ext.babel import Babel
 from flask_mail import Mail
+from flask_beaker import BeakerSession
 import pytz
 from database import db
 import config
@@ -28,6 +29,7 @@ app.config.update(
 )
 
 mail = Mail(app)
+BeakerSession(app)
 
 
 @babel.timezoneselector
