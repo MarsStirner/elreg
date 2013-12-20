@@ -330,7 +330,7 @@ def registration(lpu_id, department_id, doctor_id):
         print e
         abort(404)
 
-    session['step'] = 5
+    session['step'] = 7
 
     form = EnqueuePatientForm(request.form, **dict(session))
     if request.method == 'POST':

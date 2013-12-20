@@ -1,21 +1,14 @@
 {% extends "infokiosk/base.html" %}
 
 {% block content %}
-<div class="alert alert-info"><h4>Внесите данные пациента в поля для заполнения ниже</h4></div>
-<legend>Информация о записи</legend>
-<blockquote class="red">
-    <dl class="dl-horizontal">
-        <dt>Лечебное учреждение:</dt><dd>{{ lpu.name }}</dd>
-        {% if lpu|attr('buildings') and lpu.buildings[0] %}<dd>{{ lpu.buildings[0]|attr('name') }}{% if lpu.buildings[0]|attr('address') %} ({{ lpu.buildings[0]|attr('address') }}){% endif %}</dd>{% endif %}
-        {% if lpu.phone %}<dt>Телефон:</dt><dd>{{ lpu.phone }}</dd>{% endif %}
-        {% if lpu.email %}<dt>Электронная почта:</dt><dd><a href="mailto:{{ lpu.email }}">{{ lpu.email }}</a></dd>{% endif %}
-        <dt>Специализация:</dt><dd>{{ doctor.get('speciality') }}</dd>
-        <dt>Врач:</dt><dd>{% if doctor %}{{ doctor.get('lastName') }} {{ doctor.get('firstName') }} {{ doctor.get('patronymic') }}{% else %}&nbsp;{% endif %}</dd>
-        {%- set office=session.get('office') -%}
-        {% if office %}<dt>Кабинет:</dt><dd>{{ office }}</dd>{% endif %}
-        <dt>Дата и время приёма:</dt><dd>{{ date|dateformat('dd.M.y', rebase=False) }} {{ start_time|datetimeformat('H:mm', rebase=False) }} - {{ finish_time|datetimeformat('H:mm', rebase=False) }}</dd>
-    </dl>
+<blockquote class="red">{{ lpu.name }}{% if lpu|attr('buildings') and lpu.buildings[0] %}, {{ lpu.buildings[0]|attr('name') }}{% if lpu.buildings[0]|attr('address') %} ({{ lpu.buildings[0]|attr('address') }}){% endif %}{% endif %}<br />
+{% if lpu.phone %}<small>Телефон: {{ lpu.phone }}</small>{% endif %}
+{% if doctor.speciality %}<small>{{ doctor.speciality }}</small>{% endif %}
+{% if doctor %}{{ doctor.get('lastName') }} {{ doctor.get('firstName') }} {{ doctor.get('patronymic') }}{% endif %}{% if office is defined %} (кабинет: {{ office }}){% endif %}<br/>
+Дата и время приёма: {{ date|dateformat('dd.M.y', rebase=False) }} {{ start_time|datetimeformat('H:mm', rebase=False) }} - {{ finish_time|datetimeformat('H:mm', rebase=False) }}
 </blockquote>
+<div class="well well-small">Внесите данные пациента</div>
+<legend>Информация о записи</legend>
 {% with errors = get_flashed_messages(category_filter=["error"]) %}
   {% if errors %}
     <div class="alert alert-error" title="Ошибка записи">
@@ -141,5 +134,6 @@
     </div>
 </form>
 </div>
+{% include 'infokiosk/_virtual_keyboard.html' %}
 <a href="{{ url_for('.tickets', lpu_id=request.view_args.get('lpu_id'), department_id=request.view_args.get('department_id'), doctor_id=request.view_args.get('doctor_id')) }}" class="btn btn-large"><i class="icon-arrow-left"></i> К расписанию</a>
 {% endblock %}

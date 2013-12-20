@@ -1,0 +1,30 @@
+{% set digits='1234567890.' %}
+{% set first_row='йцукенгшщзхъ' %}
+{% set second_row='фывапролджэ' %}
+{% set third_row='ячсмитьбю-' %}
+<div class="keyboard text-center">
+    <div id="digits" class="hide">
+        <div class="row-fluid margin-bottom-10">
+        {% for digit in digits %}
+            <button type="button" class="btn btn-large btn-info letter" value="{{ digit }}">{{ digit }}</button>
+        {% endfor %}
+        </div>
+    </div>
+    <div id="letters">
+        <div class="row-fluid margin-bottom-10">
+        {% for letter in first_row %}
+            <button type="button" class="btn btn-large btn-info letter" value="{{ letter|upper }}">{{ letter|upper }}</button>
+        {% endfor %}
+        </div>
+        <div class="row-fluid margin-bottom-10">
+        {% for letter in second_row %}
+            <button type="button" class="btn btn-large btn-info letter" value="{{ letter|upper }}">{{ letter|upper }}</button>
+        {% endfor %}
+        </div>
+        <div class="row-fluid margin-bottom-10">
+        {% for letter in third_row %}
+            <button type="button" class="btn btn-large btn-info letter" value="{{ letter|upper }}">{{ letter|upper }}</button>
+        {% endfor %}
+        </div>
+    </div>
+</div>
