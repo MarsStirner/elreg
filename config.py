@@ -28,6 +28,10 @@ CAPTCHA_LETTER_ROTATION = (-10, 10)
 CAPTCHA_FOREGROUND_COLOR = '#000'
 CAPTCHA_TIMEOUT = 1440
 
+BEAKER_SESSION = {'session.type': 'file',
+                  'session.data_dir': '/tmp/session/data',
+                  'session.lock_dir': '/tmp/session/lock'}
+
 try:
     from config_local import *
 except ImportError:

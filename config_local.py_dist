@@ -14,6 +14,9 @@ SERVER_PORT = 8800
 
 SIMPLELOGS_URL = 'http://127.0.0.1:8080'
 
+BEAKER_SESSION = {'session.type': 'file',
+                  'session.data_dir': '/tmp/session/data',
+                  'session.lock_dir': '/tmp/session/lock'}
 
 #>>> import os
 #>>> os.urandom(24)
