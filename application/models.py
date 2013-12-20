@@ -12,8 +12,9 @@ class Settings(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     code = db.Column(db.String(25), unique=True, nullable=False)
     name = db.Column(db.Unicode(250), unique=True, nullable=False)
-    value = db.Column(db.Unicode(250))
-    value_type = db.Column(db.Enum(*{'bool', 'enum', 'string', 'number', 'image'}))
+    value = db.Column(db.UnicodeText())
+    value_type = db.Column(db.Enum(*{'bool', 'enum', 'string', 'number', 'image', 'password', 'text'}))
+    defaults = db.Column(db.UnicodeText())
 
     def __unicode__(self):
         return self.name
@@ -56,8 +57,26 @@ class Tickets(db.Model):
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     uid = db.Column(db.Unicode(100))
-    ticket_uid = db.Column(db.Unicode(20))
+    ticket_uid = db.Column(db.Unicode(40))
     info = db.Column(db.UnicodeText())
     created = db.Column(db.DateTime(), default=datetime.now)
     updated = db.Column(db.DateTime(), nullable=True)
     is_active = db.Column(db.Boolean(), default=True)
+
+
+class TicketsBlocked(db.Model):
+    __tablename__ = '%s_tickets_blocked' % TABLE_PREFIX
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    ticket_uid = db.Column(db.Unicode(40))
+    lpu_id = db.Column(db.Integer, nullable=False, index=True)
+    department_id = db.Column(db.Integer, nullable=False, index=True)
+    doctor_id = db.Column(db.Integer, nullable=False, index=True)
+    d = db.Column(db.Unicode(10))
+    s = db.Column(db.Unicode(10))
+    f = db.Column(db.Unicode(10))
+    timeslot = db.Column(db.DateTime(), nullable=False)
+    timeIndex = db.Column(db.Integer, nullable=True)
+    created = db.Column(db.DateTime(), default=datetime.now)
+    status = db.Column(db.Enum(*{'blocked', 'free', 'locked', 'disabled'}))
+    updated = db.Column(db.DateTime(), nullable=True)

@@ -18,12 +18,16 @@ from forms import EnqueuePatientForm
 
 from .app import module
 from .lib.service_client import List, Info, Schedule
+from .lib.data import block_ticket, del_session, get_doctor_info, get_doctors_with_tickets, get_lpu, save_ticket
+from .lib.data import prepare_doctors, find_lpu, get_blocked_tickets, change_ticket_status, gen_blocked_ticket_uid
+from .lib.data import async_clear_blocked_tickets, get_blocked_ticket_by_uid, check_blocked_ticket
 from .context_processors import header
 from application.app import db
-from application.models import Tickets
+from application.models import Tickets, TicketsBlocked
 
-from .lib.utils import _config, logger
-from emails import send_ticket
+from .lib.utils import _config, logger, datetime_now
+from .emails import send_ticket
+from .config import BLOCK_TICKET_TIME
 
 
 @module.route('/', methods=['GET'])
@@ -132,7 +136,7 @@ def ajax_search():
                     region_list.append(region)
             # формирование словаря со значениями, удовлетворяющими поиску,
             # где ключ - uid ЛПУ, а значение - наименование ЛПУ
-            result = _search_lpu(region_list, search_gorod, result)
+            result = find_lpu(region_list, search_gorod, result)
 
         ### поиск ЛПУ по названию района: ###
         if search_rayon:
@@ -144,7 +148,7 @@ def ajax_search():
                     region_list.append(region)
             # формирование словаря со значениями, удовлетворяющими поиску,
             # где ключ - uid ЛПУ, а значение - наименование ЛПУ
-            result = _search_lpu(region_list, search_rayon, result)
+            result = find_lpu(region_list, search_rayon, result)
 
         # создание ответа в формате json из содержимого словаря result:
         return jsonify(result)
@@ -200,7 +204,7 @@ def tickets(lpu_id, department_id, doctor_id, start=None):
     if tickets:
         office = getattr(tickets[0], 'office', '')
 
-    doctor_info = _get_doctor_info(hospital_uid, doctor_id)
+    doctor_info = get_doctor_info(hospital_uid, doctor_id)
 
     times = []  # Список времен начала записи текущей недели
     dates = []  # Список дат текущей недели
@@ -246,14 +250,16 @@ def tickets(lpu_id, department_id, doctor_id, start=None):
                            doctor=doctor_info,
                            office=office,
                            ticket_table=ticket_table,
+                           blocked=get_blocked_tickets(lpu_id, department_id, doctor_id),
                            prev_monday=(monday - timedelta(days=7)).strftime('%Y%m%d'),
                            next_monday=(monday + timedelta(days=7)).strftime('%Y%m%d'),
                            #now=datetime.now(tz=timezone(_config('TIME_ZONE'))),
-                           now=now)
+                           )
 
 
+@module.route('/patient/', methods=['GET'])
 @module.route('/patient/<int:lpu_id>/<int:department_id>/<int:doctor_id>/', methods=['POST', 'GET'])
-def registration(lpu_id, department_id, doctor_id):
+def registration(lpu_id=None, department_id=None, doctor_id=None):
     """Логика страницы Запись на приём
     Здесь происходит обработка данных полученных от пользователя (на стороне сервера). Осуществляется проверка на
     наличие незаполненных полей и упрощенная валидация введенных данных. Все найденные ошибки заносятся в
@@ -264,6 +270,9 @@ def registration(lpu_id, department_id, doctor_id):
     осуществляется редирект на страницу Запись.
 
     """
+    if lpu_id is None or department_id is None or doctor_id is None:
+        abort(404)
+
     hospital_uid = '{0}/{1}'.format(lpu_id, department_id)
     lpu_info = get_lpu(hospital_uid)
 
@@ -275,7 +284,7 @@ def registration(lpu_id, department_id, doctor_id):
         session['office'] = request.args.get('office')
 
     if 'doctor' not in session:
-        session['doctor'] = _get_doctor_info(hospital_uid, doctor_id)
+        session['doctor'] = get_doctor_info(hospital_uid, doctor_id)
 
     timeslot, ticket_start, ticket_end = None, None, None
 
@@ -346,7 +355,7 @@ def registration(lpu_id, department_id, doctor_id):
             session['document'] = document
             session['patient'] = patient
 
-            ticket_hash = _save_ticket(ticket.ticketUid, lpu_info=lpu_info)
+            ticket_hash = save_ticket(ticket.ticketUid, lpu_info=lpu_info)
             session['ticket_hash'] = ticket_hash
 
             # формирование и отправка письма:
@@ -358,6 +367,7 @@ def registration(lpu_id, department_id, doctor_id):
                                                              department_id=session.get('department_id'),
                                                              uid=ticket_hash))
                 send_ticket(patient_email, form.data, lpu_info, dequeue_link=dequeue_link, session_data=session)
+                async_clear_blocked_tickets()
 
             log_message = render_template('{0}/messages/success.txt'.format(module.name),
                                           lpu=lpu_info,
@@ -371,7 +381,8 @@ def registration(lpu_id, department_id, doctor_id):
                                           start_time=ticket_start.strftime('%H:%M'),
                                           finish_time=ticket_end.strftime('%H:%M'))
             logger.info(log_message, extra=dict(tags=[u'успешная запись', 'elreg']))
-
+            blocked_ticket_uid = gen_blocked_ticket_uid(lpu_id, department_id, doctor_id, timeslot.replace(tzinfo=None))
+            change_ticket_status(blocked_ticket_uid, 'locked')
             return redirect(url_for('.ticket_info'))
         elif ticket and hasattr(ticket, 'result'):
             # ошибка записи на приём:
@@ -415,12 +426,22 @@ def registration(lpu_id, department_id, doctor_id):
                                           finish_time=ticket_end.strftime('%H:%M'))
             logger.error(log_message, extra=dict(tags=[u'ошибка записи', 'elreg']))
 
-        # если представление было вызвано нажатием на ячейку таблицы на странице Время:
+    # если представление было вызвано нажатием на ячейку таблицы на странице Время:
+
+    # Блокируем талончик
+    blocked_ticket = block_ticket(lpu_id,
+                                  department_id,
+                                  doctor_id,
+                                  timeslot.replace(tzinfo=None),
+                                  date=request.args.get('d'),
+                                  start=request.args.get('s'),
+                                  end=request.args.get('f'))
     return render_template('{0}/registration.html'.format(module.name),
                            lpu=lpu_info,
                            date=timeslot.date(),
                            start_time=ticket_start,
                            finish_time=ticket_end,
+                           blocked_ticket=blocked_ticket,
                            office=session.get('office'),
                            doctor=session.get('doctor'),
                            form=form)
@@ -473,7 +494,7 @@ def get_lpu_doctors(lpu_id=None):
     if speciality:
         params['speciality'] = speciality
     doctors = List().listDoctors(**params)
-    data = _prepare_doctors(doctors)
+    data = prepare_doctors(doctors)
     return jsonify(result=data)
 
 
@@ -488,7 +509,7 @@ def get_lpu_specialities(lpu_id=None):
         specialities.append(doctor.speciality)
     specialities = list(set(specialities))
     specialities.sort()
-    doctors = _prepare_doctors(_doctors)
+    doctors = prepare_doctors(_doctors)
     return jsonify(specialities=specialities, doctors=doctors)
 
 
@@ -509,7 +530,7 @@ def find_doctors(lpu_id=None):
     data = list()
     doctors = List().listDoctors(**params)
     if doctors:
-        data = _prepare_doctors(doctors)
+        data = prepare_doctors(doctors)
     return jsonify(result=data)
 
 
@@ -520,7 +541,7 @@ def get_doctors(lpu_id=None, department_id=None):
     if not lpu_id or not department_id or not speciality:
         abort(404)
     hospital_uid = '{0}/{1}'.format(lpu_id, department_id)
-    data = _get_doctors_with_tickets(hospital_Uid=hospital_uid,
+    data = get_doctors_with_tickets(hospital_Uid=hospital_uid,
                                      speciality=speciality)
     return jsonify(result=data)
 
@@ -530,7 +551,7 @@ def dequeue(lpu_id, department_id, uid):
     ticket = db.session.query(Tickets).filter(Tickets.uid == uid, Tickets.is_active == True).first()
     if not ticket:
         abort(404)
-    _del_session('step')
+    del_session('step')
     ticket_info = ticket.info
     ticket_id, patient_id = ticket.ticket_uid.split('/')
     if request.method == 'POST':
@@ -539,7 +560,7 @@ def dequeue(lpu_id, department_id, uid):
         if result and result['success']:
             flash(u'Отмена записи произведена успешно', category='success')
             ticket.is_active = False
-            ticket.updated = datetime.now()
+            ticket.updated = datetime_now()
             db.session.commit()
             log_message = render_template('{0}/messages/dequeue.txt'.format(module.name),
                                           ticket_info=ticket_info,
@@ -550,7 +571,7 @@ def dequeue(lpu_id, department_id, uid):
         elif result:
             flash(u'''Запись не существует или уже отменена''', category='error')
             ticket.is_active = False
-            ticket.updated = datetime.now()
+            ticket.updated = datetime_now()
             db.session.commit()
             log_message = render_template('{0}/messages/dequeue.txt'.format(module.name),
                                           ticket_info=ticket_info,
@@ -574,142 +595,56 @@ def dequeue(lpu_id, department_id, uid):
     return render_template('{0}/dequeue.html'.format(module.name), ticket_info=ticket_info)
 
 
+@module.route('/unblock_ticket/<uid>/', methods=['POST'])
+def unblock_ticket(uid):
+    change_ticket_status(uid, 'free')
+    return jsonify(result=True)
+
+
+@module.route('/get_blocked_ticket/')
+@module.route('/get_blocked_ticket/<uid>/', methods=['POST'])
+def get_blocked_ticket(uid=None):
+    if uid is None:
+        abort(404)
+    ticket = get_blocked_ticket_by_uid(uid)
+    data = dict()
+    if ticket:
+        data['status'] = ticket.status
+        data['block_until'] = (ticket.created + timedelta(seconds=BLOCK_TICKET_TIME)).strftime('%H:%M %d.%m.%Y')
+        data['uid'] = ticket.ticket_uid
+        data['url'] = url_for('.registration',
+                              lpu_id=ticket.lpu_id,
+                              department_id=ticket.department_id,
+                              doctor_id=ticket.doctor_id,
+                              d=ticket.d,
+                              s=ticket.s,
+                              f=ticket.f)
+    return jsonify(result=data)
+
+
+@module.route('/check_ticket/', methods=['POST'])
+@module.route('/check_ticket/<int:lpu_id>/<int:department_id>/<int:doctor_id>/', methods=['POST'])
+def check_ticket(lpu_id=None, department_id=None, doctor_id=None):
+    if lpu_id is None or department_id is None or doctor_id is None:
+        abort(404)
+
+    date_string = '{date}{time}'.format(date=request.args.get('d'), time=request.args.get('s'))
+    try:
+        timeslot = datetime.strptime(date_string, '%Y%m%d%H%M%S')
+    except Exception, e:
+        print e
+        abort(404)
+    else:
+        ticket = check_blocked_ticket(lpu_id, department_id, doctor_id, timeslot)
+        if ticket:
+            data = dict()
+            data['status'] = ticket.status
+            data['block_until'] = (ticket.created + timedelta(seconds=BLOCK_TICKET_TIME)).strftime('%H:%M %d.%m.%Y')
+            data['uid'] = ticket.ticket_uid
+            return jsonify(result=data)
+        return jsonify(result=None)
+
+
 @module.errorhandler(404)
 def page_not_found(e):
     return render_template('{0}/404.html'.format(module.name)), 404
-
-
-def get_lpu(hospital_uid):
-    lpu_info = None
-    try:
-        hospitals = Info().getHospitalInfo(hospitalUid=hospital_uid)
-    except Exception, e:
-        print e
-    else:
-        if len(hospitals) > 0:
-            lpu_info = hospitals[0]
-        #for build in getattr(lpu_info, 'buildings', list()):
-        #    build.name = build.name
-        #    build.address = build.address
-    return lpu_info
-
-
-def _get_doctor_info(hospital_uid, doctor_id):
-    # TODO: хорошо бы иметь метод получения врача по uid
-    doctors = List().listDoctors(hospital_Uid=hospital_uid)
-
-    doctor_info = None
-    for doctor in getattr(doctors, 'doctors', []):
-        if doctor_id and doctor.uid == doctor_id:
-            doctor_info = dict(firstName=doctor.name.firstName,
-                               lastName=doctor.name.lastName,
-                               patronymic=doctor.name.patronymic,
-                               speciality=doctor.speciality)
-            break
-    return doctor_info
-
-
-def _del_session(key):
-    if key in session:
-        del session[key]
-
-
-def _save_ticket(ticket_uid, lpu_info):
-    import hashlib
-    uid = hashlib.md5(ticket_uid).hexdigest()
-    env = Environment(loader=PackageLoader(module.import_name,  module.template_folder))
-    template = env.get_template('{0}/_ticket.html'.format(module.name))
-    info = template.render(lpu=lpu_info, session=session)
-    ticket = Tickets(uid=uid, ticket_uid=ticket_uid, info=info)
-    db.session.add(ticket)
-    db.session.commit()
-    return uid
-
-
-def _search_lpu(region_list, search_input, result):
-    """Поиск ЛПУ по названию города или по названию района в зависимости от того, что
-    передается в переменной region_list.
-
-    """
-    tmp_list, tmp_dict, lpu_dict = [], {}, {}
-    # получение списка введенных пользователем слов
-    search_list = search_input.lower().split(' ')
-
-    # формирование временного списка кортежей [(регион, код ОКАТО), ...]
-    for i in region_list:
-        tmp_list.append((i.name.lower(), i.code))
-
-    # формирование словаря result со значениями, удовлетворяющими поиску,
-    # где ключ - uid ЛПУ, а значение - наименование ЛПУ
-    for (region, code) in tmp_list:
-        flag = True
-        for i in search_list:
-            if region.find(i) == -1:
-                flag = False
-        if flag:
-            tmp_dict[code] = region
-    for i in tmp_dict.keys():
-        hospitals_list = List().listHospitals(i)
-        for j in hospitals_list:
-            lpu_dict[j.uid.split('/')[0]] = j.name
-    if not result:
-        result = lpu_dict
-    else:
-        adict = {}
-        for i in result.items():
-            for j in lpu_dict.keys():
-                if i[0] == j:
-                    adict[i[0]] = i[1]
-        result = adict
-    return result
-
-
-def _get_doctors_with_tickets(**kwargs):
-    speciality = kwargs.get('speciality')
-    data = list()
-    _doctors = List().listDoctors(**kwargs)
-    start = datetime.now(tzlocal()).astimezone(tz=timezone(_config('TIME_ZONE'))).replace(tzinfo=None)
-    for doctor in getattr(_doctors, 'doctors', []):
-        if speciality and doctor.speciality != speciality:
-            continue
-        hospital_uid = doctor.hospitalUid
-        lpu_id, department_id = hospital_uid.split('/')
-        _tickets = list()
-        closest_tickets = Schedule().get_closest_tickets(hospital_uid, [doctor.uid], start=start)
-        if closest_tickets:
-            for key, value in enumerate(closest_tickets):
-                _tickets.append(dict(href=url_for('.registration',
-                                                  lpu_id=lpu_id,
-                                                  department_id=department_id,
-                                                  doctor_id=doctor.uid,
-                                                  office=getattr(value, 'office', ''),
-                                                  d=value['timeslotStart'].strftime('%Y%m%d'),
-                                                  s=value['timeslotStart'].strftime('%H%M%S'),
-                                                  f=value['timeslotEnd'].strftime('%H%M%S')),
-                                     info=value['timeslotStart'].strftime('%d.%m %H:%M')))
-        data.append(dict(uid=doctor.uid,
-                         name=u' '.join([doctor.name.lastName, doctor.name.firstName, doctor.name.patronymic]),
-                         schedule_href=url_for('.tickets',
-                                               lpu_id=lpu_id,
-                                               department_id=department_id,
-                                               doctor_id=doctor.uid),
-                         tickets=_tickets))
-    return data
-
-
-def _prepare_doctors(doctors):
-    data = list()
-    for key, doctor in enumerate(getattr(doctors, 'doctors', [])):
-        tmp = doctor.hospitalUid.split('/')
-        lpu_id, department_id = tmp[0], tmp[1]
-        data.append(dict(uid=doctor.uid,
-                         name=u' '.join([doctor.name.lastName, doctor.name.firstName, doctor.name.patronymic]),
-                         speciality=doctor.speciality,
-                         hospitalUid=doctor.hospitalUid,
-                         schedule_href=url_for('.tickets',
-                                               lpu_id=lpu_id,
-                                               department_id=department_id,
-                                               doctor_id=doctor.uid),
-                         hospital=dict(name=doctors.hospitals[key].name,
-                                       address=doctors.hospitals[key].address)))
-    return data

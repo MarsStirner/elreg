@@ -11,6 +11,8 @@
         {% if lpu.email %}<dt>Электронная почта:</dt><dd><a href="mailto:{{ lpu.email }}">{{ lpu.email }}</a></dd>{% endif %}
         <dt>Специализация:</dt><dd>{{ doctor.get('speciality') }}</dd>
         <dt>Врач:</dt><dd>{% if doctor %}{{ doctor.get('lastName') }} {{ doctor.get('firstName') }} {{ doctor.get('patronymic') }}{% else %}&nbsp;{% endif %}</dd>
+        {%- set office=session.get('office') -%}
+        {% if office %}<dt>Кабинет:</dt><dd>{{ office }}</dd>{% endif %}
         <dt>Дата и время приёма:</dt><dd>{{ date|dateformat('dd.M.y', rebase=False) }} {{ start_time|datetimeformat('H:mm', rebase=False) }} - {{ finish_time|datetimeformat('H:mm', rebase=False) }}</dd>
     </dl>
 </blockquote>
@@ -55,7 +57,7 @@
     <input type="hidden" name="ticket" value="{{ ticket }}" />
     <input type="hidden" name="flag" value="True" />
 
-    <legend><big>Данные посетителя</big></legend>
+    <legend><big>Данные посетителя</big><small class="pull-right">Талончик заблокирован для Вас до {{ blocked_ticket['block_until']|datetimeformat('HH:mm', rebase=False) }}</small></legend>
     <div class="control-group">
         {{ form.lastname.label(class="control-label") }}
         <div class="controls">
@@ -135,9 +137,28 @@
 
     <div class="form-actions">
         <button type="submit" id="button-submit" class="btn btn-success disabled" disabled>Подтвердить</button>
-        <a href="{{ url_for('.tickets', lpu_id=request.view_args.get('lpu_id'), department_id=request.view_args.get('department_id'), doctor_id=request.view_args.get('doctor_id')) }}" class="btn">Отменить</a>
+        <a href="{{ url_for('.tickets', lpu_id=request.view_args.get('lpu_id'), department_id=request.view_args.get('department_id'), doctor_id=request.view_args.get('doctor_id')) }}" class="btn unblock_ticket">Отменить</a>
     </div>
 </form>
 </div>
-<a href="{{ url_for('.tickets', lpu_id=request.view_args.get('lpu_id'), department_id=request.view_args.get('department_id'), doctor_id=request.view_args.get('doctor_id')) }}" class="btn btn-large"><i class="icon-arrow-left"></i> К расписанию</a>
+<a href="{{ url_for('.tickets', lpu_id=request.view_args.get('lpu_id'), department_id=request.view_args.get('department_id'), doctor_id=request.view_args.get('doctor_id')) }}" class="btn btn-large unblock_ticket"><i class="icon-arrow-left"></i> К расписанию</a>
+{% endblock %}
+{% block js %}
+<script type="text/javascript">
+$(document).ready(function () {
+    $('.unblock_ticket').click(function(event){
+        var url = $(this).attr('href');
+        event.preventDefault();
+        $.ajax({
+            url: "{{ url_for('.unblock_ticket', uid=blocked_ticket['ticket_uid']) }}",
+            crossDomain: true,
+            type: 'POST',
+            cache: false, // обязательно для IE
+            success: function(){
+                window.location.href = url;
+            }
+        });
+    });
+});
+</script>
 {% endblock %}
