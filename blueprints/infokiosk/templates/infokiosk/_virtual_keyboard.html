@@ -6,7 +6,7 @@
     <div id="digits" class="hide">
         <div class="row-fluid margin-bottom-10">
         {% for digit in digits %}
-            <button type="button" class="btn btn-large btn-info letter" value="{{ digit }}">{{ digit }}</button>
+            <button type="button" class="btn btn-large btn-info digit" value="{{ digit }}">{{ digit }}</button>
         {% endfor %}
         </div>
     </div>
@@ -27,4 +27,53 @@
         {% endfor %}
         </div>
     </div>
+    <div id="controls">
+        <div class="row-fluid margin-bottom-10">
+            <button type="button" class="btn btn-large btn-info" id="larr" value="{leftarrow}"><i class="icon-white icon-arrow-left"></i></button>
+            <button type="button" class="btn btn-large btn-info" id="rarr" value="{rightarrow}"><i class="icon-white icon-arrow-right"></i></button>
+            <button type="button" class="btn btn-large btn-danger" id="reset">Удалить всё</button>
+            <button type="button" class="btn btn-large btn-info" id="space" value=" ">Пробел</button>
+            <button type="button" class="btn btn-large btn-danger" id="del_symbol" value="{backspace}">Удалить символ</button>
+        </div>
+    </div>
 </div>
+<script type="text/javascript">
+$(document).ready(function(){
+    function get_input(){
+        var $inputs = $('#patient_form').find('.input_container:visible').find('input');
+        if($inputs.length > 1){
+
+        } else {
+            var input = $inputs[0];
+        }
+        return $(input);
+    }
+    $('#letters').find('button').each(function(){
+        $(this).click(function(){
+            var input = get_input();
+            input.sendkeys($(this).val());
+            input.trigger('change');
+        });
+    });
+    $('#digits').find('button').each(function(){
+        $(this).click(function(){
+            var input = get_input();
+            input.sendkeys($(this).val());
+            input.trigger('change');
+        });
+    });
+    $('#controls').find('button').each(function(){
+        $(this).click(function(){
+            var input = get_input();
+            if ($(this).attr('id') == 'reset'){
+                input.val('');
+                input.trigger('change');
+            }else{
+                input.sendkeys($(this).val());
+                input.trigger('change');
+            }
+        });
+    });
+
+});
+</script>

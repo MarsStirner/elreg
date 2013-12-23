@@ -23,6 +23,7 @@ body{
 }
 .btn-large{
     font-size: 28px;
+    line-height: 28px;
 }
 .menu, .menu > li{
     margin-bottom: 10px;
@@ -52,4 +53,29 @@ table.no-border td, table.no-border th{
 }
 table#days caption{
     margin: 0 5px;
+}
+input[type="text"]{
+    height: 40px;
+    padding: 4px 6px;
+    margin-bottom: 10px;
+    font-size: 28px;
+    line-height: 30px;
+}
+.keyboard{
+    margin-bottom: 30px;
+}
+input[readonly]{
+    background-color: #fff;
+}
+.small-text{
+    font-size: 14px;
+}
+input.day_month{
+    width: 40px;
+}
+input.year{
+    width: 70px;
+}
+.form-horizontal .control-group, .control-group{
+    margin-bottom: 0;
 }
