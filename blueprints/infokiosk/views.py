@@ -364,7 +364,6 @@ def registration(lpu_id, department_id, doctor_id):
                     'firstName': unicode(form.firstname.data.strip().title()),
                     'patronymic': unicode(form.patronymic.data.strip().title())},
             document=document,
-            sex=form.gender.data,
             hospitalUid=hospital_uid,
             doctorUid=doctor_id,
             timeslotStart=timeslot.strftime('%Y-%m-%dT%H:%M:%S'),
@@ -412,7 +411,7 @@ def registration(lpu_id, department_id, doctor_id):
                                           date=timeslot.date().strftime('%d.%m.%Y'),
                                           start_time=ticket_start.strftime('%H:%M'),
                                           finish_time=ticket_end.strftime('%H:%M'))
-            logger.info(log_message, extra=dict(tags=[u'успешная запись', 'elreg']))
+            logger.info(log_message, extra=dict(tags=[u'успешная запись', module.name]))
 
             return redirect(url_for('.ticket_info'))
         elif ticket and hasattr(ticket, 'result'):
@@ -429,7 +428,7 @@ def registration(lpu_id, department_id, doctor_id):
                                               date=timeslot.date().strftime('%d.%m.%Y'),
                                               start_time=ticket_start.strftime('%H:%M'),
                                               finish_time=ticket_end.strftime('%H:%M'))
-                logger.error(log_message, extra=dict(tags=[u'ошибка записи', 'elreg']))
+                logger.error(log_message, extra=dict(tags=[u'ошибка записи', module.name]))
             else:
                 flash(ticket.message, 'error')
                 log_message = render_template('{0}/messages/failed.txt'.format(module.name),
@@ -442,7 +441,7 @@ def registration(lpu_id, department_id, doctor_id):
                                               date=timeslot.date().strftime('%d.%m.%Y'),
                                               start_time=ticket_start.strftime('%H:%M'),
                                               finish_time=ticket_end.strftime('%H:%M'))
-                logger.error(log_message, extra=dict(tags=[u'ошибка записи', 'elreg']))
+                logger.error(log_message, extra=dict(tags=[u'ошибка записи', module.name]))
         else:
             flash(u'Не удалось соединиться с сервером. Попробуйте отправить запрос ещё раз.', 'error')
             log_message = render_template('{0}/messages/failed.txt'.format(module.name),
@@ -455,7 +454,7 @@ def registration(lpu_id, department_id, doctor_id):
                                           date=timeslot.date().strftime('%d.%m.%Y'),
                                           start_time=ticket_start.strftime('%H:%M'),
                                           finish_time=ticket_end.strftime('%H:%M'))
-            logger.error(log_message, extra=dict(tags=[u'ошибка записи', 'elreg']))
+            logger.error(log_message, extra=dict(tags=[u'ошибка записи', module.name]))
 
         # если представление было вызвано нажатием на ячейку таблицы на странице Время:
     return render_template('{0}/registration.html'.format(module.name),
@@ -470,7 +469,7 @@ def registration(lpu_id, department_id, doctor_id):
 
 @module.route('/register/', methods=['GET'])
 def ticket_info():
-    session['step'] = 6
+    session['step'] = 8
     hospital_uid = '{0}/{1}'.format(session.get('lpu_id'), session.get('department_id'))
     lpu_info = get_lpu(hospital_uid)
     return render_template('{0}/ticket_info.html'.format(module.name), lpu=lpu_info)
@@ -561,7 +560,7 @@ def dequeue(lpu_id, department_id, uid):
                                           patient_id=patient_id,
                                           ticket_id=ticket_id,
                                           message=u'Произведена отмена записи')
-            logger.info(log_message, extra=dict(tags=[u'отмена записи', 'elreg']))
+            logger.info(log_message, extra=dict(tags=[u'отмена записи', module.name]))
         elif result:
             flash(u'''Запись не существует или уже отменена''', category='error')
             ticket.is_active = False
@@ -572,7 +571,7 @@ def dequeue(lpu_id, department_id, uid):
                                           patient_id=patient_id,
                                           ticket_id=ticket_id,
                                           message=u'Запись не существует или отменена ранее')
-            logger.info(log_message, extra=dict(tags=[u'отмена записи', 'elreg']))
+            logger.info(log_message, extra=dict(tags=[u'отмена записи', module.name]))
         else:
             flash(u'''Отмена записи произошла с ошибкой,
                   <a href="{0}">попробуйте ещё раз</a>
@@ -585,7 +584,7 @@ def dequeue(lpu_id, department_id, uid):
                                           patient_id=patient_id,
                                           ticket_id=ticket_id,
                                           message=u'Ошибка отмены записи')
-            logger.error(log_message, extra=dict(tags=[u'отмена записи', 'elreg']))
+            logger.error(log_message, extra=dict(tags=[u'отмена записи', module.name]))
     return render_template('{0}/dequeue.html'.format(module.name), ticket_info=ticket_info)
 
 

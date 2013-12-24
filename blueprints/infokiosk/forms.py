@@ -19,9 +19,6 @@ class EnqueuePatientForm(Form):
     day = IntegerField(u'День рождения<span class="text-error">*</span>', [DataRequired(u'Обязательное поле')])
     month = IntegerField(u'Месяц рождения<span class="text-error">*</span>', [DataRequired(u'Обязательное поле')])
     year = IntegerField(u'Год рождения<span class="text-error">*</span>', [DataRequired(u'Обязательное поле')])
-    gender = RadioField(u'Пол<span class="text-error">*</span>',
-                        [Required()],
-                        choices=[(u'1', u'М'), (u'2', u'Ж')])
     document_type = SelectField(u'Тип документа<span class="text-error">*</span>',
                                 [DataRequired()],
                                 choices=[('', u'- укажите тип документа -'),
@@ -41,5 +38,4 @@ class EnqueuePatientForm(Form):
     client_id = StringField(u'Электронная амбулаторная карта<span class="text-error">*</span>')
     doc_series = StringField(u'Серия документа<span class="text-error">*</span>')
     doc_number = StringField(u'Номер документа<span class="text-error">*</span>')
-    captcha = CaptchaField(u'Сосчитайте результат выражения<span class="text-error">*</span>')
 

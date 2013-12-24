@@ -9,7 +9,7 @@
 {#<script type="text/javascript" src="{{ url_for('.static', filename='js/jquery.placeholder.min.js') }}"></script>#}
 <script type="text/javascript" src="{{ url_for('.static', filename='js/bililiteRange.js') }}"></script>
 <script type="text/javascript" src="{{ url_for('.static', filename='js/jquery.sendkeys.js') }}"></script>
-{#<script type="text/javascript" src="{{ url_for('.static', filename='js/scripts.js') }}"></script>#}
+<script type="text/javascript" src="{{ url_for('.static', filename='js/scripts.js') }}"></script>
 <script type="text/javascript" src="{{ url_for('.static', filename='js/ie6.min.js') }}"></script>
 {#<script type="text/javascript">jQuery('input[placeholder]').placeholder();</script>#}
 
@@ -22,3 +22,6 @@
 {% if counter %}
 <div id="counter">{{ counter|safe }}</div>
 {% endif %}
+<script type="text/javascript">
+    setTimeout("{{ url_for('.index') }}",300000);
+</script>

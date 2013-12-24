@@ -18,6 +18,10 @@
                 <a href="{{ url_for('.index') }}" class="btn btn-large"><i class="icon-chevron-left"></i> В начало</a>
                 <a href="{{ url_for('.tickets', lpu_id=request.view_args.get('lpu_id'), department_id=request.view_args.get('department_id'), doctor_id=request.view_args.get('doctor_id')) }}" class="btn btn-large"><i class="icon-chevron-left"></i> К расписанию</a>
             {%- elif session.get('step') == 8 -%}
+                <div class="row-fluid no_print">
+                    <div class="pull-left no_print"><button type="button" id="btnPrint" class="btn btn-success btn-large" name="btnPrint" title="Распечатать уведомление о записи на приём" onClick="window.print();"><i class="icon-print icon-white"></i> Распечатать</button></div>
+                    <div class="pull-right no_print"><a href="{{ url_for('.index') }}" id="button-ready" class="btn btn-large" name="send" title="Завершить запись на приём"><i class="icon-ok"></i> Готово</a></div>
+                </div>
             {%- endif -%}
         </div>
     </div>

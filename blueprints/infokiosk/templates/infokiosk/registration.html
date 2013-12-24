@@ -7,7 +7,7 @@
 {% if doctor %}{{ doctor.get('lastName') }} {{ doctor.get('firstName') }} {{ doctor.get('patronymic') }}{% endif %}{% if office is defined and office %} (кабинет: {{ office }}){% endif %}<br/>
 Дата и время приёма: {{ date|dateformat('dd.M.y', rebase=False) }} {{ start_time|datetimeformat('H:mm', rebase=False) }} - {{ finish_time|datetimeformat('H:mm', rebase=False) }}
 </blockquote>
-{%- with errors = get_flashed_messages(category_filter=["error"]) -%}
+{% set errors = get_flashed_messages(category_filter=["error"]) %}
   {%- if errors -%}
     <div class="alert alert-error" title="Ошибка записи">
         <strong>Ошибка записи!</strong>
@@ -18,7 +18,6 @@
         </ul>
     </div>
   {%- endif -%}
-{%- endwith -%}
 {%- if form.errors -%}
 <div class="alert alert-error" title="Ошибка заполнения формы">
     <strong>Форма заполнена некорректно</strong>
@@ -31,17 +30,8 @@
     </ul>
 </div>
 {%- endif -%}
-{%- with messages = get_flashed_messages(category_filter=["info"]) -%}
-  {%- if messages -%}
-    <div class="alert alert-success" title="Сообщение">
-        <ul class="unstyled no-vmargin">
-        {%- for message in messages -%}
-          <li>{{ message }}</li>
-        {%- endfor -%}
-        </ul>
-    </div>
-  {%- endif -%}
-{%- endwith -%}
+{% if errors or form.errors %}<div id="try_again" class="text-center"><button class="btn btn-large btn-info" id="btn_try_again">Попробовать записаться ещё раз</button></div>{% endif %}
+<div id="form_container"{% if errors or form.errors %} class="hide"{% endif %}>
 <form id="patient_form" action="" method="post" name="frm" class="form-horizontal">
     {{ form.csrf_token }}
     <input type="hidden" name="ticket" value="{{ ticket }}" />
@@ -67,6 +57,21 @@
     </div>
 
     <div id="step5" class="input_container hide control-group">
+        <legend><big>Документ, по которому производится запись</big></legend>
+        <input type="hidden" name="document_type" id="document_type" value="{{ session.get('document_type', '') }}">
+        <div class="row-fluid">
+        {% for column in form.document_type.choices[1:]|slice(2) %}
+            <div class="span6">
+                <ul class="unstyled menu">
+                {% for doc_type in column %}
+                <li class="clearfix"><a href="javascript:void(0);" onclick="choose_doc_type(this,'{{ doc_type[0] }}');" class="btn_doc_type btn btn-large span12 {% if doc_type[0]==session.get('document_type', '') %}btn-warning{% else %}btn-info{% endif %}">{{ doc_type[1] }}</a></li>
+                {%- endfor -%}
+                </ul>
+            </div>
+        {% endfor %}
+        </div>
+    </div>
+    <div id="step6" class="input_container hide control-group">
         {% include 'infokiosk/__documents_select.html' %}
     </div>
 
@@ -84,67 +89,110 @@
     </div>
 </form>
 <div class="well well-small small-text">
-<p>Указывая свои данные на данной странице я даю согласие на автоматизированную обработку в выбранном лечебно-профилактическом учреждении указанной информации (Фамилия, имя, отчество, дата рождения и номер полиса ОМС) для записи на прием в медико-профилактических целях для установления медицинского диагноза и оказания медицинских услуг.</p>
+Указывая свои данные на данной странице я даю согласие на автоматизированную обработку в выбранном лечебно-профилактическом учреждении указанной информации (Фамилия, имя, отчество, дата рождения и номер полиса ОМС) для записи на прием в медико-профилактических целях для установления медицинского диагноза и оказания медицинских услуг.<br/>
 Мое согласие на автоматизированную обработку указанной информации распространяется на осуществление всех действия с ней, включая сбор, передачу по сетям связи общего назначения, накопление, хранение, обновление, изменение, использование, обезличивание, блокирование, уничтожение и обработку посредством внесения в электронную базу данных, систематизации, включения в списки и отчетные формы.
+</div>
 </div>
 {% endblock %}
 {% block js %}
 <script type="text/javascript">
 var step = 1;
+function change_step(newvalue){
+    step = newvalue;
+    $('#btn-step-frwrd').attr('disabled', "disabled");
+    check_btn();
+    if(step==1){
+        $('#btn-step-bkwrd').hide();
+    }else if(step==2){
+        $('#btn-step-bkwrd').show();
+    }else if (step == 6){
+        $('#btn-step-frwrd').hide();
+        $('#btn-submit').show();
+    }else if (step == 5){
+        $('#btn-step-frwrd').hide();
+    }else{
+        $('#btn-step-frwrd').show();
+        $('#btn-submit').hide();
+    }
+    if (step == 4){
+        $('#letters').hide();
+        $('#digits').show();
+        $('#space').hide();
+    }else if (step == 5){
+        $('#letters').hide();
+        $('#digits').hide();
+        $('#controls').hide();
+    }else if(step == 6){
+        $('#letters').show();
+        $('#space').show();
+        $('#controls').show();
+        $('#digits').show();
+    }else{
+        $('#letters').show();
+        $('#space').show();
+        $('#controls').show();
+    }
+}
+function check_btn(){
+    var $inputs = $('#step'+step).find('input:visible');
+    var btn;
+    var disabled=false;
+    if (step == 6){
+        btn = $('#btn-submit');
+    } else {
+        btn = $('#btn-step-frwrd');
+    }
+    for (var i=0;i<$inputs.length;i++){
+        if (!$($inputs[i]).val()){
+            disabled = true;
+        }
+    }
+    if (disabled){
+        btn.attr('disabled', "disabled");
+    } else {
+        btn.removeAttr('disabled');
+    }
+    $inputs.each(function(){
+        $(this).on('change', function(){
+            disabled = false;
+            for (var i=0;i<$inputs.length;i++){
+                if (!$($inputs[i]).val()){
+                    disabled = true;
+                }
+            }
+            if (disabled){
+                btn.attr('disabled', "disabled");
+            } else {
+                btn.removeAttr('disabled');
+            }
+        });
+    });
+}
+function check_input(step){
+    var $inputs = $('#step'+step).find('input');
+    var result = false;
+    $inputs.each(function(index){
+        $(this).parent('div.input_container').removeClass('error');
+        if (!$(this).val()){
+            $(this).parent('div.input_container').addClass('error');
+            result = false;
+            return false;
+        }
+        result = true;
+    });
+    return result;
+}
+function choose_doc_type(el, doc_type){
+    $('.btn_doc_type').removeClass('btn-danger').addClass('btn-info');
+    $(el).removeClass('btn-info').addClass('btn-warning');
+    $('#document_type').val(doc_type);
+    show_doc_fields(doc_type);
+    $('#step5').hide();
+    change_step(6);
+    $('#step6').show();
+}
 $(document).ready(function(){
     check_btn();
-    function check_input(step){
-        var $inputs = $('#step'+step).find('input');
-        var result = false;
-        $inputs.each(function(index){
-            $(this).parent('div.input_container').removeClass('error');
-            if (!$(this).val()){
-                $(this).parent('div.input_container').addClass('error');
-                result = false;
-                return false;
-            }
-            result = true;
-        });
-        return result;
-    }
-    function check_btn(){
-        var $inputs = $('#step'+step).find('input');
-        var btn;
-        if (step == 7){
-            btn = $('#btn-submit');
-        } else {
-            btn = $('#btn-step-frwrd');
-        }
-        $inputs.each(function(){
-            $(this).on('change', function(){
-                if ($(this).val()){
-                    btn.removeAttr('disabled');
-                }else{
-                    btn.attr('disabled', "disabled");
-                }
-            });
-        });
-    }
-    function change_step(newvalue){
-        step = newvalue;
-        $('#btn-step-frwrd').addClass('disabled');
-        check_btn();
-        if(step==1){
-            $('#btn-step-bkwrd').hide();
-        }else if(step==2){
-            $('#btn-step-bkwrd').show();
-        }else if (step == 7){
-            $('#btn-step-frwrd').hide();
-            $('#btn-submit').show();
-        }
-        if (step == 4){
-            $('#letters').hide();
-            $('#digits').show();
-        }else{
-            $('#letters').show();
-            $('#digits').hide();
-        }
-    }
     $('#btn-step-frwrd').click(function(){
         if(check_input(step)){
             $('#step'+step).hide();
@@ -158,6 +206,14 @@ $(document).ready(function(){
         $('#step'+step).hide();
         change_step(step - 1);
         $('#step'+step).show();
+    });
+    $('#btn_try_again').click(function(){
+        $('#form_container').show();
+        $('#try_again').hide();
+        $('.alert').hide();
+    });
+    $("form#patient_form").submit(function(){
+        $('body').addClass("loading");
     });
 });
 </script>

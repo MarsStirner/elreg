@@ -158,7 +158,7 @@ class Schedule():
             ticket = []
         return ticket
 
-    def enqueue(self, person, document, hospitalUid, doctorUid, timeslotStart, hospitalUidFrom, birthday, sex):
+    def enqueue(self, person, document, hospitalUid, doctorUid, timeslotStart, hospitalUidFrom, birthday, sex=None):
         """
         Метод принимает данные о пациенте и возвращает номер талона и результат записи на приём.
 

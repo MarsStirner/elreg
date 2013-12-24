@@ -11,12 +11,39 @@ html, body {height: 100%;}
 body{
     font-size: 22px;
 }
+.loader {
+    display:    none;
+    position:   fixed;
+    z-index:    1000;
+    top:        0;
+    left:       0;
+    height:     100%;
+    width:      100%;
+    background: rgba( 255, 255, 255, .8 )
+    url('../i/ajax-loader.gif')
+    50% 50%
+    no-repeat;
+}
+/* When the body has the loading class, we turn
+   the scrollbar off with overflow:hidden */
+body.loading {
+    overflow: hidden;
+}
+
+/* Anytime the body has the loading class, our
+   modal element will be visible */
+body.loading .loader {
+    display: block;
+}
+
 @media (max-width: 979px) and (min-width: 798px){
 .container, .navbar-static-top .container, .navbar-fixed-top .container, .navbar-fixed-bottom .container {
     width: 95%;
 }
 }
-
+.page-header {
+    margin: 10px 0 20px;
+}
 .no-vmargin{
     margin-top:0!important;
     margin-bottom: 0!important;
@@ -74,7 +101,7 @@ input.day_month{
     width: 40px;
 }
 input.year{
-    width: 70px;
+    width: 68px;
 }
 .form-horizontal .control-group, .control-group{
     margin-bottom: 0;

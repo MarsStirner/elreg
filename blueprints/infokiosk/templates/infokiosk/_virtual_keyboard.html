@@ -1,4 +1,4 @@
-{% set digits='1234567890.' %}
+{% set digits='1234567890' %}
 {% set first_row='йцукенгшщзхъ' %}
 {% set second_row='фывапролджэ' %}
 {% set third_row='ячсмитьбю-' %}
@@ -31,43 +31,113 @@
         <div class="row-fluid margin-bottom-10">
             <button type="button" class="btn btn-large btn-info" id="larr" value="{leftarrow}"><i class="icon-white icon-arrow-left"></i></button>
             <button type="button" class="btn btn-large btn-info" id="rarr" value="{rightarrow}"><i class="icon-white icon-arrow-right"></i></button>
-            <button type="button" class="btn btn-large btn-danger" id="reset">Удалить всё</button>
-            <button type="button" class="btn btn-large btn-info" id="space" value=" ">Пробел</button>
             <button type="button" class="btn btn-large btn-danger" id="del_symbol" value="{backspace}">Удалить символ</button>
+            <button type="button" class="btn btn-large btn-danger" id="reset">Удалить всё</button>
+{#            <button type="button" class="btn btn-large btn-info" id="space" value=" ">Пробел</button>#}
         </div>
     </div>
 </div>
 <script type="text/javascript">
 $(document).ready(function(){
+    var input;
     function get_input(){
-        var $inputs = $('#patient_form').find('.input_container:visible').find('input');
+        var _input;
+        var $inputs = $('#patient_form').find('.input_container:visible').find('input:visible');
         if($inputs.length > 1){
-
+            for (var key=0; key<$inputs.length; key++){
+                _input = $inputs[key];
+                if($(_input).val().length < $(_input).attr('maxlength')){
+                    return $(_input);
+                }
+            }
         } else {
-            var input = $inputs[0];
+            _input = $inputs[0];
         }
-        return $(input);
+        return $(_input);
+    }
+    function get_prev_input(current_input){
+        var _input = current_input;
+        var $inputs = $('#patient_form').find('.input_container:visible').find('input:visible');
+        if($inputs.length > 1){
+            for (var i=0; i<$inputs.length; i++){
+                if ($($inputs[i]).attr('id') == current_input.attr('id') && i > 0){
+                    _input = $($inputs[i-1]);
+                    _input.focus();
+                    bililiteRange($inputs[i-1], false).bounds('end').select();
+                    return _input;
+                }
+            }
+        }
+        return _input;
+    }
+    function get_next_input(current_input){
+        var _input = current_input;
+        var $inputs = $('#patient_form').find('.input_container:visible').find('input:visible');
+        if($inputs.length > 1){
+            for (var i=0; i<$inputs.length; i++){
+                if ($($inputs[i]).attr('id') == current_input.attr('id') && i < ($inputs.length - 1)){
+                    _input = $($inputs[i+1]);
+                    _input.focus();
+                    bililiteRange($inputs[i+1], false).bounds('start').select();
+                    return _input;
+                }
+            }
+        }
+        return _input;
     }
     $('#letters').find('button').each(function(){
         $(this).click(function(){
-            var input = get_input();
-            input.sendkeys($(this).val());
-            input.trigger('change');
+            if (input == undefined || !input.is(':visible')){
+                input = get_input();
+            }else if (input.attr('maxlength') != undefined && input.prop('selectionStart') == (input.attr('maxlength'))){
+                input = get_next_input(input);
+            }
+            if (input.attr('maxlength') == undefined || input.val().length < input.attr('maxlength')){
+                input.sendkeys($(this).val());
+                input.trigger('change');
+            }
         });
     });
     $('#digits').find('button').each(function(){
         $(this).click(function(){
-            var input = get_input();
-            input.sendkeys($(this).val());
-            input.trigger('change');
+            if (input == undefined || !input.is(':visible')){
+                input = get_input();
+            }else if (input.attr('maxlength') != undefined && input.prop('selectionStart') == (input.attr('maxlength'))){
+                input = get_next_input(input);
+            }
+            if (input.attr('maxlength') == undefined || input.val().length < input.attr('maxlength')){
+                input.sendkeys($(this).val());
+                input.trigger('change');
+            }
         });
     });
     $('#controls').find('button').each(function(){
         $(this).click(function(){
-            var input = get_input();
+            if (input == undefined || !input.is(':visible')){
+                input = get_input();
+            }
+            var old_id = input.attr('id');
             if ($(this).attr('id') == 'reset'){
-                input.val('');
+                $('#patient_form').find('.input_container:visible').find('input').val('');
+                input = get_input();
                 input.trigger('change');
+                input.focus();
+            }else if ($(this).attr('id') == 'larr' || $(this).attr('id') == 'del_symbol'){
+                if (input.prop('selectionStart') == 0){
+                    input = get_prev_input(input);
+                }
+                if (old_id == input.attr('id')){
+                    input.sendkeys($(this).val());
+                    input.trigger('change');
+                }
+            }else if ($(this).attr('id') == 'rarr'){
+                if (input.prop('selectionStart') == (input.val().length)){
+                    input = get_next_input(input);
+                }
+                if (old_id == input.attr('id')){
+                    input.sendkeys($(this).val());
+                    input.trigger('change');
+                }
             }else{
                 input.sendkeys($(this).val());
                 input.trigger('change');
