@@ -36,18 +36,93 @@
 <p class="pull-right">
     <a href="{{ url_for('.search', okato=session.get('okato'), lpu_id=lpu_id) }}" class="btn btn-large" title="Поиск врача"><i class="icon-search"></i> Поиск врача</a>
 </p>
+    <!-- Modal -->
+<div id="block_modal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="block_modalLabel" aria-hidden="true">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="block_modalLabel">Талон заблокирован</h3>
+    </div>
+    <div class="modal-body">
+        <p>Выбранный Вами талон заблокирован другим пациентом до <b id="block_time"></b>.<br>
+           По истечении времени блокировки талон может быть освобождён.<br>
+           Вы можете выбрать любой другой свободный талон из расписания.
+        </p>
+    </div>
+</div>
+<!-- Modal -->
+<div id="locked_modal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="locked_modalLabel" aria-hidden="true">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="locked_modalLabel">Талон занят</h3>
+    </div>
+    <div class="modal-body">
+        <p>К сожалению, выбранный Вами талон занят другим пациентом.<br>
+           Перейдите к расписанию и выберите любой свободный талон.</p>
+    </div>
+</div>
+<!-- Modal -->
+<div id="disabled_modal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="disabled_modalLabel" aria-hidden="true">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="disabled_modalLabel">Талон просрочен</h3>
+    </div>
+    <div class="modal-body">
+        <p>Выбранный Вами талон просрочен.<br>
+           Перейдите к расписанию и выберите любой свободный талон.</p>
+    </div>
+</div>
 {% endblock %}
 {% block js %}
-    <script>
-    $(document).ready(function () {
-        $("body").on({
-            ajaxStart: function() {
-                $(this).addClass("loading");
-            },
-            ajaxStop: function() {
-                $(this).removeClass("loading");
-            }
-        });
+<script type="text/javascript">
+function bind_loader(){
+    $("body").on({
+        ajaxStart: function() {
+            $(this).addClass("loading");
+        },
+        ajaxStop: function() {
+            $(this).removeClass("loading");
+            $('.btn-success').click(function(event){
+                free_ticket_worker($(this), event);
+            });
+        }
     });
-    </script>
+}
+function unbind_loader(){
+    $("body").off('ajaxStart');
+    $("body").off('ajaxStop');
+}
+$(document).ready(function () {
+    bind_loader();
+});
+function free_ticket_worker($slot, event){
+    unbind_loader();
+    event.preventDefault();
+    var url = $slot.attr('href');
+    url = url.replace('{{ url_for('.registration') }}', '{{ url_for('.check_ticket') }}');
+      $.ajax({
+        url: url,
+        crossDomain: true,
+        type: 'POST',
+        cache: false // обязательно для IE
+        }).done(function(data){
+              if(data['result']){
+                  var ticket = data['result'];
+                  if (ticket['status'] == 'free'){
+                      window.location.href = $slot.attr('href');
+                  } else if(ticket['status'] == 'locked'){
+                      $('#locked_modal').modal();
+                  } else if(ticket['status'] == 'disabled'){
+                      $('#disabled_modal').modal();
+                  } else if(ticket['status'] == 'blocked'){
+                      $('#block_time').text(ticket['block_until']);
+                      $('#block_modal').modal();
+                  }
+                  bind_loader();
+              } else {
+                  $('body').addClass("loading");
+                  window.location.href = $slot.attr('href');
+              }
+        });
+}
+</script>
 {% endblock %}
