@@ -63,7 +63,7 @@
             <div class="span6">
                 <ul class="unstyled menu">
                 {% for gender in column %}
-                <li class="clearfix"><a href="javascript:void(0);" onclick="choose_gender(this,'{{ gender[0] }}');" class="btn_doc_type btn btn-large span12 {% if gender[0]==session.get('gender', '') %}btn-warning{% else %}btn-info{% endif %}">{{ gender[1] }}</a></li>
+                <li class="clearfix"><a href="javascript:void(0);" onclick="choose_gender(this,'{{ gender[0] }}');" class="btn_gender_type btn btn-large span12 {% if gender[0]==session.get('gender', '') %}btn-warning{% else %}btn-info{% endif %}">{{ gender[1] }}</a></li>
                 {%- endfor -%}
                 </ul>
             </div>
@@ -208,7 +208,7 @@ function choose_doc_type(el, doc_type){
     $('#step7').show();
 }
 function choose_gender(el, gender){
-    $('.btn_doc_type').removeClass('btn-warning').addClass('btn-info');
+    $('.btn_gender_type').removeClass('btn-warning').addClass('btn-info');
     $(el).removeClass('btn-info').addClass('btn-warning');
     $('#gender').val(gender);
     $('#step5').hide();
