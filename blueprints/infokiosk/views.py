@@ -24,7 +24,7 @@ from .context_processors import header
 from application.app import db
 from application.models import Tickets
 
-from ..site.lib.utils import _config, logger
+from ..infokiosk.lib.utils import _config, logger
 from emails import send_ticket
 
 
@@ -335,6 +335,7 @@ def registration(lpu_id, department_id, doctor_id):
     form = EnqueuePatientForm(request.form, **dict(session))
     if request.method == 'POST':
         session.update(form.data)
+
     if form.validate_on_submit():
         document_type = form.document_type.data.strip()
         document = dict()
@@ -364,6 +365,7 @@ def registration(lpu_id, department_id, doctor_id):
                     'firstName': unicode(form.firstname.data.strip().title()),
                     'patronymic': unicode(form.patronymic.data.strip().title())},
             document=document,
+            sex=form.gender.data,
             hospitalUid=hospital_uid,
             doctorUid=doctor_id,
             timeslotStart=timeslot.strftime('%Y-%m-%dT%H:%M:%S'),

@@ -34,7 +34,7 @@
     <ul class="unstyled no-vmargin">
         {% for field_name in form.errors %}
             {% for error in form.errors[field_name] %}
-                <li>{{ form[field_name].label(class="inline") }}: {{ error }}</li>
+                <li>{% if field_name != 'year' %}{{ form[field_name].label(class="inline") }}: {% endif %}{{ error }}</li>
             {% endfor %}
         {% endfor %}
     </ul>

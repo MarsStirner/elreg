@@ -3,6 +3,7 @@ from flask.ext.wtf import Form, RecaptchaField
 from wtforms import StringField, IntegerField, RadioField, SelectField, BooleanField, FormField
 from wtforms.validators import DataRequired, Email, AnyOf, Optional, Required
 from application.lib.captcha.fields import CaptchaField
+from ..site.lib.validators import DateValidator
 
 
 class BirthdayForm(Form):
@@ -15,10 +16,14 @@ class EnqueuePatientForm(Form):
     lastname = StringField(u'Фамилия<span class="text-error">*</span>', [DataRequired()])
     firstname = StringField(u'Имя<span class="text-error">*</span>', [DataRequired()])
     patronymic = StringField(u'Отчество<span class="text-error">*</span>', [DataRequired()])
-    #BirthdayForm = FormField(BirthdayForm, label=u'Дата рождения')
+    #birth_date = FormField(BirthdayForm, label=u'Дата рождения')
     day = IntegerField(u'День рождения<span class="text-error">*</span>', [DataRequired(u'Обязательное поле')])
     month = IntegerField(u'Месяц рождения<span class="text-error">*</span>', [DataRequired(u'Обязательное поле')])
-    year = IntegerField(u'Год рождения<span class="text-error">*</span>', [DataRequired(u'Обязательное поле')])
+    year = IntegerField(u'Год рождения<span class="text-error">*</span>',
+                        [DataRequired(u'Обязательное поле'), DateValidator('month', 'day')])
+    gender = RadioField(u'Пол<span class="text-error">*</span>',
+                        [Required()],
+                        choices=[(u'1', u'Мужской'), (u'2', u'Женский')])
     document_type = SelectField(u'Тип документа<span class="text-error">*</span>',
                                 [DataRequired()],
                                 choices=[('', u'- укажите тип документа -'),
@@ -38,4 +43,3 @@ class EnqueuePatientForm(Form):
     client_id = StringField(u'Электронная амбулаторная карта<span class="text-error">*</span>')
     doc_series = StringField(u'Серия документа<span class="text-error">*</span>')
     doc_number = StringField(u'Номер документа<span class="text-error">*</span>')
-

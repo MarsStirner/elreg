@@ -24,7 +24,7 @@
     <ul class="unstyled no-vmargin">
         {%- for field_name in form.errors -%}
             {%- for error in form.errors[field_name] -%}
-                <li>{{ form[field_name].label(class="inline") }}: {{ error }}</li>
+                <li>{% if field_name != 'year' %}{{ form[field_name].label(class="inline") }}: {% endif %}{{ error }}</li>
             {%- endfor -%}
         {%- endfor -%}
     </ul>
@@ -55,8 +55,22 @@
         {{ form.year(class="year text-center", id="yy", autocomplete="off", value=session.get('year', ''), maxlength=4) }}
         </div>
     </div>
-
     <div id="step5" class="input_container hide control-group">
+        <legend><big>Укажите пол</big></legend>
+        <input type="hidden" name="gender" id="gender" value="{{ session.get('gender', '') }}">
+        <div class="row-fluid">
+        {% for column in form.gender.choices|slice(2) %}
+            <div class="span6">
+                <ul class="unstyled menu">
+                {% for gender in column %}
+                <li class="clearfix"><a href="javascript:void(0);" onclick="choose_gender(this,'{{ gender[0] }}');" class="btn_doc_type btn btn-large span12 {% if gender[0]==session.get('gender', '') %}btn-warning{% else %}btn-info{% endif %}">{{ gender[1] }}</a></li>
+                {%- endfor -%}
+                </ul>
+            </div>
+        {% endfor %}
+        </div>
+    </div>
+    <div id="step6" class="input_container hide control-group">
         <legend><big>Документ, по которому производится запись</big></legend>
         <input type="hidden" name="document_type" id="document_type" value="{{ session.get('document_type', '') }}">
         <div class="row-fluid">
@@ -71,7 +85,7 @@
         {% endfor %}
         </div>
     </div>
-    <div id="step6" class="input_container hide control-group">
+    <div id="step7" class="input_container hide control-group">
         {% include 'infokiosk/__documents_select.html' %}
     </div>
 
@@ -89,7 +103,7 @@
     </div>
 </form>
 <div class="well well-small small-text">
-Указывая свои данные на данной странице я даю согласие на автоматизированную обработку в выбранном лечебно-профилактическом учреждении указанной информации (Фамилия, имя, отчество, дата рождения и номер полиса ОМС) для записи на прием в медико-профилактических целях для установления медицинского диагноза и оказания медицинских услуг.<br/>
+Указывая свои данные на данной странице я даю согласие на автоматизированную обработку в выбранном лечебно-профилактическом учреждении указанной информации (фамилия, имя, отчество, дата рождения, номер и/или серия документа) для записи на прием в медико-профилактических целях для установления медицинского диагноза и оказания медицинских услуг.<br/>
 Мое согласие на автоматизированную обработку указанной информации распространяется на осуществление всех действия с ней, включая сбор, передачу по сетям связи общего назначения, накопление, хранение, обновление, изменение, использование, обезличивание, блокирование, уничтожение и обработку посредством внесения в электронную базу данных, систематизации, включения в списки и отчетные формы.
 </div>
 </div>
@@ -105,10 +119,12 @@ function change_step(newvalue){
         $('#btn-step-bkwrd').hide();
     }else if(step==2){
         $('#btn-step-bkwrd').show();
-    }else if (step == 6){
+    }else if (step == 7){
         $('#btn-step-frwrd').hide();
         $('#btn-submit').show();
-    }else if (step == 5){
+    }else if (step == 5 && !$('#gender').val()){
+        $('#btn-step-frwrd').hide();
+    }else if (step == 6 && !$('#document_type').val()){
         $('#btn-step-frwrd').hide();
     }else{
         $('#btn-step-frwrd').show();
@@ -118,11 +134,11 @@ function change_step(newvalue){
         $('#letters').hide();
         $('#digits').show();
         $('#space').hide();
-    }else if (step == 5){
+    }else if (step == 6 || step == 5){
         $('#letters').hide();
         $('#digits').hide();
         $('#controls').hide();
-    }else if(step == 6){
+    }else if(step == 7){
         $('#letters').show();
         $('#space').show();
         $('#controls').show();
@@ -137,7 +153,7 @@ function check_btn(){
     var $inputs = $('#step'+step).find('input:visible');
     var btn;
     var disabled=false;
-    if (step == 6){
+    if (step == 7){
         btn = $('#btn-submit');
     } else {
         btn = $('#btn-step-frwrd');
@@ -187,6 +203,14 @@ function choose_doc_type(el, doc_type){
     $(el).removeClass('btn-info').addClass('btn-warning');
     $('#document_type').val(doc_type);
     show_doc_fields(doc_type);
+    $('#step6').hide();
+    change_step(7);
+    $('#step7').show();
+}
+function choose_gender(el, gender){
+    $('.btn_doc_type').removeClass('btn-danger').addClass('btn-info');
+    $(el).removeClass('btn-info').addClass('btn-warning');
+    $('#gender').val(gender);
     $('#step5').hide();
     change_step(6);
     $('#step6').show();
