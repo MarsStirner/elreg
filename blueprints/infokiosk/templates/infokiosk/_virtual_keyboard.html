@@ -50,11 +50,13 @@ $(document).ready(function(){
             for (var key=0; key<$inputs.length; key++){
                 _input = $inputs[key];
                 if($(_input).val().length < $(_input).attr('maxlength')){
+                    bililiteRange(_input, false).bounds('end').select();
                     return $(_input);
                 }
             }
         } else {
             _input = $inputs[0];
+            bililiteRange(_input, false).bounds('end').select();
         }
         return $(_input);
     }
