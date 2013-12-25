@@ -44,6 +44,9 @@ $(document).ready(function(){
         var _input;
         var $inputs = $('#patient_form').find('.input_container:visible').find('input:visible');
         if($inputs.length > 1){
+            $inputs.click(function(){
+                input = $(this);
+            });
             for (var key=0; key<$inputs.length; key++){
                 _input = $inputs[key];
                 if($(_input).val().length < $(_input).attr('maxlength')){
