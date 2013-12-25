@@ -137,12 +137,15 @@ class Schedule():
                 params.update(dict(startDate=startDate, endDate=endDate))
             result = self.client.service.getScheduleInfo(params)
             ticket = getattr(result, 'timeslots', [])
+            absences = getattr(result, 'absences', [])
         except Exception, e:
             print e
             logger.error(u'params:{0} \nError: {1}'.format(unicode(params), e),
                          extra=dict(tags=[u'получение расписания', 'elreg']))
             ticket = []
-        return ticket
+            absences = []
+        result = self.client.service.getScheduleInfo(params)
+        return ticket, absences
 
     def getTicketStatus(self, hospitalUid=0, ticketUid=0):
         """

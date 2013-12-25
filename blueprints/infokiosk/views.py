@@ -246,10 +246,10 @@ def tickets(lpu_id, department_id, doctor_id, start=None):
 
     closest_first_day = start_date - timedelta(days=(min(start_date.day, start_date.isoweekday()) - 1))
 
-    tickets = Schedule().getScheduleInfo(hospitalUid=hospital_uid,
-                                         doctorUid=doctor_id,
-                                         startDate=start_date,
-                                         endDate=last_date)
+    tickets, absences = Schedule().getScheduleInfo(hospitalUid=hospital_uid,
+                                                   doctorUid=doctor_id,
+                                                   startDate=start_date,
+                                                   endDate=last_date)
     office = None
     if tickets:
         office = getattr(tickets[0], 'office', '')

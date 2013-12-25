@@ -44,25 +44,36 @@
         </thead>
         <tbody>
         {% for row in ticket_table %}
+            {% set outer_loop = loop %}
             <tr>
                 {% for cell in row %}
-                    {% if cell and cell|attr('start') > now %}
-                    <td class="{{ cell.status }}">
-                        {% if cell.status == 'free' %}
-                            <a href="{{ url_for('.registration', lpu_id=lpu_id, department_id=department_id, doctor_id=doctor_id, d=cell.start|dateformat('yyyyMMdd'), s=cell.start|datetimeformat('HHmmss', rebase=False), f=cell.finish|datetimeformat('HHmmss', rebase=False)) }}" class="btn btn-block btn-success">{{ cell.start|datetimeformat('HH:mm', rebase=False) }}</a>
-                        {% elif cell.status == 'locked' or cell.status == 'disabled' %}
-                            <span class="btn btn-block btn-danger disabled">{{ cell.start|datetimeformat('HH:mm', rebase=False) }}</span>
-                        {% else %}
-                            <span class="btn btn-block btn-danger disabled{% if cell.start|datetimeformat('HH:mm', rebase=False) %} btn-inverse{% endif %}">{{ cell.start|datetimeformat('H:mm', rebase=False)|default("&nbsp;") }}</span>
+                    {% if cell|attr('start') and cell.start|dateformat('yyyyMMdd') in absences and absences[cell.start|dateformat('yyyyMMdd')] is iterable %}
+                        {% if outer_loop.first %}
+                            <td rowspan="{{ outer_loop.length }}" class="span2">
+                                <span class="btn btn-block disabled">Врач не принимает по причине: <strong>{{ absences[cell.start|dateformat('yyyyMMdd')].name }}</strong></span>
+                            </td>
                         {% endif %}
-                    {% elif cell %}
-                    <td align="center">
-                        <span class="btn btn-block btn-danger disabled{% if cell.start|datetimeformat('HH:mm', rebase=False) %} btn-inverse{% endif %}">{{ cell.start|datetimeformat('H:mm', rebase=False)|default("&nbsp;") }}</span>
                     {% else %}
-                    <td align="center">
-                        <span class="btn btn-block disabled">&nbsp;</span>
+                        {% if cell and cell|attr('start') > now %}
+                        <td class="{{ cell.status }}">
+                            {% if cell.status == 'free' %}
+                                <a href="{{ url_for('.registration', lpu_id=lpu_id, department_id=department_id, doctor_id=doctor_id, d=cell.start|dateformat('yyyyMMdd'), s=cell.start|datetimeformat('HHmmss', rebase=False), f=cell.finish|datetimeformat('HHmmss', rebase=False)) }}" class="btn btn-block btn-success">{{ cell.start|datetimeformat('HH:mm', rebase=False) }}</a>
+                            {% elif cell.status == 'locked' or cell.status == 'disabled' %}
+                                <span class="btn btn-block btn-danger disabled">{{ cell.start|datetimeformat('HH:mm', rebase=False) }}</span>
+                            {% else %}
+                                <span class="btn btn-block btn-danger disabled{% if cell.start|datetimeformat('HH:mm', rebase=False) %} btn-inverse{% endif %}">{{ cell.start|datetimeformat('H:mm', rebase=False)|default("&nbsp;") }}</span>
+                            {% endif %}
+                        </td>
+                        {% elif cell %}
+                        <td align="center">
+                            <span class="btn btn-block btn-danger disabled{% if cell.start|datetimeformat('HH:mm', rebase=False) %} btn-inverse{% endif %}">{{ cell.start|datetimeformat('H:mm', rebase=False)|default("&nbsp;") }}</span>
+                        </td>
+                        {% else %}
+                        <td align="center">
+                            <span class="btn btn-block disabled">&nbsp;</span>
+                        </td>
+                        {% endif %}
                     {% endif %}
-                    </td>
                 {% endfor %}
             </tr>
         {% endfor %}

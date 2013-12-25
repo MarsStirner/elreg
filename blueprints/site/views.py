@@ -190,10 +190,10 @@ def tickets(lpu_id, department_id, doctor_id, start=None):
     if monday is None:
         monday = today - timedelta(days=date.isoweekday(today) - 1)
 
-    tickets = Schedule().getScheduleInfo(hospitalUid=hospital_uid,
-                                         doctorUid=doctor_id,
-                                         startDate=monday,
-                                         endDate=monday+timedelta(days=6))
+    tickets, absences = Schedule().getScheduleInfo(hospitalUid=hospital_uid,
+                                                   doctorUid=doctor_id,
+                                                   startDate=monday,
+                                                   endDate=monday+timedelta(days=6))
     office = None
     if tickets:
         office = getattr(tickets[0], 'office', '')
@@ -232,6 +232,10 @@ def tickets(lpu_id, department_id, doctor_id, start=None):
             if add_to_table:
                 ticket_table.append(tmp_list)
 
+    absence_data = dict()
+    for absence in absences:
+        absence_data[absence.date.strftime('%Y%m%d')] = absence
+
     session['doctor'] = doctor_info
     session['office'] = office
     return render_template('{0}/tickets.html'.format(module.name),
@@ -244,6 +248,7 @@ def tickets(lpu_id, department_id, doctor_id, start=None):
                            doctor=doctor_info,
                            office=office,
                            ticket_table=ticket_table,
+                           absences=absence_data,
                            prev_monday=(monday - timedelta(days=7)).strftime('%Y%m%d'),
                            next_monday=(monday + timedelta(days=7)).strftime('%Y%m%d'),
                            #now=datetime.now(tz=timezone(_config('TIME_ZONE'))),
