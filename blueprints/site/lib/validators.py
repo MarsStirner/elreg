@@ -19,6 +19,8 @@ class DateValidator(object):
             raise ValidationError(field.gettext(u"Invalid field name (%s).") % e)
         try:
             date = datetime(year=field.data, month=month.data, day=day.data)
+            if date > datetime.today():
+                ValidationError(self.message)
         except ValueError:
             raise ValidationError(self.message)
         except Exception:
