@@ -199,7 +199,7 @@ function check_input(step){
     return result;
 }
 function choose_doc_type(el, doc_type){
-    $('.btn_doc_type').removeClass('btn-danger').addClass('btn-info');
+    $('.btn_doc_type').removeClass('btn-warning').addClass('btn-info');
     $(el).removeClass('btn-info').addClass('btn-warning');
     $('#document_type').val(doc_type);
     show_doc_fields(doc_type);
@@ -208,7 +208,7 @@ function choose_doc_type(el, doc_type){
     $('#step7').show();
 }
 function choose_gender(el, gender){
-    $('.btn_doc_type').removeClass('btn-danger').addClass('btn-info');
+    $('.btn_doc_type').removeClass('btn-warning').addClass('btn-info');
     $(el).removeClass('btn-info').addClass('btn-warning');
     $('#gender').val(gender);
     $('#step5').hide();
