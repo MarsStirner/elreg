@@ -17,8 +17,8 @@
 {% else %}
     <div class="alert alert-error">Данные по медицинским учреждениям выбранного муниципального образования отсутствуют, попробуйте зайти на страницу позже или выберите другое муниципальное образование.</div>
 {% endif %}
-<a href="{{ url_for('.index') }}" class="btn btn-large" title="На главную страницу"><i class="icon-arrow-left"></i> На главную</a>
-<p class="pull-right">
-    <a href="{{ url_for('.search', okato=request.view_args.get('okato')) }}" class="btn btn-large" title="Поиск врача"><i class="icon-search"></i> Поиск врача</a>
-</p>
+<div class="clearfix">
+    <div class="pull-left"><a href="{{ url_for('.index') }}" class="btn btn-large" title="На главную страницу"><i class="icon-arrow-left"></i> На главную</a></div>
+    <div class="pull-right"><a href="{{ url_for('.search', okato=request.view_args.get('okato')) }}" class="btn btn-large" title="Поиск врача"><i class="icon-search"></i> Поиск врача</a></div>
+</div>
 {% endblock %}
