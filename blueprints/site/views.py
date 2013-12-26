@@ -12,6 +12,7 @@ from jinja2 import Environment, PackageLoader
 from datetime import datetime, timedelta, date
 from pytz import timezone
 from dateutil.tz import tzlocal
+from copy import deepcopy
 
 from jinja2 import TemplateNotFound
 from forms import EnqueuePatientForm
@@ -235,7 +236,7 @@ def tickets(lpu_id, department_id, doctor_id, start=None):
                             add_to_table = True
 
             if add_to_table:
-                ticket_table.append(tmp_tickets)
+                ticket_table.append(deepcopy(tmp_tickets))
 
     absence_data = dict()
     for absence in absences:
