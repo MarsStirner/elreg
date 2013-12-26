@@ -19,7 +19,7 @@ from forms import EnqueuePatientForm
 from .app import module
 from ..site.lib.service_client import List, Info, Schedule
 from ..site.lib.data import del_session, get_doctor_info, get_doctors_with_tickets, get_lpu, save_ticket
-from ..site.lib.data import prepare_doctors, search_lpu
+from ..site.lib.data import prepare_doctors, find_lpu
 from .context_processors import header
 from application.app import db
 from application.models import Tickets
@@ -134,7 +134,7 @@ def ajax_search():
                     region_list.append(region)
             # формирование словаря со значениями, удовлетворяющими поиску,
             # где ключ - uid ЛПУ, а значение - наименование ЛПУ
-            result = search_lpu(region_list, search_gorod, result)
+            result = find_lpu(region_list, search_gorod, result)
 
         ### поиск ЛПУ по названию района: ###
         if search_rayon:
@@ -146,7 +146,7 @@ def ajax_search():
                     region_list.append(region)
             # формирование словаря со значениями, удовлетворяющими поиску,
             # где ключ - uid ЛПУ, а значение - наименование ЛПУ
-            result = search_lpu(region_list, search_rayon, result)
+            result = find_lpu(region_list, search_rayon, result)
 
         # создание ответа в формате json из содержимого словаря result:
         return jsonify(result)
