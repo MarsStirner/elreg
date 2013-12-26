@@ -144,7 +144,6 @@ class Schedule():
                          extra=dict(tags=[u'получение расписания', 'elreg']))
             ticket = []
             absences = []
-        result = self.client.service.getScheduleInfo(params)
         return ticket, absences
 
     def getTicketStatus(self, hospitalUid=0, ticketUid=0):
