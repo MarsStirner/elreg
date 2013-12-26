@@ -20,7 +20,7 @@
     <a href="{{ url_for('.tickets', lpu_id=lpu_id, department_id=department_id, doctor_id=doctor_id, start=next_monday) }}" class="btn btn-info pull-right" title="Следующая неделя">Следующая неделя</a>
 </div>
 <br>
-{% if ticket_table %}
+{% if ticket_table or absences %}
 <div class="well well-small">
     <table class="table table-condensed">
         <caption>
@@ -37,20 +37,21 @@
             <tr>
             {% for date in dates %}
                 <th class="th-centered">
-                    {{ date|dateformat('dd.M.y') }}, {{ date|dateformat('E') }}.
+                    {{ date|dateformat('dd.MM.y') }}, {{ date|dateformat('E') }}.
                 </th>
             {% endfor %}
             </tr>
         </thead>
         <tbody>
+        {% if ticket_table %}
         {% for row in ticket_table %}
             {% set outer_loop = loop %}
             <tr>
-                {% for cell in row %}
-                    {% if cell|attr('start') and cell.start|dateformat('yyyyMMdd') in absences and absences[cell.start|dateformat('yyyyMMdd')] is iterable %}
+                {% for _date, cell in row.iteritems() %}
+                    {% if _date in absences and absences[_date] is iterable %}
                         {% if outer_loop.first %}
                             <td rowspan="{{ outer_loop.length }}" class="span2">
-                                <span class="btn btn-block disabled">Врач не принимает по причине: <strong>{{ absences[cell.start|dateformat('yyyyMMdd')].name }}</strong></span>
+                                <span class="btn btn-block disabled">Врач не принимает по причине: <strong>{{ absences[_date].name }}</strong></span>
                             </td>
                         {% endif %}
                     {% else %}
@@ -77,10 +78,24 @@
                 {% endfor %}
             </tr>
         {% endfor %}
+        {% elif absences %}
+            <tr>
+            {% for date in dates %}
+                {% set _date=date|dateformat('yyyyMMdd') %}
+                {% if _date in absences and absences[_date] is iterable %}
+                    <td class="span2">
+                        <span class="btn btn-block disabled">Врач не принимает по причине: <strong>{{ absences[_date].name }}</strong></span>
+                    </td>
+                {% else %}
+                    <td></td>
+                {% endif %}
+            {% endfor %}
+            </tr>
+        {% endif %}
             <tr>
                 {% for date in dates %}
                     <th class="th-centered">
-                        {{ date|dateformat('dd.M.y') }}, {{ date|dateformat('E') }}.
+                        {{ date|dateformat('dd.MM.y') }}, {{ date|dateformat('E') }}.
                     </th>
                 {% endfor %}
             </tr>

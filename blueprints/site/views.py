@@ -202,10 +202,13 @@ def tickets(lpu_id, department_id, doctor_id, start=None):
 
     times = []  # Список времен начала записи текущей недели
     dates = []  # Список дат текущей недели
+    current_tickets = dict()
+    tmp_tickets = dict()
 
     for i in xrange(7):
         new_day = monday + timedelta(days=i)
         dates.append(new_day)
+        current_tickets[new_day.strftime('%Y%m%d')] = list()
         if tickets:
             for j in tickets:
                 if new_day == j.start.date():
@@ -215,22 +218,22 @@ def tickets(lpu_id, department_id, doctor_id, start=None):
 
     ticket_table = []
     if times:
-        current_ticket_list = []
         if tickets:
             for i in tickets:
                 if i.start.date() in dates:
-                    current_ticket_list.append(i)
+                    current_tickets[i.start.strftime('%Y%m%d')].append(i)
         for i in times:
             add_to_table = False
-            tmp_list = [0] * 7
-            for j in current_ticket_list:
-                if j.start.time() == i:
-                    tmp_list[dates.index(j.start.date())] = j
-                    if j.start > now and j.status in ('free', 'locked', 'disabled'):
-                        add_to_table = True
+            for _date, _tickets in current_tickets.iteritems():
+                tmp_tickets[_date] = None
+                for j in _tickets:
+                    if j.start.time() == i:
+                        tmp_tickets[_date] = j
+                        if j.start > now and j.status in ('free', 'locked', 'disabled'):
+                            add_to_table = True
 
             if add_to_table:
-                ticket_table.append(tmp_list)
+                ticket_table.append(tmp_tickets)
 
     absence_data = dict()
     for absence in absences:
