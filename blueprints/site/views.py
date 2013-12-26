@@ -18,14 +18,16 @@ from forms import EnqueuePatientForm
 
 from .app import module
 from .lib.service_client import List, Info, Schedule
-from .lib.data import del_session, get_doctor_info, get_doctors_with_tickets, get_lpu, save_ticket
-from .lib.data import prepare_doctors, search_lpu
+from .lib.data import block_ticket, del_session, get_doctor_info, get_doctors_with_tickets, get_lpu, save_ticket
+from .lib.data import prepare_doctors, find_lpu, get_blocked_tickets, change_ticket_status, gen_blocked_ticket_uid
+from .lib.data import async_clear_blocked_tickets, get_blocked_ticket_by_uid, check_blocked_ticket
 from .context_processors import header
 from application.app import db
-from application.models import Tickets
+from application.models import Tickets, TicketsBlocked
 
-from .lib.utils import _config, logger
-from emails import send_ticket
+from .lib.utils import _config, logger, datetime_now
+from .emails import send_ticket
+from .config import BLOCK_TICKET_TIME
 
 
 @module.route('/', methods=['GET'])
@@ -134,7 +136,7 @@ def ajax_search():
                     region_list.append(region)
             # формирование словаря со значениями, удовлетворяющими поиску,
             # где ключ - uid ЛПУ, а значение - наименование ЛПУ
-            result = search_lpu(region_list, search_gorod, result)
+            result = find_lpu(region_list, search_gorod, result)
 
         ### поиск ЛПУ по названию района: ###
         if search_rayon:
@@ -146,7 +148,7 @@ def ajax_search():
                     region_list.append(region)
             # формирование словаря со значениями, удовлетворяющими поиску,
             # где ключ - uid ЛПУ, а значение - наименование ЛПУ
-            result = search_lpu(region_list, search_rayon, result)
+            result = find_lpu(region_list, search_rayon, result)
 
         # создание ответа в формате json из содержимого словаря result:
         return jsonify(result)
@@ -251,6 +253,7 @@ def tickets(lpu_id, department_id, doctor_id, start=None):
                            doctor=doctor_info,
                            office=office,
                            ticket_table=ticket_table,
+                           blocked=get_blocked_tickets(lpu_id, department_id, doctor_id),
                            absences=absence_data,
                            prev_monday=(monday - timedelta(days=7)).strftime('%Y%m%d'),
                            next_monday=(monday + timedelta(days=7)).strftime('%Y%m%d'),
@@ -258,8 +261,9 @@ def tickets(lpu_id, department_id, doctor_id, start=None):
                            now=now)
 
 
+@module.route('/patient/', methods=['GET'])
 @module.route('/patient/<int:lpu_id>/<int:department_id>/<int:doctor_id>/', methods=['POST', 'GET'])
-def registration(lpu_id, department_id, doctor_id):
+def registration(lpu_id=None, department_id=None, doctor_id=None):
     """Логика страницы Запись на приём
     Здесь происходит обработка данных полученных от пользователя (на стороне сервера). Осуществляется проверка на
     наличие незаполненных полей и упрощенная валидация введенных данных. Все найденные ошибки заносятся в
@@ -270,6 +274,9 @@ def registration(lpu_id, department_id, doctor_id):
     осуществляется редирект на страницу Запись.
 
     """
+    if lpu_id is None or department_id is None or doctor_id is None:
+        abort(404)
+
     hospital_uid = '{0}/{1}'.format(lpu_id, department_id)
     lpu_info = get_lpu(hospital_uid)
 
@@ -364,6 +371,7 @@ def registration(lpu_id, department_id, doctor_id):
                                                              department_id=session.get('department_id'),
                                                              uid=ticket_hash))
                 send_ticket(patient_email, form.data, lpu_info, dequeue_link=dequeue_link, session_data=session)
+                async_clear_blocked_tickets()
 
             log_message = render_template('{0}/messages/success.txt'.format(module.name),
                                           lpu=lpu_info,
@@ -377,7 +385,8 @@ def registration(lpu_id, department_id, doctor_id):
                                           start_time=ticket_start.strftime('%H:%M'),
                                           finish_time=ticket_end.strftime('%H:%M'))
             logger.info(log_message, extra=dict(tags=[u'успешная запись', 'elreg']))
-
+            blocked_ticket_uid = gen_blocked_ticket_uid(lpu_id, department_id, doctor_id, timeslot.replace(tzinfo=None))
+            change_ticket_status(blocked_ticket_uid, 'locked')
             return redirect(url_for('.ticket_info'))
         elif ticket and hasattr(ticket, 'result'):
             # ошибка записи на приём:
@@ -421,12 +430,22 @@ def registration(lpu_id, department_id, doctor_id):
                                           finish_time=ticket_end.strftime('%H:%M'))
             logger.error(log_message, extra=dict(tags=[u'ошибка записи', 'elreg']))
 
-        # если представление было вызвано нажатием на ячейку таблицы на странице Время:
+    # если представление было вызвано нажатием на ячейку таблицы на странице Время:
+
+    # Блокируем талончик
+    blocked_ticket = block_ticket(lpu_id,
+                                  department_id,
+                                  doctor_id,
+                                  timeslot.replace(tzinfo=None),
+                                  date=request.args.get('d'),
+                                  start=request.args.get('s'),
+                                  end=request.args.get('f'))
     return render_template('{0}/registration.html'.format(module.name),
                            lpu=lpu_info,
                            date=timeslot.date(),
                            start_time=ticket_start,
                            finish_time=ticket_end,
+                           blocked_ticket=blocked_ticket,
                            office=session.get('office'),
                            doctor=session.get('doctor'),
                            form=form)
@@ -545,7 +564,7 @@ def dequeue(lpu_id, department_id, uid):
         if result and result['success']:
             flash(u'Отмена записи произведена успешно', category='success')
             ticket.is_active = False
-            ticket.updated = datetime.now()
+            ticket.updated = datetime_now()
             db.session.commit()
             log_message = render_template('{0}/messages/dequeue.txt'.format(module.name),
                                           ticket_info=ticket_info,
@@ -556,7 +575,7 @@ def dequeue(lpu_id, department_id, uid):
         elif result:
             flash(u'''Запись не существует или уже отменена''', category='error')
             ticket.is_active = False
-            ticket.updated = datetime.now()
+            ticket.updated = datetime_now()
             db.session.commit()
             log_message = render_template('{0}/messages/dequeue.txt'.format(module.name),
                                           ticket_info=ticket_info,
@@ -578,6 +597,56 @@ def dequeue(lpu_id, department_id, uid):
                                           message=u'Ошибка отмены записи')
             logger.error(log_message, extra=dict(tags=[u'отмена записи', 'elreg']))
     return render_template('{0}/dequeue.html'.format(module.name), ticket_info=ticket_info)
+
+
+@module.route('/unblock_ticket/<uid>/', methods=['POST'])
+def unblock_ticket(uid):
+    change_ticket_status(uid, 'free')
+    return jsonify(result=True)
+
+
+@module.route('/get_blocked_ticket/')
+@module.route('/get_blocked_ticket/<uid>/', methods=['POST'])
+def get_blocked_ticket(uid=None):
+    if uid is None:
+        abort(404)
+    ticket = get_blocked_ticket_by_uid(uid)
+    data = dict()
+    if ticket:
+        data['status'] = ticket.status
+        data['block_until'] = (ticket.created + timedelta(seconds=BLOCK_TICKET_TIME)).strftime('%H:%M %d.%m.%Y')
+        data['uid'] = ticket.ticket_uid
+        data['url'] = url_for('.registration',
+                              lpu_id=ticket.lpu_id,
+                              department_id=ticket.department_id,
+                              doctor_id=ticket.doctor_id,
+                              d=ticket.d,
+                              s=ticket.s,
+                              f=ticket.f)
+    return jsonify(result=data)
+
+
+@module.route('/check_ticket/', methods=['POST'])
+@module.route('/check_ticket/<int:lpu_id>/<int:department_id>/<int:doctor_id>/', methods=['POST'])
+def check_ticket(lpu_id=None, department_id=None, doctor_id=None):
+    if lpu_id is None or department_id is None or doctor_id is None:
+        abort(404)
+
+    date_string = '{date}{time}'.format(date=request.args.get('d'), time=request.args.get('s'))
+    try:
+        timeslot = datetime.strptime(date_string, '%Y%m%d%H%M%S')
+    except Exception, e:
+        print e
+        abort(404)
+    else:
+        ticket = check_blocked_ticket(lpu_id, department_id, doctor_id, timeslot)
+        if ticket:
+            data = dict()
+            data['status'] = ticket.status
+            data['block_until'] = (ticket.created + timedelta(seconds=BLOCK_TICKET_TIME)).strftime('%H:%M %d.%m.%Y')
+            data['uid'] = ticket.ticket_uid
+            return jsonify(result=data)
+        return jsonify(result=None)
 
 
 @module.route('/patient_tickets/', methods=['GET', 'POST'])
