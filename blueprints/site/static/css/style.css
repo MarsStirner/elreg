@@ -257,3 +257,9 @@ ol.prog_trckr li a{
   background-color: #edf1f5!important;
 }
 /*Old Browsers END*/
+.black_text{
+    color: #000000!important;
+}
+.margin-bottom-10{
+    margin-bottom: 10px;
+}

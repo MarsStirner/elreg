@@ -25,8 +25,8 @@
     <table class="table table-condensed">
         <caption>
             <div class="row-fluid">
-                <div class="span3"><p class="lead"><big>Расписание врача:</big></p></div>
-                <div class="span3 offset6">
+                <div class="span3 text-left"><p class="lead margin-bottom-10"><big>Расписание врача:</big></p></div>
+                <div class="span3 offset6 text-right">
                     <button type="button" class="btn btn-mini btn-success">Свободно</button>
                     <button type="button" class="btn btn-mini btn-danger disabled">Занято</button>
                     <button type="button" class="btn btn-mini btn-inverse disabled">Приём окончен</button>
@@ -51,7 +51,7 @@
                     {% if _date in absences and absences[_date] is iterable %}
                         {% if outer_loop.first %}
                             <td rowspan="{{ outer_loop.length }}" class="span2">
-                                <span class="btn btn-block disabled">Врач не принимает по причине: <strong>{{ absences[_date].name }}</strong></span>
+                                <span class="btn btn-block disabled black_text">Врач не принимает по причине: <strong>{{ absences[_date].name }}</strong></span>
                             </td>
                         {% endif %}
                     {% else %}
@@ -84,7 +84,7 @@
                 {% set _date=date|dateformat('yyyyMMdd') %}
                 {% if _date in absences and absences[_date] is iterable %}
                     <td class="span2">
-                        <span class="btn btn-block disabled">Врач не принимает по причине: <strong>{{ absences[_date].name }}</strong></span>
+                        <span class="btn btn-block disabled black_text">Врач не принимает по причине: <strong>{{ absences[_date].name }}</strong></span>
                     </td>
                 {% else %}
                     <td></td>

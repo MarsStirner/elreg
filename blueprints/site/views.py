@@ -580,6 +580,11 @@ def dequeue(lpu_id, department_id, uid):
     return render_template('{0}/dequeue.html'.format(module.name), ticket_info=ticket_info)
 
 
+@module.route('/patient_tickets/', methods=['GET', 'POST'])
+def patient_tickets():
+    return render_template('{0}/patient_tickets.html'.format(module.name))
+
+
 @module.errorhandler(404)
 def page_not_found(e):
     return render_template('{0}/404.html'.format(module.name)), 404

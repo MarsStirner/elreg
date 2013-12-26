@@ -1,0 +1,105 @@
+{% extends "site/base.html" %}
+
+{% block content %}
+<div class="alert alert-info"><h4>Для получения списка талончиков внесите данные пациента в поля формы</h4></div>
+<legend>Талончики пациента</legend>
+{% with errors = get_flashed_messages(category_filter=["error"]) %}
+  {% if errors %}
+    <div class="alert alert-error" title="Ошибка записи">
+        <strong>Ошибка записи!</strong>
+        <ul class="unstyled no-vmargin">
+        {% for error in errors %}
+          <li>{{ error }}</li>
+        {% endfor %}
+        </ul>
+    </div>
+  {% endif %}
+{% endwith %}
+{% if form.errors %}
+<div class="alert alert-error" title="Ошибка заполнения формы">
+    <strong>Форма заполнена некорректно</strong>
+    <ul class="unstyled no-vmargin">
+        {% for field_name in form.errors %}
+            {% for error in form.errors[field_name] %}
+                <li>{% if field_name != 'year' %}{{ form[field_name].label(class="inline") }}: {% endif %}{{ error }}</li>
+            {% endfor %}
+        {% endfor %}
+    </ul>
+</div>
+{% endif %}
+{% with messages = get_flashed_messages(category_filter=["info"]) %}
+  {% if messages %}
+    <div class="alert alert-success" title="Сообщение">
+        <ul class="unstyled no-vmargin">
+        {% for message in messages %}
+          <li>{{ message }}</li>
+        {% endfor %}
+        </ul>
+    </div>
+  {% endif %}
+{% endwith %}
+<div class="well well-small">
+<form id="patient_form" action="" method="post" name="frm" class="form-horizontal">
+    {{ form.csrf_token }}
+    <input type="hidden" name="ticket" value="{{ ticket }}" />
+
+    <legend><big>Данные посетителя</big></legend>
+    <div class="control-group">
+        {{ form.lastname.label(class="control-label") }}
+        <div class="controls">
+            {{ form.lastname(class="span4", autocomplete="off", value=session.get('lastname', ''), placeholder="Иванов") }}
+        </div>
+    </div>
+    <div class="control-group">
+        {{ form.firstname.label(class="control-label") }}
+        <div class="controls">
+            {{ form.firstname(class="span4", autocomplete="off", value=session.get('firstname', ''), placeholder="Иван") }}
+        </div>
+    </div>
+
+    <div class="control-group">
+        {{ form.patronymic.label(class="control-label") }}
+        <div class="controls">
+            {{ form.patronymic(class="span4", autocomplete="off", value=session.get('patronymic', ''), placeholder="Иванович") }}
+        </div>
+    </div>
+
+    <div class="control-group">
+        <label class="control-label" for="dd">Дата рождения<span class="text-error">*</span></label>
+        <div class="controls">
+            {{ form.day(class="day_month", id="dd", autocomplete="on", value=session.get('day', ''), maxlength=2, placeholder="01") }}
+            {{ form.month(class="day_month", id="mm", autocomplete="on", value=session.get('month', ''), maxlength=2, placeholder="12") }}
+            {{ form.year(class="year", id="yy", autocomplete="on", value=session.get('year', ''), maxlength=4, placeholder="2001") }}
+        </div>
+    </div>
+
+    <div class="control-group">
+        {{ form.gender.label(class="control-label") }}
+        <div class="controls">
+            {{ form.gender(class="inline clearfix", value=session.get('gender', '')) }}
+        </div>
+    </div>
+
+    {% include 'site/__documents_select.html' %}
+
+    <div class="control-group">
+        {{ form.captcha.label(class="control-label") }}
+        <div class="controls">
+            {{ form.captcha(class="span1", value="") }}
+        </div>
+    </div>
+
+    <div class="control-group">
+        <div class="controls">
+            <span class="text-error">* - поля, обязательные для заполнения</span>
+        </div>
+    </div>
+
+    <div class="form-actions">
+        <button type="submit" id="button-submit" class="btn btn-success disabled" disabled>Подтвердить</button>
+        <a href="{{ url_for('.tickets', lpu_id=request.view_args.get('lpu_id'), department_id=request.view_args.get('department_id'), doctor_id=request.view_args.get('doctor_id')) }}" class="btn">Отменить</a>
+    </div>
+</form>
+</div>
+<a href="{{ url_for('.tickets', lpu_id=request.view_args.get('lpu_id'), department_id=request.view_args.get('department_id'), doctor_id=request.view_args.get('doctor_id')) }}" class="btn btn-large"><i class="icon-arrow-left"></i> К расписанию</a>
+{% endblock %}
