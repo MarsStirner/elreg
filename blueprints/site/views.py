@@ -652,7 +652,45 @@ def check_ticket(lpu_id=None, department_id=None, doctor_id=None):
 
 @module.route('/patient_tickets/', methods=['GET', 'POST'])
 def patient_tickets():
-    return render_template('{0}/patient_tickets.html'.format(module.name))
+    session['step'] = 1
+    region_list = List().listRegions()
+    hospitals = list()
+    hospitals_list = List().listHospitals(okato=0)
+    if hospitals_list:
+        for _lpu in hospitals_list:
+            tmp = _lpu.uid.split('/')
+            lpu_id, department_id = int(tmp[0]), int(tmp[1])
+            if department_id == 0:
+                setattr(_lpu, 'id', lpu_id)
+                hospitals.append(_lpu)
+
+    form = EnqueuePatientForm(request.form)
+    if form.validate_on_submit():
+        document_type = form.document_type.data.strip()
+        document = dict()
+        if not document_type:
+            flash(u"Выберите тип документа", 'error')
+        else:
+            if document_type in ('policy_type_2', 'policy_type_3'):
+                document['policy_type'] = int(document_type.replace('policy_type_', ''))
+                document['series'] = form.series.data.strip()
+                document['number'] = form.number.data.strip()
+            elif document_type in ('doc_type_4', 'doc_type_7'):
+                document['document_code'] = int(document_type.replace('doc_type_', ''))
+                document['series'] = form.doc_series.data.strip()
+                document['number'] = form.doc_number.data.strip()
+            elif document_type == 'client_id':
+                document['client_id'] = int(form.client_id.data.strip())
+            elif document_type in ('policy_type_1', 'policy_type_4'):
+                document['policy_type'] = int(document_type.replace('policy_type_', ''))
+                document['number'] = form.policy_number.data.strip()
+
+
+
+    return render_template('{0}/patient_tickets.html'.format(module.name),
+                           region_list=region_list,
+                           hospitals=hospitals,
+                           form=form)
 
 
 @module.errorhandler(404)

@@ -2,7 +2,7 @@
 
 {% block content %}
 <div class="alert alert-info"><h4>Для получения списка талончиков внесите данные пациента в поля формы</h4></div>
-<legend>Талончики пациента</legend>
+<legend>Поиск талончиков пациента</legend>
 {% with errors = get_flashed_messages(category_filter=["error"]) %}
   {% if errors %}
     <div class="alert alert-error" title="Ошибка записи">
@@ -39,44 +39,65 @@
   {% endif %}
 {% endwith %}
 <div class="well well-small">
-<form id="patient_form" action="" method="post" name="frm" class="form-horizontal">
+<form id="patient_form" action="" method="post" name="frm" class="form-horizontal search-form">
     {{ form.csrf_token }}
-    <input type="hidden" name="ticket" value="{{ ticket }}" />
-
-    <legend><big>Данные посетителя</big></legend>
+    <fieldset>
+        <div class="control-group">
+            <label class="control-label" for="region_filter">Муниципальное образование</label>
+            <div class="controls">
+                <select name="region" id="region_filter" class="span6">
+                <option value="0">- любое -</option>
+                {% for region in region_list|sort(attribute='name') %}
+                    <option value="{{ region.code }}"{% if request.values.get('region') == region.code|string %} selected="selected"{% endif %}>{{ region.name }}</option>
+                {% endfor %}
+                </select>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="lpu_filter">Медицинское учреждение<span class="text-error">*</span></label>
+            <div class="controls">
+                <select name="lpu" id="lpu_filter" class="span6">
+                <option value="">- выберите медицинское учреждение -</option>
+                {% for hospital in hospitals|sort(attribute='name') %}
+                    <option value="{{ hospital.id }}"{% if '%s/0'|format(request.view_args.get('lpu')) == hospital.uid or '%s/0'|format(request.values.get('lpu')) == hospital.uid %} selected="selected"{% endif %}>{{ hospital.name }}</option>
+                {% endfor %}
+                </select>
+            </div>
+        </div>
+    </fieldset>
     <div class="control-group">
         {{ form.lastname.label(class="control-label") }}
         <div class="controls">
-            {{ form.lastname(class="span4", autocomplete="off", value=session.get('lastname', ''), placeholder="Иванов") }}
+            {{ form.lastname(class="span4", autocomplete="off", placeholder="Иванов") }}
         </div>
     </div>
     <div class="control-group">
         {{ form.firstname.label(class="control-label") }}
         <div class="controls">
-            {{ form.firstname(class="span4", autocomplete="off", value=session.get('firstname', ''), placeholder="Иван") }}
+            {{ form.firstname(class="span4", autocomplete="off", placeholder="Иван") }}
         </div>
     </div>
 
     <div class="control-group">
         {{ form.patronymic.label(class="control-label") }}
         <div class="controls">
-            {{ form.patronymic(class="span4", autocomplete="off", value=session.get('patronymic', ''), placeholder="Иванович") }}
+            {{ form.patronymic(class="span4", autocomplete="off", placeholder="Иванович") }}
         </div>
     </div>
 
     <div class="control-group">
         <label class="control-label" for="dd">Дата рождения<span class="text-error">*</span></label>
         <div class="controls">
-            {{ form.day(class="day_month", id="dd", autocomplete="on", value=session.get('day', ''), maxlength=2, placeholder="01") }}
-            {{ form.month(class="day_month", id="mm", autocomplete="on", value=session.get('month', ''), maxlength=2, placeholder="12") }}
-            {{ form.year(class="year", id="yy", autocomplete="on", value=session.get('year', ''), maxlength=4, placeholder="2001") }}
+            {{ form.day(class="day_month", id="dd", autocomplete="on", maxlength=2, placeholder="01") }}
+            {{ form.month(class="day_month", id="mm", autocomplete="on", maxlength=2, placeholder="12") }}
+            {{ form.year(class="year", id="yy", autocomplete="on", maxlength=4, placeholder="2001") }}
         </div>
     </div>
 
     <div class="control-group">
         {{ form.gender.label(class="control-label") }}
         <div class="controls">
-            {{ form.gender(class="inline clearfix", value=session.get('gender', '')) }}
+            {{ form.gender(class="inline clearfix") }}
         </div>
     </div>
 
@@ -95,11 +116,75 @@
         </div>
     </div>
 
-    <div class="form-actions">
-        <button type="submit" id="button-submit" class="btn btn-success disabled" disabled>Подтвердить</button>
-        <a href="{{ url_for('.tickets', lpu_id=request.view_args.get('lpu_id'), department_id=request.view_args.get('department_id'), doctor_id=request.view_args.get('doctor_id')) }}" class="btn">Отменить</a>
+    <div class="control-group no-vmargin">
+        <div class="controls">
+            <button type="submit" class="btn btn-large btn-success"><i class="icon-search icon-white"></i> Найти</button>
+            <button type="reset" class="btn btn-large" id="reset">Очистить форму</button>
+        </div>
     </div>
 </form>
 </div>
-<a href="{{ url_for('.tickets', lpu_id=request.view_args.get('lpu_id'), department_id=request.view_args.get('department_id'), doctor_id=request.view_args.get('doctor_id')) }}" class="btn btn-large"><i class="icon-arrow-left"></i> К расписанию</a>
+<div class="row-fluid" id="search_result_row">
+    <div class="alert alert-error hide" title="Ошибка поиска" id="error"></div>
+    <div id="search_result"></div>
+</div>
+<a href="{{ request.referrer }}" class="btn btn-large"><i class="icon-arrow-left"></i> Вернуться</a>
+{% endblock %}
+{% block js %}
+    <script type="text/javascript">
+    $(document).ready(function () {
+        $("body").on({
+            ajaxStart: function() {
+                $(this).addClass("loading");
+            },
+            ajaxStop: function() {
+                $(this).removeClass("loading");
+            }
+        });
+    });
+    function filter_lpu(okato){
+        $.ajax({
+            url: "{{ url_for('.get_lpu_list') }}" + okato,
+            crossDomain: true,
+            cache: false, // обязательно для IE
+            dataType: 'json',
+            success: function (data) {
+                $('#lpu_filter')
+                        .find('option[value!=""]')
+                        .remove()
+                        .end();
+                if(data['result'].length > 0){
+                    $.each(data['result'], function(key, value) {
+                        $('#lpu_filter')
+                                .append($('<option>', { value : value['id'] })
+                                .text(value['name']));
+                    });
+                }
+            }
+        });
+    }
+
+    $(document).ready(function(){
+        var $region = $('select#region_filter');
+        var $lpu = $('select#lpu_filter');
+        var $error = $('#error');
+        var $lpu_uid = $lpu.val();
+        $region.change(function(){
+            if($(this).val()){
+                filter_lpu($(this).val());
+            }
+        });
+        $('#search_form').submit(function(event){
+            event.preventDefault();
+            $error.hide();
+
+            if (!$lpu.val()){
+                $error.text('Необходимо выбрать медицинское учреждение').show();
+                return false;
+            } else{
+                return true;
+            }
+        });
+    });
+    </script>
 {% endblock %}
