@@ -33,7 +33,13 @@
             {%- if day.date < now.date() or day.has_tickets == False -%}
                 <td class="muted"><button class="btn btn-large disabled" >{{ day.date|dateformat('dd') }}</button></td>
             {%- elif day.date == now.date() -%}
-                <td><button class="btn btn-warning btn-large" onclick="show_tickets(this, '{{ day.date|dateformat('yyyyMMdd') }}');">{{ day.date|dateformat('dd') }}</button></td>
+                <td>
+                {% if day.has_tickets == False %}
+                    <button class="btn btn-warning btn-large disabled">{{ day.date|dateformat('dd') }}</button>
+                {% else %}
+                    <button class="btn btn-warning btn-large" onclick="show_tickets(this, '{{ day.date|dateformat('yyyyMMdd') }}');">{{ day.date|dateformat('dd') }}</button>
+                {% endif %}
+                </td>
             {%- else -%}
                 <td><button class="btn btn-info btn-large" onclick="show_tickets(this, '{{ day.date|dateformat('yyyyMMdd') }}');">{{ day.date|dateformat('dd') }}</button></td>
             {%- endif -%}

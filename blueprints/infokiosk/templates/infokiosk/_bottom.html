@@ -31,7 +31,7 @@
                 </div>
             {%- elif session.get('step') == 8 -%}
                 <div class="row-fluid no_print">
-                    <div class="pull-left no_print"><button type="button" id="btnPrint" class="btn btn-success btn-large" name="btnPrint" title="Распечатать уведомление о записи на приём" onClick="window.print();"><i class="icon-print icon-white"></i> Распечатать</button></div>
+                    <div class="pull-left no_print"><button type="button" id="btnPrint" class="btn btn-success btn-large" name="btnPrint" title="Распечатать уведомление о записи на приём" onClick="printContent('printable');"><i class="icon-print icon-white"></i> Распечатать</button></div>
                     <div class="pull-right"><a href="{{ url_for('.index') }}" class="btn btn-large">Выйти</a></div>
                 </div>
             {%- endif -%}
