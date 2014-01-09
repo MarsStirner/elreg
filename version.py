@@ -1,4 +1,4 @@
 # -*- coding: utf-8 -*-
 from datetime import datetime
-version = u'3.1.2'
-last_change_date = datetime(year=2013, month=12, day=30, hour=16,)
+version = u'3.2.0'
+last_change_date = datetime(year=2014, month=1, day=9, hour=20,)
