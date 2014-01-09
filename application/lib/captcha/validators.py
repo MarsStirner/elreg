@@ -17,7 +17,9 @@ class CaptchaValidator(object):
         challenge = field.data.lower().strip()
         key = 'captcha_{id}'.format(id=captcha_id)
         captcha = session.get(key)
-        response = captcha.get('response')
+        response = None
+        if captcha:
+            response = captcha.get('response')
         if not response or response != challenge:
             raise ValidationError(self.message)
         if key in session:

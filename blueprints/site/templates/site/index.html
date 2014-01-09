@@ -15,8 +15,9 @@
         {%- endfor -%}
     </div>
     <p class="pull-right">
-        <a href="{{ url_for('.search_lpu') }}" class="btn btn-large" title="Поиск ЛПУ"><i class="icon-search"></i> Поиск мед. учреждения</a>
         <a href="{{ url_for('.search') }}" class="btn btn-large" title="Поиск врача"><i class="icon-search"></i> Поиск врача</a>
+        <a href="{{ url_for('.search_lpu') }}" class="btn btn-large" title="Поиск ЛПУ"><i class="icon-search"></i> Поиск мед. учреждения</a>
+        <a href="{{ url_for('.patient_tickets') }}" class="btn btn-large" title="Поиск существующих записей на приём к врачу"><i class="icon-search"></i> Мои записи</a>
     </p>
     <!-- Modal -->
     <div id="old_browser" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -52,40 +53,51 @@
 {% block js %}
 <script type="text/javascript" src="{{ url_for('.static', filename='js/bdetect-1.1.js') }}"></script>
 <script type="text/javascript">
-    function bdetect()
-    {
+    function bdetect(){
         var chrome = 20;
         var safari = 5;
         var msie = 8;
         var opera = 12;
         var firefox = 17;
 
-        var browser = getBrowser(1),
-        browserName = browser[0],
-        browserVer = browser[1],
-        browserVerPoints = browser[2],
+        var browser = getBrowser(1);
+        var browserName = browser[0];
+        var browserVer = browser[1];
+        var browserVerPoints = browser[2];
         browserVer = parseFloat(browserVer+"."+browserVerPoints);
-    switch (browserName)
-    {
-        case 'Chrome':
-            if (browserVer >= chrome) return false
-                else break;
-        case 'Safari':
-            if (browserVer >= safari) return false
-                else reak;
-        case 'MSIE':
-            if (browserVer >= msie) return false
-                else break;
-        case 'Opera':
-            if (browserVer >= opera) return false
-                else break;
-        case 'Firefox':
-            if (browserVer >= firefox) return false
-                else break;
-    };
-
-    $('#old_browser').modal('show');
-
+        switch (browserName) {
+            case 'Chrome':
+                if (browserVer >= chrome){
+                    return false;
+                }else {
+                    break;
+                }
+            case 'Safari':
+                if (browserVer >= safari){
+                    return false;
+                } else{
+                    break;
+                }
+            case 'MSIE':
+                if (browserVer >= msie){
+                    return false;
+                } else {
+                    break;
+                }
+            case 'Opera':
+                if (browserVer >= opera){
+                    return false;
+                } else {
+                    break;
+                }
+            case 'Firefox':
+                if (browserVer >= firefox){
+                    return false;
+                }else{
+                    break;
+                }
+        }
+        $('#old_browser').modal('show');
     }
     window.onload = bdetect;
 </script>

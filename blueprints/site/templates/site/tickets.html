@@ -48,7 +48,7 @@
         {% for row in ticket_table %}
             {% set outer_loop = loop %}
             <tr>
-                {% for _date, cell in row.iteritems() %}
+                {% for _date, cell in row|dictsort %}
                     {% if _date in absences and absences[_date] is iterable %}
                         {% if outer_loop.first %}
                             <td rowspan="{{ outer_loop.length }}" class="span2">

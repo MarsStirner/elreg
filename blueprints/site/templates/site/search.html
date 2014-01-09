@@ -11,7 +11,7 @@
                         <label class="control-label" for="region_filter">Муниципальное образование:</label>
                         <div class="controls">
                             <select name="region" id="region_filter" class="span12">
-                            <option value="">- любое -</option>
+                            <option value="0">- любое -</option>
                             {% for region in region_list|sort(attribute='name') %}
                                 <option value="{{ region.code }}"{% if request.view_args.get('okato') == region.code|string %} selected="selected"{% endif %}>{{ region.name }}</option>
                             {% endfor %}
@@ -185,17 +185,15 @@
         var $error = $('#error');
         var $lpu_uid = $lpu.val();
         var old_specilality="";
-        $speciality.typeahead();
-        $doctor.typeahead();
+{#        $speciality.typeahead();#}
+{#        $doctor.typeahead();#}
         if ($lpu_uid){
             get_specialities($lpu_uid);
         }
         $region.change(function(){
             $('select#speciality').val('').trigger("change");
             $('select#doctor').val('').trigger("change");
-            if($(this).val()){
-                filter_lpu($(this).val());
-            }
+            filter_lpu($(this).val());
         });
         $lpu.change(function(){
             $('select#speciality').val('').trigger("change");
