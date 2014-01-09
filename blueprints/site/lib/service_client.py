@@ -215,3 +215,19 @@ class Schedule():
                          extra=dict(tags=[u'ближайший талон', 'elreg']))
             tickets = []
         return tickets
+
+    def get_patient_tickets(self, person, document, hospital_uid, birthday, gender=None, hospitalUidFrom=None):
+        try:
+            result = self.client.service.patientTickets({
+                'person': person,
+                'document': document,
+                'hospitalUid': hospital_uid,
+                'hospitalUidFrom': hospitalUidFrom,
+                'birthday': birthday,
+                'sex': gender
+            })
+        except Exception, e:
+            print e
+            logger.error(e, extra=dict(tags=[u'записи пациента', 'elreg']))
+            result = e
+        return result

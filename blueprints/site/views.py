@@ -19,9 +19,7 @@ from forms import EnqueuePatientForm
 
 from .app import module
 from .lib.service_client import List, Info, Schedule
-from .lib.data import block_ticket, del_session, get_doctor_info, get_doctors_with_tickets, get_lpu, save_ticket
-from .lib.data import prepare_doctors, find_lpu, get_blocked_tickets, change_ticket_status, gen_blocked_ticket_uid
-from .lib.data import async_clear_blocked_tickets, get_blocked_ticket_by_uid, check_blocked_ticket
+from .lib.data import *
 from .context_processors import header
 from application.app import db
 from application.models import Tickets, TicketsBlocked
@@ -360,7 +358,7 @@ def registration(lpu_id=None, department_id=None, doctor_id=None):
             session['document'] = document
             session['patient'] = patient
 
-            ticket_hash = save_ticket(ticket.ticketUid, lpu_info=lpu_info)
+            ticket_hash = save_ticket(ticket.ticketUid, lpu_id, department_id, doctor_id, lpu_info=lpu_info)
             session['ticket_hash'] = ticket_hash
 
             # формирование и отправка письма:
@@ -664,11 +662,16 @@ def patient_tickets():
                 setattr(_lpu, 'id', lpu_id)
                 hospitals.append(_lpu)
 
+    result = dict()
     form = EnqueuePatientForm(request.form)
     if form.validate_on_submit():
         document_type = form.document_type.data.strip()
         document = dict()
-        if not document_type:
+        hospital_id = request.form['lpu'].strip()
+
+        if not hospital_id:
+            flash(u"Выберите медицинское учреждение", 'error')
+        elif not document_type:
             flash(u"Выберите тип документа", 'error')
         else:
             if document_type in ('policy_type_2', 'policy_type_3'):
@@ -685,12 +688,43 @@ def patient_tickets():
                 document['policy_type'] = int(document_type.replace('policy_type_', ''))
                 document['number'] = form.policy_number.data.strip()
 
+            result = Schedule().get_patient_tickets(
+                person={'lastName': unicode(form.lastname.data.strip().title()),
+                        'firstName': unicode(form.firstname.data.strip().title()),
+                        'patronymic': unicode(form.patronymic.data.strip().title())},
+                document=document,
+                hospital_uid='{0}/0'.format(hospital_id),
+                birthday=unicode('{year}-{month}-{day}'.format(**form.data)),
+                gender=form.gender.data,
+                hospitalUidFrom='')
 
+            _tickets = list()
+
+            if getattr(result, 'tickets', None):
+                for ticket in getattr(result, 'tickets'):
+                    if ticket['timeslotStart'] < datetime_now():
+                        continue
+                    doctor = ticket['doctor']
+                    lpu_id, department_id = doctor['hospitalUid'].split('/')
+                    # filter by date (>now)
+                    saved_ticket = find_ticket(ticket['ticketUid'], lpu_id, department_id, doctor.uid)
+                    if saved_ticket:
+                        ticket['dequeue_href'] = url_for('.dequeue',
+                                                         lpu_id=lpu_id,
+                                                         department_id=department_id,
+                                                         uid=saved_ticket['uid'])
+                        ticket['schedule_href'] = url_for('.tickets',
+                                                          lpu_id=lpu_id,
+                                                          department_id=department_id,
+                                                          doctor_id=doctor.uid)
+                        _tickets.append(ticket)
+                result['tickets'] = _tickets
 
     return render_template('{0}/patient_tickets.html'.format(module.name),
                            region_list=region_list,
                            hospitals=hospitals,
-                           form=form)
+                           form=form,
+                           result=result)
 
 
 @module.errorhandler(404)

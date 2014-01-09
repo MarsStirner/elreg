@@ -38,6 +38,7 @@
     </div>
   {% endif %}
 {% endwith %}
+<div class="alert alert-error hide" title="Ошибка поиска" id="error"></div>
 <div class="well well-small">
 <form id="patient_form" action="" method="post" name="frm" class="form-horizontal search-form">
     {{ form.csrf_token }}
@@ -124,14 +125,33 @@
     </div>
 </form>
 </div>
+{% if result %}
 <div class="row-fluid" id="search_result_row">
-    <div class="alert alert-error hide" title="Ошибка поиска" id="error"></div>
-    <div id="search_result"></div>
+    {% if 'tickets' in result and result['tickets'] %}
+    <div id="search_result">
+    {% for ticket in result['tickets'] %}
+        {% set doctor=ticket['doctor'] %}
+        <blockquote>
+            <p class="lead">
+                <a href="{{ ticket['schedule_href'] }}" title="Перейти к расписанию врача">{{ doctor['name']['lastName'] }} {{ doctor['name']['firstName'] }} {{ doctor['name']['patronymic'] }}</a> ({{ doctor['speciality'] }})
+                <small>{{ ticket['location'] }}</small>
+                {{ ticket['timeslotStart']|datetimeformat('dd.MM.YYYY HH:mm', rebase=False) }}
+                <a href="{{ ticket['dequeue_href'] }}" title="Отменить запись" class="btn btn-danger"><i class="icon-white icon-trash"></i> Отменить запись</a>
+            </p>
+        </blockquote>
+    {% endfor %}
+    </div>
+    {% elif result['status'] == False and result['message'] %}
+        <div class="alert alert-error lead" title="Ошибка поиска"><strong>Ошибка поиска!</strong> {{ result['message'] }}</div>
+    {% else %}
+        <div class="alert lead" title="Результат поиска">Не найдено ни одного актуального талончика</div>
+    {% endif %}
 </div>
+{% endif %}
 <a href="{{ request.referrer }}" class="btn btn-large"><i class="icon-arrow-left"></i> Вернуться</a>
 {% endblock %}
 {% block js %}
-    <script type="text/javascript">
+<script type="text/javascript">
     $(document).ready(function () {
         $("body").on({
             ajaxStart: function() {
@@ -142,6 +162,13 @@
             }
         });
     });
+    {% if result %}
+    $(document).ready(function () {
+        $('html, body').animate({
+            scrollTop: $("#search_result_row").offset().top
+        }, 1000);
+    });
+    {% endif %}
     function filter_lpu(okato){
         $.ajax({
             url: "{{ url_for('.get_lpu_list') }}" + okato,
@@ -174,11 +201,16 @@
                 filter_lpu($(this).val());
             }
         });
-        $('#search_form').submit(function(event){
-            event.preventDefault();
+        $lpu.change(function(){
+            if($(this).val()){
+                $lpu.parents('.control-group').removeClass('error');
+            }
+        });
+        $('#patient_form').submit(function(){
             $error.hide();
 
             if (!$lpu.val()){
+                $lpu.parents('.control-group').removeClass('success').addClass('error');
                 $error.text('Необходимо выбрать медицинское учреждение').show();
                 return false;
             } else{

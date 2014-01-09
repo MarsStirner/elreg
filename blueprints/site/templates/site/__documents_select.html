@@ -1,7 +1,7 @@
 <div class="control-group" style="position: relative;">
         {{ form.document_type.label(class="control-label") }}
         <div class="controls">
-            {{ form.document_type(id="doc_type_selector", class="span4", value=session.get('document_type', '')) }}
+            {{ form.document_type(id="doc_type_selector", class="span6", value=session.get('document_type', '')) }}
         </div>
     <div id="doc_example" class="hide">
         <a href="javascript:void(0);" id="show_big_doc"><img src="" class="img-polaroid"></a>
