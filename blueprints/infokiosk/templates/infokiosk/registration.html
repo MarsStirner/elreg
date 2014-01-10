@@ -114,7 +114,6 @@ var step = 1;
 function change_step(newvalue){
     step = newvalue;
     $('#btn-step-frwrd').attr('disabled', "disabled");
-    check_btn();
     if(step==1){
         $('#btn-step-bkwrd').hide();
     }else if(step==2){
@@ -151,7 +150,7 @@ function change_step(newvalue){
     }
 }
 function check_btn(){
-    var $inputs = $('#step'+step).find('input:visible');
+    var $inputs = $('#step'+step).find('input').filter(':visible');
     var btn;
     var disabled=false;
     if (step == 7){
@@ -161,6 +160,11 @@ function check_btn(){
     }
     for (var i=0;i<$inputs.length;i++){
         if (!$($inputs[i]).val()){
+            disabled = true;
+        }
+    }
+    if (step == 4){
+        if (!validate_date($('#dd').val(), $('#mm').val(), $('#yy').val())){
             disabled = true;
         }
     }
@@ -177,6 +181,11 @@ function check_btn(){
                     disabled = true;
                 }
             }
+            if (step == 4){
+                if (!validate_date($('#dd').val(), $('#mm').val(), $('#yy').val())){
+                    disabled = true;
+                }
+            }
             if (disabled){
                 btn.attr('disabled', "disabled");
             } else {
@@ -184,6 +193,28 @@ function check_btn(){
             }
         });
     });
+}
+function IsLeapYear(aYear){
+    return ((((aYear%4==0) && (aYear%100!=0)) || (aYear%400==0)) ? true : false);
+}
+function validate_date(day, month, year){
+    var _date = new Date();
+    if (day < 1 || day > 31){
+        return false;
+    }
+    if (month < 1 || month > 12){
+        return false;
+    }
+    if (year < 1900 || year > _date.getFullYear()){
+        return false;
+    }
+    if ([4,6,9,11].indexOf(month) > -1 && day > 30){
+        return false;
+    }
+    if (month ==2 && (day > 29 && IsLeapYear(year) || day > 28 && !IsLeapYear(year))){
+        return false;
+    }
+    return true;
 }
 function check_input(step){
     var $inputs = $('#step'+step).find('input');
@@ -207,6 +238,7 @@ function choose_doc_type(el, doc_type){
     $('#step6').hide();
     change_step(7);
     $('#step7').show();
+    check_btn();
 }
 function choose_gender(el, gender){
     $('.btn_gender_type').removeClass('btn-warning').addClass('btn-info');
@@ -215,6 +247,7 @@ function choose_gender(el, gender){
     $('#step5').hide();
     change_step(6);
     $('#step6').show();
+    check_btn();
 }
 $(document).ready(function(){
     check_btn();
@@ -224,6 +257,7 @@ $(document).ready(function(){
             change_step(step + 1);
             if($('#step'+step)){
                 $('#step'+step).show();
+                check_btn();
             }
         }
     });
@@ -231,6 +265,7 @@ $(document).ready(function(){
         $('#step'+step).hide();
         change_step(step - 1);
         $('#step'+step).show();
+        check_btn();
     });
     $('#btn_try_again').click(function(){
         $('#form_container').show();
