@@ -57,7 +57,13 @@ def save_ticket(ticket_uid, lpu_id, department_id, doctor_id, lpu_info):
     env = Environment(loader=PackageLoader(module.import_name,  module.template_folder))
     template = env.get_template('{0}/_ticket.html'.format(module.name))
     info = template.render(lpu=lpu_info, session=session)
-    ticket = Tickets(uid=uid, ticket_uid=ticket_uid, info=info, created=datetime_now())
+    ticket = Tickets(uid=uid,
+                     ticket_uid=ticket_uid,
+                     lpu_id=lpu_id,
+                     department_id=department_id,
+                     doctor_id=doctor_id,
+                     info=info,
+                     created=datetime_now())
     db.session.add(ticket)
     db.session.commit()
     return uid
