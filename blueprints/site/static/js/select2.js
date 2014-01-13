@@ -1723,6 +1723,8 @@ the specific language governing permissions and limitations under the Apache Lic
                 this.onSelect(data, options);
             } else if (options && options.noFocus) {
                 this.close();
+            } else{
+                this.close();
             }
         },
 
