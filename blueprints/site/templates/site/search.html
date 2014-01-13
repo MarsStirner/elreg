@@ -33,6 +33,7 @@
                         <label class="control-label" for="speciality">Специальность:</label>
                         <div class="controls">
                             <select id="speciality" class="span12">
+                                <option value=""></option>
                             </select>
                         </div>
                     </div>
@@ -40,6 +41,7 @@
                         <label class="control-label" for="doctor">ФИО врача:</label>
                         <div class="controls">
                             <select id="doctor" class="span12">
+                                <option value=""></option>
                             </select>
                         </div>
                     </div>
@@ -223,6 +225,8 @@
         });
         $('#reset').click(function(){
             $('#search_result').html("");
+            $('select#speciality').val('').trigger("change");
+            $('select#doctor').val('').trigger("change");
         });
         $('#search_form').submit(function(event){
             $('#search_result').html("");
