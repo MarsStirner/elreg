@@ -31,9 +31,6 @@ def upgrade():
         op.alter_column('app_settings', sa.Column('value_type', sa.Enum(*{'bool', 'enum', 'string', 'number', 'image', 'password', 'text'})), existing_type=sa.Enum(*{'bool', 'enum', 'string', 'number', 'image', 'password'}))
     except Exception, e:
         print e
-    op.bulk_insert(Settings.__table__, [
-        {'id': 15, 'code': 'COUNTER_CODE', 'name': u'Код счётчика (Яндекс.Метрика)', 'value_type': 'text'}]
-    )
     ### end Alembic commands ###
 
 
@@ -42,5 +39,4 @@ def downgrade():
     op.drop_column('app_settings', 'defaults')
     op.alter_column('app_settings', sa.Column('value', sa.Unicode(250), nullable=True), existing_type=sa.UnicodeText)
     op.alter_column('app_settings', sa.Column('value_type', sa.Enum(*{'bool', 'enum', 'string', 'number', 'image', 'password'})), existing_type=sa.Enum(*{'bool', 'enum', 'string', 'number', 'image', 'password', 'text'}))
-    op.execute(Settings.__table__.delete().where(Settings.id == 15))
     ### end Alembic commands ###
