@@ -389,7 +389,7 @@ def registration(lpu_id, department_id, doctor_id):
             session['document'] = document
             session['patient'] = patient
 
-            ticket_hash = save_ticket(ticket.ticketUid, lpu_info=lpu_info)
+            ticket_hash = save_ticket(ticket.ticketUid, lpu_id, department_id, doctor_id, lpu_info=lpu_info)
             session['ticket_hash'] = ticket_hash
 
             # формирование и отправка письма:
