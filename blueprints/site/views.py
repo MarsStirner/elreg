@@ -286,8 +286,7 @@ def registration(lpu_id=None, department_id=None, doctor_id=None):
     if request.args.get('office'):
         session['office'] = request.args.get('office')
 
-    if 'doctor' not in session:
-        session['doctor'] = get_doctor_info(hospital_uid, doctor_id)
+    session['doctor'] = get_doctor_info(hospital_uid, doctor_id)
 
     timeslot, ticket_start, ticket_end = None, None, None
 
