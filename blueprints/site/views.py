@@ -712,7 +712,7 @@ def patient_tickets():
                         ticket['dequeue_href'] = url_for('.dequeue',
                                                          lpu_id=lpu_id,
                                                          department_id=department_id,
-                                                         uid=saved_ticket['uid'])
+                                                         uid=saved_ticket.uid)
                         ticket['schedule_href'] = url_for('.tickets',
                                                           lpu_id=lpu_id,
                                                           department_id=department_id,
