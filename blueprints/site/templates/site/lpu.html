@@ -20,6 +20,7 @@
             <li><a href="javascript:void(0);" onclick="$('#lpu28Modal').modal();">{{ hospital.name }}</a></li>
             {% else %}
             <li><a href="{{ url_for('.division', lpu_id=hospital.uid) }}">{{ hospital.name }}</a></li>
+            {% endif %}
             {% endfor %}
         {% endif %}
         </ul>
