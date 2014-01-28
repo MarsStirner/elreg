@@ -1,7 +1,8 @@
 {% extends "site/base.html" %}
 
 {% block content %}
-<div class="alert alert-info"><h4>Для получения списка талончиков внесите данные пациента в поля формы</h4></div>
+<div class="alert alert-info"><h4>Для получения списка талончиков внесите данные пациента в поля формы</h4>
+<strong>Внимание!</strong> Отображаются только те талончики, запись по которым производилась через сайт</div>
 <legend>Поиск талончиков пациента</legend>
 {% with errors = get_flashed_messages(category_filter=["error"]) %}
   {% if errors %}
