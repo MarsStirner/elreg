@@ -1,0 +1,4 @@
+<div class="row-fluid page-header no_print">
+    {% if logo %}<div class="span1"><a href="{{ home_link|default('/') }}" title="На главную"><img src="{{ url_for('static', filename='i/%s'|format(logo)) }}"></a></div>{% endif %}
+    <div class="span11 lead no-vmargin"><h2 class="no-vmargin">{{ site_name }}</h2>{{ region_name }}</div>
+</div>

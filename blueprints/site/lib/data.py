@@ -51,13 +51,19 @@ def del_session(key):
         del session[key]
 
 
-def save_ticket(ticket_uid, lpu_info):
+def save_ticket(ticket_uid, lpu_id, department_id, doctor_id, lpu_info):
     import hashlib
-    uid = hashlib.md5(ticket_uid).hexdigest()
+    uid = hashlib.md5('{0}/{1}/{2}/{3}'.format(lpu_id, department_id, doctor_id, ticket_uid)).hexdigest()
     env = Environment(loader=PackageLoader(module.import_name,  module.template_folder))
     template = env.get_template('{0}/_ticket.html'.format(module.name))
     info = template.render(lpu=lpu_info, session=session)
-    ticket = Tickets(uid=uid, ticket_uid=ticket_uid, info=info, created=datetime_now())
+    ticket = Tickets(uid=uid,
+                     ticket_uid=ticket_uid,
+                     lpu_id=lpu_id,
+                     department_id=department_id,
+                     doctor_id=doctor_id,
+                     info=info,
+                     created=datetime_now())
     db.session.add(ticket)
     db.session.commit()
     return uid
@@ -247,3 +253,11 @@ def async_clear_blocked_tickets():
 
     thr = Thread(target=clear_blocked_tickets)
     thr.start()
+
+
+def find_ticket(ticket_uid, lpu_id, department_id, doctor_id):
+    return db.session.query(Tickets).filter(
+        Tickets.ticket_uid==ticket_uid,
+        lpu_id==lpu_id,
+        department_id==department_id,
+        doctor_id==doctor_id).first()

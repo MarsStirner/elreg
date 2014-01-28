@@ -20,7 +20,6 @@
             <li><a href="javascript:void(0);" onclick="$('#lpu28Modal').modal();">{{ hospital.name }}</a></li>
             {% else %}
             <li><a href="{{ url_for('.division', lpu_id=hospital.uid) }}">{{ hospital.name }}</a></li>
-            {% endif %}
             {% endfor %}
         {% endif %}
         </ul>
@@ -79,8 +78,8 @@
         <p>Для записи на прием перейдите по <a href="{{ url_for('.division', lpu_id=40) }}">ссылке</a>.</p>
     </div>
 </div>
-<a href="{{ url_for('.index') }}" class="btn btn-large" title="На главную страницу"><i class="icon-arrow-left"></i> На главную</a>
-<p class="pull-right">
-    <a href="{{ url_for('.search', okato=request.view_args.get('okato')) }}" class="btn btn-large" title="Поиск врача"><i class="icon-search"></i> Поиск врача</a>
-</p>
+<div class="clearfix">
+    <div class="pull-left"><a href="{{ url_for('.index') }}" class="btn btn-large" title="На главную страницу"><i class="icon-arrow-left"></i> На главную</a></div>
+    <div class="pull-right"><a href="{{ url_for('.search', okato=request.view_args.get('okato')) }}" class="btn btn-large" title="Поиск врача"><i class="icon-search"></i> Поиск врача</a></div>
+</div>
 {% endblock %}

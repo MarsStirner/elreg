@@ -1,0 +1,27 @@
+<div class="loader"></div>
+<!-- Le javascript
+================================================== -->
+<!-- Placed at the end of the document so the pages load faster -->
+<script type="text/javascript">
+    $STATIC_DIR = '{{ url_for('.static', filename='') }}';
+</script>
+<script type="text/javascript" src="{{ url_for('static', filename='bootstrap/js/bootstrap.min.js') }}"></script>
+{#<script type="text/javascript" src="{{ url_for('.static', filename='js/jquery.placeholder.min.js') }}"></script>#}
+<script type="text/javascript" src="{{ url_for('.static', filename='js/bililiteRange.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('.static', filename='js/jquery.sendkeys.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('.static', filename='js/scripts.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('.static', filename='js/ie6.min.js') }}"></script>
+{#<script type="text/javascript">jQuery('input[placeholder]').placeholder();</script>#}
+
+<!--[if IE]>
+   <script type="text/javascript" src="{{ url_for('.static', filename='js/respond.min.js') }}"></script>
+<![endif]-->
+
+{#<script src="{{ url_for('static', filename='js/intro.js') }}"></script>#}
+{#<script src="{{ url_for('static', filename='js/help.js') }}"></script>#}
+{% if counter %}
+<div id="counter">{{ counter|safe }}</div>
+{% endif %}
+<script type="text/javascript">
+    setTimeout("{{ url_for('.index') }}",300000);
+</script>

@@ -11,7 +11,7 @@
                         <label class="control-label" for="region_filter">Муниципальное образование:</label>
                         <div class="controls">
                             <select name="region" id="region_filter" class="span12">
-                            <option value="">- любое -</option>
+                            <option value="0">- любое -</option>
                             {% for region in region_list|sort(attribute='name') %}
                                 <option value="{{ region.code }}"{% if request.view_args.get('okato') == region.code|string %} selected="selected"{% endif %}>{{ region.name }}</option>
                             {% endfor %}
@@ -35,6 +35,7 @@
                         <label class="control-label" for="speciality">Специальность:</label>
                         <div class="controls">
                             <select id="speciality" class="span12">
+                                <option value=""></option>
                             </select>
                         </div>
                     </div>
@@ -42,6 +43,7 @@
                         <label class="control-label" for="doctor">ФИО врача:</label>
                         <div class="controls">
                             <select id="doctor" class="span12">
+                                <option value=""></option>
                             </select>
                         </div>
                     </div>
@@ -183,21 +185,21 @@
         var $region = $('select#region_filter');
         var $lpu = $('select#lpu_filter');
         var $speciality = $('select#speciality');
+        var $speciality_chosen = $('#s2id_speciality .select2-chosen');
+        var $doctor_chosen = $('#s2id_doctor .select2-chosen');
         var $doctor = $('select#doctor');
         var $error = $('#error');
         var $lpu_uid = $lpu.val();
         var old_specilality="";
-        $speciality.typeahead();
-        $doctor.typeahead();
+{#        $speciality.typeahead();#}
+{#        $doctor.typeahead();#}
         if ($lpu_uid){
             get_specialities($lpu_uid);
         }
         $region.change(function(){
             $('select#speciality').val('').trigger("change");
             $('select#doctor').val('').trigger("change");
-            if($(this).val()){
-                filter_lpu($(this).val());
-            }
+            filter_lpu($(this).val());
         });
         $lpu.change(function(){
             $('select#speciality').val('').trigger("change");
@@ -227,12 +229,16 @@
         });
         $('#reset').click(function(){
             $('#search_result').html("");
+            $('select#speciality').val('').trigger("change");
+            $('select#doctor').val('').trigger("change");
         });
         $('#search_form').submit(function(event){
             $('#search_result').html("");
             event.preventDefault();
             $error.hide();
-            if(!$speciality.val() && !$doctor.val()){
+            var if_speciality = ($speciality_chosen.html() === "") || ($speciality_chosen.html() === " ") || ($speciality_chosen.html() === "&nbsp;");
+            var if_doctor = ($doctor_chosen.html() === "") || ($doctor_chosen.html() === " ") || ($doctor_chosen.html() === "&nbsp;");
+            if(if_speciality && if_doctor){
                 $speciality.closest('.control-group').removeClass('success').addClass('error');
                 $doctor.closest('.control-group').removeClass('success').addClass('error');
                 $error.text('Необходимо указать специализацию или ФИО врача').show();
@@ -243,8 +249,8 @@
             }
 
             var doctors = [];
-            if ($doctor.val()){
-                var doctor = find_doctor($doctor.val());
+            if (!if_doctor){
+                var doctor = find_doctor($doctor_chosen.html());
                 if (doctor){
                     doctors.push(doctor);
                 }
@@ -257,11 +263,11 @@
                     lpu_id += "/";
                 }
                 var args = {};
-                if ($speciality.val()){
-                    args['sp'] = $speciality.val();
+                if (!if_speciality){
+                    args['sp'] = $speciality_chosen.html();
                 }
-                if ($doctor.val()){
-                    args['fio'] = $doctor.val();
+                if (!if_doctor){
+                    args['fio'] = $doctor_chosen.html();
                 }
                 $.ajax({
                     url: "{{ url_for('.find_doctors') }}" + lpu_id,

@@ -1,0 +1,37 @@
+{% extends "infokiosk/base.html" %}
+
+{% block content %}
+<legend>Отмена записи на приём</legend>
+<div class="well well-small">{{ ticket_info|safe }}</div>
+{% with errors = get_flashed_messages(category_filter=["error"]) %}
+  {% if errors %}
+    <div class="alert alert-error" title="Ошибка записи">
+        <strong>Ошибка!</strong>
+        <ul class="unstyled">
+        {% for error in errors %}
+          <li>{{ error|safe }}</li>
+        {% endfor %}
+        </ul>
+    </div>
+    <p><a href="{{ url_for('.index') }}" class="btn btn-large"><i class="icon-ok icon-arrow-left"></i> На главную</a></p>
+  {% endif %}
+{% endwith %}
+{% with messages = get_flashed_messages(category_filter=["success"]) %}
+  {% if messages %}
+    <div class="alert alert-success" title="Сообщение">
+        <ul class="unstyled">
+        {% for message in messages %}
+          <li>{{ message }}</li>
+        {% endfor %}
+        </ul>
+    </div>
+    <p><a href="{{ url_for('.index') }}" class="btn btn-large"><i class="icon-ok icon-arrow-left"></i> На главную</a></p>
+  {% endif %}
+{% endwith %}
+{% if request.method == 'GET' %}
+<p class="lead">Вы уверены, что хотите отменить запись на приём?</p>
+<form method="post">
+<button type="submit" class="btn btn-danger">Отменить запись</button> <a href="{{ url_for('.index') }}" class="btn">Не отменять</a>
+</form>
+{% endif %}
+{% endblock %}

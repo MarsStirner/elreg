@@ -1,0 +1,102 @@
+{% extends "infokiosk/base.html" %}
+
+{% block content %}
+<div class="alert alert-info"><h4>Поиск медицинского учреждения</h4>Задайте параметры поиска</div>
+<div class="well well-small">
+    <div class="row-fluid">
+        <div class="span6">
+            <form id="form" action="" method="post" name="frm" class="form-horizontal search-form no-vmargin">
+                <fieldset>
+                    <div class="control-group">
+                        <label class="control-label" for="search_lpu">Медицинское учреждение:</label>
+                        <div class="controls">
+                            <input type="text" name="search" id="search_lpu" maxlength="100" class="input-block-level" onkeyup="searchLpu()" />
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label" for="search_gorod">Город:</label>
+                        <div class="controls">
+                            <input type="text" name="search" id="search_gorod" maxlength="100" class="input-block-level" onkeyup="searchGorod()" value="{{ current_region }}" />
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label" for="search_rayon">Район:</label>
+                        <div class="controls">
+                            <input type="text" name="search" id="search_rayon" maxlength="100" class="input-block-level" onkeyup="searchRayon()" />
+                        </div>
+                    </div>
+                </fieldset>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="row-fluid">
+    <div class="span12">
+        <ul id="search_table" class="nav nav-tabs nav-stacked upper_case">
+        {% if hospitals_list %}
+            {% for hospital in hospitals_list %}
+            <li><a href="{{ url_for('.division', lpu_id=hospital.uid) }}">{{ hospital.name }}</a></li>
+            {% endfor %}
+        {% endif %}
+        </ul>
+    </div>
+</div>
+<a href="{{ url_for('.index') }}" class="btn btn-large"><i class="icon-arrow-left"></i> Вернуться</a>
+<p class="pull-right">
+    <a href="{{ url_for('.search') }}" class="btn btn-large" title="Поиск врача"><i class="icon-search"></i> Поиск врача</a>
+</p>
+
+    <script type="text/javascript">
+        function searchLpu() {
+            $("#search_table").html("");
+            var search_lpu = $('#search_lpu').val();
+            var search_gorod = $('#search_gorod').val();
+            var search_rayon = $('#search_rayon').val();
+            if (!search_lpu && !search_gorod && !search_rayon){
+                return false;
+            }
+            $.getJSON('{{ url_for('.ajax_search') }}', {search_lpu: search_lpu, search_gorod: search_gorod, search_rayon: search_rayon}, function(data) {
+                var $items = [];
+                $.each(data, function(key, val) {
+                    $items.push('<li><a href="{{ url_for('.division') }}' + key + '/">' + val + '</a></li>');
+                });
+                $("#search_table").html($items.join('')).fadeIn('fast');
+            });
+        }
+
+        function searchGorod() {
+            $("#search_table").html("");
+            var search_lpu = $('#search_lpu').val();
+            var search_gorod = $('#search_gorod').val();
+            var search_rayon = $('#search_rayon').val();
+            if (!search_lpu && !search_gorod && !search_rayon){
+                return false;
+            }
+            $.getJSON('{{ url_for('.ajax_search') }}', {search_lpu: search_lpu, search_gorod: search_gorod, search_rayon: search_rayon}, function(data) {
+                var $items = [];
+                $.each(data, function(key, val) {
+                    $items.push('<li><a href="{{ url_for('.division') }}' + key + '/">' + val + '</a></li>');
+                });
+                $("#search_table").html($items.join('')).fadeIn('fast');
+            });
+        }
+
+        function searchRayon() {
+            $("#search_table").html("");
+            var search_lpu = $('#search_lpu').val();
+            var search_gorod = $('#search_gorod').val();
+            var search_rayon = $('#search_rayon').val();
+            if (!search_lpu && !search_gorod && !search_rayon){
+                return false;
+            }
+            $.getJSON('{{ url_for('.ajax_search') }}', {search_lpu: search_lpu, search_gorod: search_gorod, search_rayon: search_rayon}, function(data) {
+                var $items = [];
+                $.each(data, function(key, val) {
+                    $items.push('<li><a href="{{ url_for('.division') }}' + key + '/">' + val + '</a></li>');
+                });
+                $("#search_table").html($items.join('')).fadeIn('fast');
+            });
+        }
+    </script>
+{% endblock %}

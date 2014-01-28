@@ -1,0 +1,23 @@
+{% extends "infokiosk/base.html" %}
+
+{% block content %}
+<blockquote class="red">{{ lpu.name }}{% if lpu|attr('buildings') and lpu.buildings[0] %}, {{ lpu.buildings[0]|attr('name') }}{% if lpu.buildings[0]|attr('address') %} ({{ lpu.buildings[0]|attr('address') }}){% endif %}{% endif %}
+{% if lpu.phone %}<br /><small>Телефон: {{ lpu.phone }}</small>{% endif %}
+</blockquote>
+<div class="well well-small">Выберите специализацию врача из представленного списка</div>
+{% if specialities %}
+<div class="row-fluid">
+    {%- for columns in specialities|slice(2) -%}
+    <div class="span6">
+        <ul class="unstyled menu">
+        {%- for speciality in columns -%}
+        <li class="clearfix"><a href="{{ url_for('.doctors', lpu_id=lpu_id, department_id=department_id, sp=speciality) }}" class="btn btn-large btn-info span12">{{ speciality|replace('(', '<br><small>(')|replace(')',')</small>')|safe }}</a></li>
+        {%- endfor -%}
+        </ul>
+    </div>
+    {%- endfor -%}
+</div>
+{% else %}
+    <div class="alert alert-error">Данные по специализациям врачей отсутствуют, попробуйте зайти на страницу позже или выберите другое медицинское учреждение.</div>
+{% endif %}
+{% endblock %}

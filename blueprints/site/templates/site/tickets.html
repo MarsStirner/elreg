@@ -20,12 +20,12 @@
     <a href="{{ url_for('.tickets', lpu_id=lpu_id, department_id=department_id, doctor_id=doctor_id, start=next_monday) }}" class="btn btn-info pull-right" title="Следующая неделя">Следующая неделя</a>
 </div>
 <br>
-{% if ticket_table %}
+{% if ticket_table or absences %}
 <div class="well well-small">
     <table class="table table-condensed">
         <caption>
             <div class="row-fluid">
-                <div class="span3"><p class="lead"><big>Расписание врача:</big></p></div>
+                <div class="span3 text-left"><p class="lead margin-bottom-10"><big>Расписание врача:</big></p></div>
                 <div class="span4 offset5 text-right">
                     <button type="button" class="btn btn-mini btn-success">Свободно</button>
                     <button type="button" class="btn btn-mini btn-warning" title="Заблокирован на 10 минут другим пациентом">Заблокирован</button>
@@ -38,17 +38,26 @@
             <tr>
             {% for date in dates %}
                 <th class="th-centered">
-                    {{ date|dateformat('dd.M.y') }}, {{ date|dateformat('E') }}.
+                    {{ date|dateformat('dd.MM.y') }}, {{ date|dateformat('E') }}.
                 </th>
             {% endfor %}
             </tr>
         </thead>
         <tbody>
+        {% if ticket_table %}
         {% for row in ticket_table %}
+            {% set outer_loop = loop %}
             <tr>
-                {% for cell in row %}
-                    {% if cell and cell|attr('start') > now %}
-                    <td class="{{ cell.status }}">
+                {% for _date, cell in row|dictsort %}
+                    {% if _date in absences and absences[_date] is iterable %}
+                        {% if outer_loop.first %}
+                            <td rowspan="{{ outer_loop.length }}" class="span2">
+                                <span class="btn btn-block disabled black_text">Врач не принимает по причине: <strong>{{ absences[_date].name }}</strong></span>
+                            </td>
+                        {% endif %}
+                    {% else %}
+                        {% if cell and cell|attr('start') > now %}
+                        <td class="{{ cell.status }}">
                         {% if cell.status == 'free' %}
                             {% if cell.start not in blocked.keys() %}
                             <a href="{{ url_for('.registration', lpu_id=lpu_id, department_id=department_id, doctor_id=doctor_id, d=cell.start|dateformat('yyyyMMdd'), s=cell.start|datetimeformat('HHmmss', rebase=False), f=cell.finish|datetimeformat('HHmmss', rebase=False)) }}" class="btn btn-block btn-success">{{ cell.start|datetimeformat('HH:mm', rebase=False) }}</a>
@@ -60,21 +69,39 @@
                         {% else %}
                             <span class="btn btn-block btn-danger disabled{% if cell.start|datetimeformat('HH:mm', rebase=False) %} btn-inverse{% endif %}">{{ cell.start|datetimeformat('H:mm', rebase=False)|default("&nbsp;") }}</span>
                         {% endif %}
-                    {% elif cell %}
-                    <td align="center">
-                        <span class="btn btn-block btn-danger disabled{% if cell.start|datetimeformat('HH:mm', rebase=False) %} btn-inverse{% endif %}">{{ cell.start|datetimeformat('H:mm', rebase=False)|default("&nbsp;") }}</span>
-                    {% else %}
-                    <td align="center">
-                        <span class="btn btn-block disabled">&nbsp;</span>
+                        </td>
+                        {% elif cell %}
+                        <td align="center">
+                            <span class="btn btn-block btn-danger disabled{% if cell.start|datetimeformat('HH:mm', rebase=False) %} btn-inverse{% endif %}">{{ cell.start|datetimeformat('H:mm', rebase=False)|default("&nbsp;") }}</span>
+                        </td>
+                        {% else %}
+                        <td align="center">
+                            <span class="btn btn-block disabled">&nbsp;</span>
+                        </td>
+                        {% endif %}
                     {% endif %}
                     </td>
                 {% endfor %}
             </tr>
         {% endfor %}
+        {% elif absences %}
+            <tr>
+            {% for date in dates %}
+                {% set _date=date|dateformat('yyyyMMdd') %}
+                {% if _date in absences and absences[_date] is iterable %}
+                    <td class="span2">
+                        <span class="btn btn-block disabled black_text">Врач не принимает по причине: <strong>{{ absences[_date].name }}</strong></span>
+                    </td>
+                {% else %}
+                    <td></td>
+                {% endif %}
+            {% endfor %}
+            </tr>
+        {% endif %}
             <tr>
                 {% for date in dates %}
                     <th class="th-centered">
-                        {{ date|dateformat('dd.M.y') }}, {{ date|dateformat('E') }}.
+                        {{ date|dateformat('dd.MM.y') }}, {{ date|dateformat('E') }}.
                     </th>
                 {% endfor %}
             </tr>

@@ -1,0 +1,89 @@
+{% extends "infokiosk/base.html" %}
+
+{% block content %}
+{% set policy_type = session.get('document', dict()).get('policy_type') %}
+{% set document_code = session.get('document', dict()).get('document_code') %}
+{% set series = session.get('document', dict()).get('series') %}
+{% set number = session.get('document', dict()).get('number') %}
+{% set client_id = session.get('client_id') %}
+<div class="row-fluid">
+<div class="span10 offset1 no_print">
+<table class="no_print table">
+    <thead>
+    <tr><th colspan="3"><h4>УВЕДОМЛЕНИЕ О ЗАПИСИ НА ПРИЕМ №{{ session.get('ticket_uid', '') }}</h4></th></tr>
+    </thead>
+    <tr><th>ФИО (Пациент):</th><td colspan="2">{{ session.get('patient', {}).get('name', '') }}</td></tr>
+    {% if session.get('patient', {}).get('birthday') %}<tr><th>Дата рождения:</th><td colspan="2">{{ session.get('patient', {}).get('birthday', '') }} г.</td></tr>{% endif %}
+    {% if client_id %}
+    <tr><th>№ Амбулаторной карты:</th><td colspan="2">{{ client_id }}</td></tr>
+    {% else %}
+        {% if policy_type == 2 or policy_type == 4 %}
+        <tr><th>Полис ОМС:</th><td colspan="2">{% if series %}{{ series }} {% endif %}{{ number }}</td></tr>
+        {% endif %}
+        {% if policy_type == 1 %}
+        <tr><th>Полис ОМС (временное свидетельство):</th><td colspan="2">{{ number }}</td></tr>
+        {% endif %}
+        {% if policy_type == 3 %}
+        <tr><th>Полис ДМС:</th><td colspan="2">{% if series %}{{ series }} {% endif %}{{ number }}</td></tr>
+        {% endif %}
+        {% if document_code == 7 %}
+        <tr><th>Военный билет:</th><td colspan="2">{% if series %}{{ series }} {% endif %}{{ number }}</td></tr>
+        {% endif %}
+        {% if document_code == 4 %}
+        <tr><th>Удостоверение личности офицера:</th><td colspan="2">{% if series %}{{ series }} {% endif %}{{ number }}</td></tr>
+        {% endif %}
+    {% endif %}
+    <tr><th colspan="3"><h4>ВЫ ЗАПИСАНЫ НА ПРИЕМ:</h4></th></tr>
+    <tr><th>Лечебное учреждение:</th><td colspan="2">{{ lpu.name }},<br/>{% if lpu|attr('buildings') and lpu.buildings[0] %}{{ lpu.buildings[0]|attr('name') }}{% if lpu.buildings[0]|attr('address') %} ({{ lpu.buildings[0]|attr('address') }}){% endif %}{% if lpu.buildings[0]|attr('phone') %},<br/>телефон: {{ lpu.buildings[0]|attr('phone') }}{% endif %}{% endif %}</td></tr>
+    <tr><th>Врач:</th><td colspan="2">
+        {% set doctor=session.get('doctor') %}
+        {% set office=session.get('office') %}
+        {{ doctor['lastName'] }} {{ doctor['firstName'] }} {{ doctor['patronymic'] }}{% if office %} (кабинет: {{ office }}){% endif %}<br/>({{ doctor.get('speciality') }})
+    </td></tr>
+    <tr><th>Дата и время приёма:</th><td colspan="2">{{ session.get('date', '') }} {{ session.get('start_time', '') }} - {{ session.get('finish_time', '') }}</td></tr>
+    <tr><th colspan="3"><h4>ВНИМАНИЕ:</h4></th></tr>
+    <tr><td colspan="3">В случае невозможности посещения врача в указанное время, пожалуйста, сообщите об этом лечебному учреждению по контактным данным, указанным в настоящем уведомлении.</td></tr>
+    <tr><td colspan="3">С настоящим уведомлением необходимо обратиться в регистратуру лечебного учреждения не менее чем за 15 минут до указанного времени приёма.</td></tr>
+</table>
+</div>
+</div>
+<div class="hide" id="printable">
+    <table style="border: 1px solid; border-collapse: collapse;">
+        <tr><td style="border: 1px solid; border-collapse: collapse; padding: 5px;"><span style="text-align: center;">УВЕДОМЛЕНИЕ О ЗАПИСИ НА ПРИЕМ №{{ session.get('ticket_uid', '') }}</span><br />
+        ФИО (Пациент): <b>{{ session.get('patient', {}).get('name', '') }}</b><br />
+        Дата рождения: <b>{{ session.get('patient', {}).get('birthday', '') }}</b><br />
+        {% if client_id %}
+        № Амбулаторной карты: <b>{{ client_id }}</b>
+        {% else %}
+        {% if policy_type == 2 or policy_type == 4 %}
+        Полис ОМС: <b>{% if series %}{{ series }} {% endif %}{{ number }}</b>
+        {% endif %}
+        {% if policy_type == 1 %}
+        Полис ОМС (временное свидетельство): <b>{{ number }}</b>
+        {% endif %}
+        {% if policy_type == 3 %}
+        Полис ДМС: <b>{% if series %}{{ series }} {% endif %}{{ number }}</b>
+        {% endif %}
+        {% if document_code == 7 %}
+        Военный билет: <b>{% if series %}{{ series }} {% endif %}{{ number }}</b>
+        {% endif %}
+        {% if document_code == 4 %}
+        Удостоверение личности офицера: <b>{% if series %}{{ series }} {% endif %}{{ number }}</b>
+        {% endif %}
+        {% endif %}
+        </td></tr>
+        <tr><td style="border: 1px solid; border-collapse: collapse; padding: 5px;"><span style="text-align: center;"><b>Вы записаны на прием:</b></span><br />
+        Лечебное учреждение:<br />
+        <b>{{ lpu.name }}, {% if lpu|attr('buildings') and lpu.buildings[0] %}{{ lpu.buildings[0]|attr('name') }}{% if lpu.buildings[0]|attr('address') %} ({{ lpu.buildings[0]|attr('address') }}){% endif %}{% if lpu.buildings[0]|attr('phone') %}, тел.: {{ lpu.buildings[0]|attr('phone') }}{% endif %}{% endif %}</b><br />
+        Врач: <b>{{ doctor['lastName'] }} {{ doctor['firstName'] }} {{ doctor['patronymic'] }} ({{ doctor.get('speciality') }})</b><br />
+        Дата и время приема: <b>{{ session.get('date', '') }} {{ session.get('start_time', '') }} - {{ session.get('finish_time', '') }}{% if office %} (кабинет: {{ office }}){% endif %}<br/></b></td></tr>
+        <tr><td style="border: 1px solid; border-collapse: collapse; padding: 5px;"><b>Внимание:</b><i>* В случае невозможности посещения врача в указанное время, пожалуйста, сообщите об этом лечебному учреждению по контактным данным, указанным в настоящем уведомлении.</i><br />
+        <i>* С настоящим уведомлением необходимо обратиться в регистратуру лечебного учреждения не менее чем за 15 минут до указанного времени приема.</i></td></tr>
+    </table>
+</div>
+{% endblock %}
+{% block js %}
+<script type="text/javascript">
+    setTimeout("{{ url_for('.index') }}",30000);
+</script>
+{% endblock %}

@@ -17,6 +17,8 @@ sqlalchemy
 fabric
 dateutils
 mysql-python
+beaker
+Flask-Beaker
 #lxml
 
 -r pysimplelogs/requirements.txt

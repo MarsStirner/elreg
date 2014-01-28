@@ -1,0 +1,32 @@
+УВЕДОМЛЕНИЕ О ЗАПИСИ НА ПРИЕМ №{{ session.get('ticket_uid') }}
+ФИО (Пациент): {{ data['lastname'] }} {{ data['firstname'] }} {{ data['patronymic'] }}
+Дата рождения: {{ data['day'] }}.{{ data['month'] }}.{{ data['year'] }} г.
+{% if data.get('client_id') %}
+№ Амбулаторной карты: {{ data.get('client_id') }}
+{% else %}
+{% if data['document_type'] == 'policy_type_2' %}
+Полис ОМС: {% if data['series'] %}{{ data['series'] }} {% endif %}{{ data['number'] }}
+{% endif %}
+{% if data['document_type'] in 'policy_type_4' %}
+Полис ОМС: {{ data['policy_number'] }}
+{% endif %}
+{% if data['document_type'] in 'policy_type_1' %}
+Полис ОМС (временное свидетельство): {{ data['policy_number'] }}
+{% endif %}
+{% if data['document_type'] == 'policy_type_3' %}
+Полис ДМС: {% if data['series'] %}{{ data['series'] }} {% endif %}{{ data['number'] }}
+{% endif %}
+{% if data['document_type'] == 'doc_type_7' %}
+Военный билет: {% if data['doc_series'] %}{{ data['doc_series'] }} {% endif %}{{ data['doc_number'] }}
+{% endif %}
+{% if data['document_type'] == 'doc_type_4' %}
+Удостоверение личности офицера: {% if data['doc_series'] %}{{ data['doc_series'] }} {% endif %}{{ data['doc_number'] }}
+{% endif %}
+{% endif %}
+ВЫ ЗАПИСАНЫ НА ПРИЕМ:
+Лечебное учреждение: {{ lpu.name }}, {% if lpu.buildings[0] %}{{ lpu|attr('buildings') and lpu.buildings[0]|attr('name') }}{% if lpu.buildings[0]|attr('address') %} ({{ lpu.buildings[0]|attr('address') }}){% endif %}{% if lpu.buildings[0]|attr('phone') %}, телефон: {{ lpu.buildings[0]|attr('phone') }}{% endif %}{% endif %}
+Врач: {% set doctor=session.get('doctor') %}{% set office=session.get('office') %}{{ doctor['lastName'] }} {{ doctor['firstName'] }} {{ doctor['patronymic'] }}{% if office %} (кабинет: {{ office }}){% endif %} ({{ doctor.get('speciality') }})
+Дата и время приёма: {{ session.get('date', '') }} {{ session.get('start_time', '') }} - {{ session.get('finish_time', '') }}
+ВНИМАНИЕ:
+В случае невозможности посещения врача в указанное время, пожалуйста, сообщите об этом лечебному учреждению по контактным данным, указанным в настоящем уведомлении, или отмените запись, воспользовавшись ссылкой: {{ dequeue_link }}.
+С настоящим уведомлением необходимо обратиться в регистратуру лечебного учреждения не менее чем за 15 минут до указанного времени приёма.

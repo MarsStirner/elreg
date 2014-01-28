@@ -1,0 +1,280 @@
+{% extends "infokiosk/base.html" %}
+
+{% block content %}
+<blockquote class="red">{{ lpu.name }}{% if lpu|attr('buildings') and lpu.buildings[0] %}, {{ lpu.buildings[0]|attr('name') }}{% if lpu.buildings[0]|attr('address') %} ({{ lpu.buildings[0]|attr('address') }}){% endif %}{% endif %}<br />
+{% if lpu.phone %}<small>Телефон: {{ lpu.phone }}</small>{% endif %}
+{% if doctor.speciality %}<small>{{ doctor.speciality }}</small>{% endif %}
+{% if doctor %}{{ doctor.get('lastName') }} {{ doctor.get('firstName') }} {{ doctor.get('patronymic') }}{% endif %}{% if office is defined and office %} (кабинет: {{ office }}){% endif %}<br/>
+Дата и время приёма: {{ date|dateformat('dd.M.y', rebase=False) }} {{ start_time|datetimeformat('H:mm', rebase=False) }} - {{ finish_time|datetimeformat('H:mm', rebase=False) }}
+</blockquote>
+{% set errors = get_flashed_messages(category_filter=["error"]) %}
+  {%- if errors -%}
+    <div class="alert alert-error" title="Ошибка записи">
+        <strong>Ошибка записи!</strong>
+        <ul class="unstyled no-vmargin">
+        {%- for error in errors -%}
+          <li>{{ error }}</li>
+        {%- endfor -%}
+        </ul>
+    </div>
+  {%- endif -%}
+{%- if form.errors -%}
+<div class="alert alert-error" title="Ошибка заполнения формы">
+    <strong>Форма заполнена некорректно</strong>
+    <ul class="unstyled no-vmargin">
+        {%- for field_name in form.errors -%}
+            {%- for error in form.errors[field_name] -%}
+                <li>{% if field_name != 'year' %}{{ form[field_name].label(class="inline") }}: {% endif %}{{ error }}</li>
+            {%- endfor -%}
+        {%- endfor -%}
+    </ul>
+</div>
+{%- endif -%}
+{% if errors or form.errors %}<div id="try_again" class="text-center"><button class="btn btn-large btn-info" id="btn_try_again">Попробовать записаться ещё раз</button></div>{% endif %}
+<div id="form_container"{% if errors or form.errors %} class="hide"{% endif %}>
+<form id="patient_form" action="" method="post" name="frm" class="form-horizontal">
+    {{ form.csrf_token }}
+    <input type="hidden" name="ticket" value="{{ ticket }}" />
+    <div id="step1" class="input_container control-group">
+        <legend><big>Ваша фамилия</big></legend>
+        {{ form.lastname(class="span12", autocomplete="off", value=session.get('lastname', '')) }}
+    </div>
+    <div id="step2" class="input_container hide control-group">
+        <legend><big>Ваше имя</big></legend>
+        {{ form.firstname(class="span12", autocomplete="off", value=session.get('firstname', '')) }}
+    </div>
+    <div id="step3" class="input_container hide control-group">
+        <legend><big>Ваше отчество</big></legend>
+        {{ form.patronymic(class="span12", autocomplete="off", value=session.get('patronymic', '')) }}
+    </div>
+    <div id="step4" class="input_container hide control-group">
+        <legend><big>Дата рождения</big></legend>
+        <div class="text-center">
+        {{ form.day(class="day_month text-center", id="dd", autocomplete="off", value=session.get('day', ''), maxlength=2) }}
+        {{ form.month(class="day_month text-center", id="mm", autocomplete="off", value=session.get('month', ''), maxlength=2) }}
+        {{ form.year(class="year text-center", id="yy", autocomplete="off", value=session.get('year', ''), maxlength=4) }}
+        </div>
+    </div>
+    <div id="step5" class="input_container hide control-group">
+        <legend><big>Укажите пол</big></legend>
+        <input type="hidden" name="gender" id="gender" value="{{ session.get('gender', '') }}">
+        <div class="row-fluid">
+        {% for column in form.gender.choices|slice(2) %}
+            <div class="span6">
+                <ul class="unstyled menu">
+                {% for gender in column %}
+                <li class="clearfix"><a href="javascript:void(0);" onclick="choose_gender(this,'{{ gender[0] }}');" class="btn_gender_type btn btn-large span12 {% if gender[0]==session.get('gender', '') %}btn-warning{% else %}btn-info{% endif %}">{{ gender[1] }}</a></li>
+                {%- endfor -%}
+                </ul>
+            </div>
+        {% endfor %}
+        </div>
+    </div>
+    <div id="step6" class="input_container hide control-group">
+        <legend><big>Документ, по которому производится запись</big></legend>
+        <input type="hidden" name="document_type" id="document_type" value="{{ session.get('document_type', '') }}">
+        <div class="row-fluid">
+        {% for column in form.document_type.choices[1:]|slice(2) %}
+            <div class="span6">
+                <ul class="unstyled menu">
+                {% for doc_type in column %}
+                <li class="clearfix"><a href="javascript:void(0);" onclick="choose_doc_type(this,'{{ doc_type[0] }}');" class="btn_doc_type btn btn-large span12 {% if doc_type[0]==session.get('document_type', '') %}btn-warning{% else %}btn-info{% endif %}">{{ doc_type[1] }}</a></li>
+                {%- endfor -%}
+                </ul>
+            </div>
+        {% endfor %}
+        </div>
+    </div>
+    <div id="step7" class="input_container hide control-group">
+        {% include 'infokiosk/__documents_select.html' %}
+    </div>
+
+    <div id="error" class="alert alert-error hide">Некорректно заполнены данные</div>
+    {% include 'infokiosk/_virtual_keyboard.html' %}
+
+    <div class="well well-small">
+        <div class="row-fluid">
+            <div class="span6"><button type="button" id="btn-step-bkwrd" class="btn btn-large btn-danger hide"><i class="icon-white icon-chevron-left"></i> Назад</button></div>
+            <div class="span6 text-right">
+                <button type="button" id="btn-step-frwrd" class="btn btn-large btn-success" disabled>Далее <i class="icon-white icon-chevron-right"></i></button>
+                <button type="submit" id="btn-submit" class="btn btn-large btn-success hide" disabled><i class="icon-white icon-ok"></i> Записаться</button>
+            </div>
+        </div>
+    </div>
+</form>
+<div class="well well-small small-text">
+Указывая свои данные на данной странице я даю согласие на автоматизированную обработку в выбранном лечебно-профилактическом учреждении указанной информации (фамилия, имя, отчество, дата рождения, номер и/или серия документа) для записи на прием в медико-профилактических целях для установления медицинского диагноза и оказания медицинских услуг.<br/>
+Мое согласие на автоматизированную обработку указанной информации распространяется на осуществление всех действия с ней, включая сбор, передачу по сетям связи общего назначения, накопление, хранение, обновление, изменение, использование, обезличивание, блокирование, уничтожение и обработку посредством внесения в электронную базу данных, систематизации, включения в списки и отчетные формы.
+</div>
+</div>
+{% endblock %}
+{% block js %}
+<script type="text/javascript">
+var step = 1;
+function change_step(newvalue){
+    step = newvalue;
+    $('#btn-step-frwrd').attr('disabled', "disabled");
+    if(step==1){
+        $('#btn-step-bkwrd').hide();
+    }else if(step==2){
+        $('#btn-step-bkwrd').show();
+    }else if (step == 7){
+        $('#btn-step-frwrd').hide();
+        $('#btn-submit').show();
+    }else if (step == 5 && !$('#gender').val()){
+        $('#btn-step-frwrd').hide();
+    }else if (step == 6 && !$('#document_type').val()){
+        $('#btn-step-frwrd').hide();
+    }else{
+        $('#btn-step-frwrd').show();
+        $('#btn-submit').hide();
+    }
+    if (step == 4){
+        $('#letters').hide();
+        $('#digits').show();
+        $('#space').hide();
+    }else if (step == 6 || step == 5){
+        $('#letters').hide();
+        $('#digits').hide();
+        $('#controls').hide();
+    }else if(step == 7){
+        $('#letters').show();
+        $('#space').show();
+        $('#controls').show();
+        $('#digits').show();
+    }else{
+        $('#digits').hide();
+        $('#letters').show();
+        $('#space').show();
+        $('#controls').show();
+    }
+}
+function check_btn(){
+    var $inputs = $('#step'+step).find('input').filter(':visible');
+    var btn;
+    var disabled=false;
+    if (step == 7){
+        btn = $('#btn-submit');
+    } else {
+        btn = $('#btn-step-frwrd');
+    }
+    for (var i=0;i<$inputs.length;i++){
+        if (!$($inputs[i]).val()){
+            disabled = true;
+        }
+    }
+    if (step == 4){
+        if (!validate_date($('#dd').val(), $('#mm').val(), $('#yy').val())){
+            disabled = true;
+        }
+    }
+    if (disabled){
+        btn.attr('disabled', "disabled");
+    } else {
+        btn.removeAttr('disabled');
+    }
+    $inputs.each(function(){
+        $(this).on('change', function(){
+            disabled = false;
+            for (var i=0;i<$inputs.length;i++){
+                if (!$($inputs[i]).val()){
+                    disabled = true;
+                }
+            }
+            if (step == 4){
+                if (!validate_date($('#dd').val(), $('#mm').val(), $('#yy').val())){
+                    disabled = true;
+                }
+            }
+            if (disabled){
+                btn.attr('disabled', "disabled");
+            } else {
+                btn.removeAttr('disabled');
+            }
+        });
+    });
+}
+function IsLeapYear(aYear){
+    return ((((aYear%4==0) && (aYear%100!=0)) || (aYear%400==0)) ? true : false);
+}
+function validate_date(day, month, year){
+    var _date = new Date();
+    if (day < 1 || day > 31){
+        return false;
+    }
+    if (month < 1 || month > 12){
+        return false;
+    }
+    if (year < 1900 || year > _date.getFullYear()){
+        return false;
+    }
+    if ([4,6,9,11].indexOf(month) > -1 && day > 30){
+        return false;
+    }
+    if (month ==2 && (day > 29 && IsLeapYear(year) || day > 28 && !IsLeapYear(year))){
+        return false;
+    }
+    return true;
+}
+function check_input(step){
+    var $inputs = $('#step'+step).find('input');
+    var result = false;
+    $inputs.each(function(index){
+        $(this).parent('div.input_container').removeClass('error');
+        if (!$(this).val()){
+            $(this).parent('div.input_container').addClass('error');
+            result = false;
+            return false;
+        }
+        result = true;
+    });
+    return result;
+}
+function choose_doc_type(el, doc_type){
+    $('.btn_doc_type').removeClass('btn-warning').addClass('btn-info');
+    $(el).removeClass('btn-info').addClass('btn-warning');
+    $('#document_type').val(doc_type);
+    show_doc_fields(doc_type);
+    $('#step6').hide();
+    change_step(7);
+    $('#step7').show();
+    check_btn();
+}
+function choose_gender(el, gender){
+    $('.btn_gender_type').removeClass('btn-warning').addClass('btn-info');
+    $(el).removeClass('btn-info').addClass('btn-warning');
+    $('#gender').val(gender);
+    $('#step5').hide();
+    change_step(6);
+    $('#step6').show();
+    check_btn();
+}
+$(document).ready(function(){
+    check_btn();
+    $('#btn-step-frwrd').click(function(){
+        if(check_input(step)){
+            $('#step'+step).hide();
+            change_step(step + 1);
+            if($('#step'+step)){
+                $('#step'+step).show();
+                check_btn();
+            }
+        }
+    });
+    $('#btn-step-bkwrd').click(function(){
+        $('#step'+step).hide();
+        change_step(step - 1);
+        $('#step'+step).show();
+        check_btn();
+    });
+    $('#btn_try_again').click(function(){
+        $('#form_container').show();
+        $('#try_again').hide();
+        $('.alert').hide();
+    });
+    $("form#patient_form").submit(function(){
+        $('body').addClass("loading");
+    });
+});
+</script>
+{% endblock %}

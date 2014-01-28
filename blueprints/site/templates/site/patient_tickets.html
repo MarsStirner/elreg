@@ -1,0 +1,223 @@
+{% extends "site/base.html" %}
+
+{% block content %}
+<div class="alert alert-info"><h4>Для получения списка талончиков внесите данные пациента в поля формы</h4>
+<strong>Внимание!</strong> Отображаются только те талончики, запись по которым производилась через сайт</div>
+<legend>Поиск талончиков пациента</legend>
+{% with errors = get_flashed_messages(category_filter=["error"]) %}
+  {% if errors %}
+    <div class="alert alert-error" title="Ошибка записи">
+        <strong>Ошибка записи!</strong>
+        <ul class="unstyled no-vmargin">
+        {% for error in errors %}
+          <li>{{ error }}</li>
+        {% endfor %}
+        </ul>
+    </div>
+  {% endif %}
+{% endwith %}
+{% if form.errors %}
+<div class="alert alert-error" title="Ошибка заполнения формы">
+    <strong>Форма заполнена некорректно</strong>
+    <ul class="unstyled no-vmargin">
+        {% for field_name in form.errors %}
+            {% for error in form.errors[field_name] %}
+                <li>{% if field_name != 'year' %}{{ form[field_name].label(class="inline") }}: {% endif %}{{ error }}</li>
+            {% endfor %}
+        {% endfor %}
+    </ul>
+</div>
+{% endif %}
+{% with messages = get_flashed_messages(category_filter=["info"]) %}
+  {% if messages %}
+    <div class="alert alert-success" title="Сообщение">
+        <ul class="unstyled no-vmargin">
+        {% for message in messages %}
+          <li>{{ message }}</li>
+        {% endfor %}
+        </ul>
+    </div>
+  {% endif %}
+{% endwith %}
+<div class="alert alert-error hide" title="Ошибка поиска" id="error"></div>
+<div class="well well-small">
+<form id="patient_form" action="" method="post" name="frm" class="form-horizontal search-form">
+    {{ form.csrf_token }}
+    <fieldset>
+        <div class="control-group">
+            <label class="control-label" for="region_filter">Муниципальное образование</label>
+            <div class="controls">
+                <select name="region" id="region_filter" class="span6">
+                <option value="0">- любое -</option>
+                {% for region in region_list|sort(attribute='name') %}
+                    <option value="{{ region.code }}"{% if request.values.get('region') == region.code|string %} selected="selected"{% endif %}>{{ region.name }}</option>
+                {% endfor %}
+                </select>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="lpu_filter">Медицинское учреждение<span class="text-error">*</span></label>
+            <div class="controls">
+                <select name="lpu" id="lpu_filter" class="span6">
+                <option value="">- выберите медицинское учреждение -</option>
+                {% for hospital in hospitals|sort(attribute='name') %}
+                    <option value="{{ hospital.id }}"{% if '%s/0'|format(request.view_args.get('lpu')) == hospital.uid or '%s/0'|format(request.values.get('lpu')) == hospital.uid %} selected="selected"{% endif %}>{{ hospital.name }}</option>
+                {% endfor %}
+                </select>
+            </div>
+        </div>
+    </fieldset>
+    <div class="control-group">
+        {{ form.lastname.label(class="control-label") }}
+        <div class="controls">
+            {{ form.lastname(class="span4", autocomplete="off", placeholder="Иванов") }}
+        </div>
+    </div>
+    <div class="control-group">
+        {{ form.firstname.label(class="control-label") }}
+        <div class="controls">
+            {{ form.firstname(class="span4", autocomplete="off", placeholder="Иван") }}
+        </div>
+    </div>
+
+    <div class="control-group">
+        {{ form.patronymic.label(class="control-label") }}
+        <div class="controls">
+            {{ form.patronymic(class="span4", autocomplete="off", placeholder="Иванович") }}
+        </div>
+    </div>
+
+    <div class="control-group">
+        <label class="control-label" for="dd">Дата рождения<span class="text-error">*</span></label>
+        <div class="controls">
+            {{ form.day(class="day_month", id="dd", autocomplete="on", maxlength=2, placeholder="01") }}
+            {{ form.month(class="day_month", id="mm", autocomplete="on", maxlength=2, placeholder="12") }}
+            {{ form.year(class="year", id="yy", autocomplete="on", maxlength=4, placeholder="2001") }}
+        </div>
+    </div>
+
+    <div class="control-group">
+        {{ form.gender.label(class="control-label") }}
+        <div class="controls">
+            {{ form.gender(class="inline clearfix") }}
+        </div>
+    </div>
+
+    {% include 'site/__documents_select.html' %}
+
+    <div class="control-group">
+        {{ form.captcha.label(class="control-label") }}
+        <div class="controls">
+            {{ form.captcha(class="span1", value="") }}
+        </div>
+    </div>
+
+    <div class="control-group">
+        <div class="controls">
+            <span class="text-error">* - поля, обязательные для заполнения</span>
+        </div>
+    </div>
+
+    <div class="control-group no-vmargin">
+        <div class="controls">
+            <button type="submit" class="btn btn-large btn-success"><i class="icon-search icon-white"></i> Найти</button>
+            <button type="reset" class="btn btn-large" id="reset">Очистить форму</button>
+        </div>
+    </div>
+</form>
+</div>
+{% if result %}
+<div class="row-fluid" id="search_result_row">
+    {% if 'tickets' in result and result['tickets'] %}
+    <div id="search_result">
+    {% for ticket in result['tickets'] %}
+        {% set doctor=ticket['doctor'] %}
+        <blockquote>
+            <p class="lead">
+                <a href="{{ ticket['schedule_href'] }}" title="Перейти к расписанию врача">{{ doctor['name']['lastName'] }} {{ doctor['name']['firstName'] }} {{ doctor['name']['patronymic'] }}</a> ({{ doctor['speciality'] }})
+                <small>{{ ticket['location'] }}</small>
+                {{ ticket['timeslotStart']|datetimeformat('dd.MM.YYYY HH:mm', rebase=False) }}
+                <a href="{{ ticket['dequeue_href'] }}" title="Отменить запись" class="btn btn-danger"><i class="icon-white icon-trash"></i> Отменить запись</a>
+            </p>
+        </blockquote>
+    {% endfor %}
+    </div>
+    {% elif result['status'] == False and result['message'] %}
+        <div class="alert alert-error lead" title="Ошибка поиска"><strong>Ошибка поиска!</strong> {{ result['message'] }}</div>
+    {% else %}
+        <div class="alert lead" title="Результат поиска">Не найдено ни одного актуального талончика</div>
+    {% endif %}
+</div>
+{% endif %}
+<a href="{{ request.referrer }}" class="btn btn-large"><i class="icon-arrow-left"></i> Вернуться</a>
+{% endblock %}
+{% block js %}
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("body").on({
+            ajaxStart: function() {
+                $(this).addClass("loading");
+            },
+            ajaxStop: function() {
+                $(this).removeClass("loading");
+            }
+        });
+    });
+    {% if result %}
+    $(document).ready(function () {
+        $('html, body').animate({
+            scrollTop: $("#search_result_row").offset().top
+        }, 1000);
+    });
+    {% endif %}
+    function filter_lpu(okato){
+        $.ajax({
+            url: "{{ url_for('.get_lpu_list') }}" + okato,
+            crossDomain: true,
+            cache: false, // обязательно для IE
+            dataType: 'json',
+            success: function (data) {
+                $('#lpu_filter')
+                        .find('option[value!=""]')
+                        .remove()
+                        .end();
+                if(data['result'].length > 0){
+                    $.each(data['result'], function(key, value) {
+                        $('#lpu_filter')
+                                .append($('<option>', { value : value['id'] })
+                                .text(value['name']));
+                    });
+                }
+            }
+        });
+    }
+
+    $(document).ready(function(){
+        var $region = $('select#region_filter');
+        var $lpu = $('select#lpu_filter');
+        var $error = $('#error');
+        var $lpu_uid = $lpu.val();
+        $region.change(function(){
+            if($(this).val()){
+                filter_lpu($(this).val());
+            }
+        });
+        $lpu.change(function(){
+            if($(this).val()){
+                $lpu.parents('.control-group').removeClass('error');
+            }
+        });
+        $('#patient_form').submit(function(){
+            $error.hide();
+
+            if (!$lpu.val()){
+                $lpu.parents('.control-group').removeClass('success').addClass('error');
+                $error.text('Необходимо выбрать медицинское учреждение').show();
+                return false;
+            } else{
+                return true;
+            }
+        });
+    });
+    </script>
+{% endblock %}

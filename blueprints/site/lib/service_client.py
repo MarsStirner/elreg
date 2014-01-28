@@ -137,12 +137,14 @@ class Schedule():
                 params.update(dict(startDate=startDate, endDate=endDate))
             result = self.client.service.getScheduleInfo(params)
             ticket = getattr(result, 'timeslots', [])
+            absences = getattr(result, 'absences', [])
         except Exception, e:
             print e
             logger.error(u'params:{0} \nError: {1}'.format(unicode(params), e),
                          extra=dict(tags=[u'получение расписания', 'elreg']))
             ticket = []
-        return ticket
+            absences = []
+        return ticket, absences
 
     def getTicketStatus(self, hospitalUid=0, ticketUid=0):
         """
@@ -158,7 +160,7 @@ class Schedule():
             ticket = []
         return ticket
 
-    def enqueue(self, person, document, hospitalUid, doctorUid, timeslotStart, hospitalUidFrom, birthday, sex):
+    def enqueue(self, person, document, hospitalUid, doctorUid, timeslotStart, hospitalUidFrom, birthday, sex=None):
         """
         Метод принимает данные о пациенте и возвращает номер талона и результат записи на приём.
 
@@ -213,3 +215,19 @@ class Schedule():
                          extra=dict(tags=[u'ближайший талон', 'elreg']))
             tickets = []
         return tickets
+
+    def get_patient_tickets(self, person, document, hospital_uid, birthday, gender=None, hospitalUidFrom=None):
+        try:
+            result = self.client.service.patientTickets({
+                'person': person,
+                'document': document,
+                'hospitalUid': hospital_uid,
+                'hospitalUidFrom': hospitalUidFrom,
+                'birthday': birthday,
+                'sex': gender
+            })
+        except Exception, e:
+            print e
+            logger.error(e, extra=dict(tags=[u'записи пациента', 'elreg']))
+            result = e
+        return result

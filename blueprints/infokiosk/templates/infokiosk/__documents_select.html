@@ -1,0 +1,50 @@
+{% set doc_type = session.get('document_type', '') %}
+<div class="{% if doc_type not in ('policy_type_2', 'policy_type_3') %}hidden{% endif %} doc_div policy_type_2 policy_type_3">
+    <legend><big>Введите серию и номер полиса</big></legend>
+    <div class="text-center">
+        {% if doc_type in ('policy_type_2', 'policy_type_3') %}
+            {{ form.series(class="span2", value=session.get('series', ''), maxlength="10", size="2", autocomplete="off") }}
+        {% else %}
+            {{ form.series(class="span2", value=session.get('series', ''), disabled=disabled, maxlength="10", size="2", autocomplete="off") }}
+        {% endif %}
+        {% if doc_type in ('policy_type_2', 'policy_type_3') %}
+            {{ form.number(class="span8", value=session.get('number', ''), autocomplete="off") }}
+        {% else %}
+            {{ form.number(class="span8", value=session.get('number', ''), disabled=disabled, autocomplete="off") }}
+        {% endif %}
+    </div>
+</div>
+
+<div class="{% if doc_type not in ('policy_type_1', 'policy_type_4') %}hidden{% endif %} doc_div policy_type_1 policy_type_4">
+    <legend><big>Введите номер полиса</big></legend>
+    {% if doc_type in ('policy_type_1', 'policy_type_4') %}
+        {{ form.policy_number(class="span12", value=session.get('policy_number', ''), autocomplete="off") }}
+    {% else %}
+        {{ form.policy_number(class="span12", value=session.get('policy_number', ''), disabled=disabled, autocomplete="off") }}
+    {% endif %}
+</div>
+
+<div class="{% if doc_type != 'client_id' %}hidden{% endif %} doc_div client_id">
+    <legend><big>Введите номер амбулаторной карты</big></legend>
+    {% if doc_type == 'client_id' %}
+        {{ form.client_id(class="span12", value=session.get('client_id', ''), autocomplete="off") }}
+    {% else %}
+        {{ form.client_id(class="span12", value=session.get('client_id', ''), disabled=disabled, autocomplete="off") }}{% set disabled=True %}
+    {% endif %}
+</div>
+
+<div class="{% if doc_type not in ('doc_type_4', 'doc_type_7') %}hidden{% endif %} doc_div doc_type_4 doc_type_7">
+    <legend><big>Введите серию и номер документа</big></legend>
+    <div class="text-center">
+        {% if doc_type in ('doc_type_4', 'doc_type_7') %}
+            {{ form.doc_series(class="span2", value=session.get('doc_series', ''), maxlength="10", size="2", autocomplete="off") }}
+        {% else %}
+            {{ form.doc_series(class="span2", value=session.get('doc_series', ''), disabled=disabled, maxlength="10", size="2", autocomplete="off") }}
+        {% endif %}
+         {% if doc_type in ('doc_type_4', 'doc_type_7') %}
+                {{ form.doc_number(class="span8", default=session.get('doc_number', ''), autocomplete="off") }}
+            {% else %}
+                {{ form.doc_number(class="span8", default=session.get('doc_number', ''), disabled=disabled, autocomplete="off") }}
+            {% endif %}
+    </div>
+</div>

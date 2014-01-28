@@ -3,6 +3,7 @@ from flask.ext.wtf import Form, RecaptchaField
 from wtforms import StringField, IntegerField, RadioField, SelectField, BooleanField, FormField
 from wtforms.validators import DataRequired, Email, AnyOf, Optional, Required
 from application.lib.captcha.fields import CaptchaField
+from .lib.validators import DateValidator
 
 
 class BirthdayForm(Form):
@@ -18,7 +19,8 @@ class EnqueuePatientForm(Form):
     #BirthdayForm = FormField(BirthdayForm, label=u'Дата рождения')
     day = IntegerField(u'День рождения<span class="text-error">*</span>', [DataRequired(u'Обязательное поле')])
     month = IntegerField(u'Месяц рождения<span class="text-error">*</span>', [DataRequired(u'Обязательное поле')])
-    year = IntegerField(u'Год рождения<span class="text-error">*</span>', [DataRequired(u'Обязательное поле')])
+    year = IntegerField(u'Год рождения<span class="text-error">*</span>',
+                        [DataRequired(u'Обязательное поле'), DateValidator('month', 'day')])
     gender = RadioField(u'Пол<span class="text-error">*</span>',
                         [Required()],
                         choices=[(u'1', u'М'), (u'2', u'Ж')])

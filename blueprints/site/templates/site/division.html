@@ -32,10 +32,10 @@
 {% else %}
     <div class="alert alert-error">Данные по подразделениям выбранного медицинского учреждения отсутствуют, попробуйте зайти на страницу позже или выберите другое медицинское учреждение.</div>
 {% endif %}
-<a href="{{ url_for('.lpu', okato=session.get('okato')) }}" class="btn btn-large"><i class="icon-arrow-left"></i> К выбору мед.учреждения</a>
-<p class="pull-right">
-    <a href="{{ url_for('.search', okato=session.get('okato'), lpu_id=lpu_id) }}" class="btn btn-large" title="Поиск врача"><i class="icon-search"></i> Поиск врача</a>
-</p>
+<div class="clearfix">
+    <div class="pull-left"><a href="{{ url_for('.lpu', okato=session.get('okato')) }}" class="btn btn-large"><i class="icon-arrow-left"></i> К выбору мед.учреждения</a></div>
+    <div class="pull-right"><a href="{{ url_for('.search', okato=session.get('okato'), lpu_id=lpu_id) }}" class="btn btn-large" title="Поиск врача"><i class="icon-search"></i> Поиск врача</a></div>
+</div>
     <!-- Modal -->
 <div id="block_modal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="block_modalLabel" aria-hidden="true">
     <div class="modal-header">

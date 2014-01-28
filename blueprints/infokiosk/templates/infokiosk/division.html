@@ -1,0 +1,38 @@
+{% extends "infokiosk/base.html" %}
+
+{% block content %}
+<blockquote class="red">{{ lpu.name }}
+{% if lpu.address %}<br />{{ lpu.address }}{% endif %}
+{% if lpu.phone %}<br /><small>Телефон: {{ lpu.phone }}</small>{% endif %}
+</blockquote>
+<div class="well well-small">Выберите подразделение из представленного списка</div>
+{% if lpu.buildings %}
+<div class="row-fluid">
+    {%- for columns in lpu.buildings|slice(3) -%}
+    <div class="span4">
+        <ul class="unstyled menu">
+        {%- for division in columns -%}
+        <li class="clearfix"><a id="{{ division.id }}" href="{{ url_for('.specialities', lpu_id=lpu_id, department_id=division.id) }}" class="btn btn-large btn-info span12">{{ division.name }}{% if division.address %}<br><small>({{ division.address }})</small>{% endif %}</a></li>
+        {%- endfor -%}
+        </ul>
+    </div>
+    {%- endfor -%}
+</div>
+{% else %}
+    <div class="alert alert-error">Данные по подразделениям выбранного медицинского учреждения отсутствуют, попробуйте зайти на страницу позже или выберите другое медицинское учреждение.</div>
+{% endif %}
+{% endblock %}
+{% block js %}
+    <script>
+    $(document).ready(function () {
+        $("body").on({
+            ajaxStart: function() {
+                $(this).addClass("loading");
+            },
+            ajaxStop: function() {
+                $(this).removeClass("loading");
+            }
+        });
+    });
+    </script>
+{% endblock %}

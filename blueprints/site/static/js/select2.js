@@ -1561,6 +1561,11 @@ the specific language governing permissions and limitations under the Apache Lic
                 // sequence number used to drop out-of-order responses
                 queryNumber;
 
+            if(search.val()){
+                $("#" +this.containerId+ " .select2-chosen").html(search.val());
+                $('select#speciality').val(search.val());
+            };
+
             // prevent duplicate queries against the same term
             if (initial !== true && lastTerm && equal(term, lastTerm)) return;
 
@@ -1717,6 +1722,8 @@ the specific language governing permissions and limitations under the Apache Lic
                 this.highlight(index);
                 this.onSelect(data, options);
             } else if (options && options.noFocus) {
+                this.close();
+            } else{
                 this.close();
             }
         },

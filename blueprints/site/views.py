@@ -12,15 +12,14 @@ from jinja2 import Environment, PackageLoader
 from datetime import datetime, timedelta, date
 from pytz import timezone
 from dateutil.tz import tzlocal
+from copy import deepcopy
 
 from jinja2 import TemplateNotFound
 from forms import EnqueuePatientForm
 
 from .app import module
 from .lib.service_client import List, Info, Schedule
-from .lib.data import block_ticket, del_session, get_doctor_info, get_doctors_with_tickets, get_lpu, save_ticket
-from .lib.data import prepare_doctors, find_lpu, get_blocked_tickets, change_ticket_status, gen_blocked_ticket_uid
-from .lib.data import async_clear_blocked_tickets, get_blocked_ticket_by_uid, check_blocked_ticket
+from .lib.data import *
 from .context_processors import header
 from application.app import db
 from application.models import Tickets, TicketsBlocked
@@ -196,10 +195,10 @@ def tickets(lpu_id, department_id, doctor_id, start=None):
     if monday is None:
         monday = today - timedelta(days=date.isoweekday(today) - 1)
 
-    tickets = Schedule().getScheduleInfo(hospitalUid=hospital_uid,
-                                         doctorUid=doctor_id,
-                                         startDate=monday,
-                                         endDate=monday+timedelta(days=6))
+    tickets, absences = Schedule().getScheduleInfo(hospitalUid=hospital_uid,
+                                                   doctorUid=doctor_id,
+                                                   startDate=monday,
+                                                   endDate=monday+timedelta(days=6))
     office = None
     if tickets:
         office = getattr(tickets[0], 'office', '')
@@ -208,10 +207,13 @@ def tickets(lpu_id, department_id, doctor_id, start=None):
 
     times = []  # Список времен начала записи текущей недели
     dates = []  # Список дат текущей недели
+    current_tickets = dict()
+    tmp_tickets = dict()
 
     for i in xrange(7):
         new_day = monday + timedelta(days=i)
         dates.append(new_day)
+        current_tickets[new_day.strftime('%Y%m%d')] = list()
         if tickets:
             for j in tickets:
                 if new_day == j.start.date():
@@ -221,22 +223,26 @@ def tickets(lpu_id, department_id, doctor_id, start=None):
 
     ticket_table = []
     if times:
-        current_ticket_list = []
         if tickets:
             for i in tickets:
                 if i.start.date() in dates:
-                    current_ticket_list.append(i)
+                    current_tickets[i.start.strftime('%Y%m%d')].append(i)
         for i in times:
             add_to_table = False
-            tmp_list = [0] * 7
-            for j in current_ticket_list:
-                if j.start.time() == i:
-                    tmp_list[dates.index(j.start.date())] = j
-                    if j.start > now and j.status in ('free', 'locked', 'disabled'):
-                        add_to_table = True
+            for _date, _tickets in current_tickets.iteritems():
+                tmp_tickets[_date] = None
+                for j in _tickets:
+                    if j.start.time() == i:
+                        tmp_tickets[_date] = j
+                        if j.start > now and j.status in ('free', 'locked', 'disabled'):
+                            add_to_table = True
 
             if add_to_table:
-                ticket_table.append(tmp_list)
+                ticket_table.append(deepcopy(tmp_tickets))
+
+    absence_data = dict()
+    for absence in absences:
+        absence_data[absence.date.strftime('%Y%m%d')] = absence
 
     session['doctor'] = doctor_info
     session['office'] = office
@@ -251,10 +257,11 @@ def tickets(lpu_id, department_id, doctor_id, start=None):
                            office=office,
                            ticket_table=ticket_table,
                            blocked=get_blocked_tickets(lpu_id, department_id, doctor_id),
+                           absences=absence_data,
                            prev_monday=(monday - timedelta(days=7)).strftime('%Y%m%d'),
                            next_monday=(monday + timedelta(days=7)).strftime('%Y%m%d'),
                            #now=datetime.now(tz=timezone(_config('TIME_ZONE'))),
-                           )
+                           now=now)
 
 
 @module.route('/patient/', methods=['GET'])
@@ -283,8 +290,7 @@ def registration(lpu_id=None, department_id=None, doctor_id=None):
     if request.args.get('office'):
         session['office'] = request.args.get('office')
 
-    if 'doctor' not in session:
-        session['doctor'] = get_doctor_info(hospital_uid, doctor_id)
+    session['doctor'] = get_doctor_info(hospital_uid, doctor_id)
 
     timeslot, ticket_start, ticket_end = None, None, None
 
@@ -355,7 +361,7 @@ def registration(lpu_id=None, department_id=None, doctor_id=None):
             session['document'] = document
             session['patient'] = patient
 
-            ticket_hash = save_ticket(ticket.ticketUid, lpu_info=lpu_info)
+            ticket_hash = save_ticket(ticket.ticketUid, lpu_id, department_id, doctor_id, lpu_info=lpu_info)
             session['ticket_hash'] = ticket_hash
 
             # формирование и отправка письма:
@@ -643,6 +649,85 @@ def check_ticket(lpu_id=None, department_id=None, doctor_id=None):
             data['uid'] = ticket.ticket_uid
             return jsonify(result=data)
         return jsonify(result=None)
+
+
+@module.route('/patient_tickets/', methods=['GET', 'POST'])
+def patient_tickets():
+    session['step'] = 1
+    region_list = List().listRegions()
+    hospitals = list()
+    hospitals_list = List().listHospitals(okato=0)
+    if hospitals_list:
+        for _lpu in hospitals_list:
+            tmp = _lpu.uid.split('/')
+            lpu_id, department_id = int(tmp[0]), int(tmp[1])
+            if department_id == 0:
+                setattr(_lpu, 'id', lpu_id)
+                hospitals.append(_lpu)
+
+    result = dict()
+    form = EnqueuePatientForm(request.form)
+    if form.validate_on_submit():
+        document_type = form.document_type.data.strip()
+        document = dict()
+        hospital_id = request.form['lpu'].strip()
+
+        if not hospital_id:
+            flash(u"Выберите медицинское учреждение", 'error')
+        elif not document_type:
+            flash(u"Выберите тип документа", 'error')
+        else:
+            if document_type in ('policy_type_2', 'policy_type_3'):
+                document['policy_type'] = int(document_type.replace('policy_type_', ''))
+                document['series'] = form.series.data.strip()
+                document['number'] = form.number.data.strip()
+            elif document_type in ('doc_type_4', 'doc_type_7'):
+                document['document_code'] = int(document_type.replace('doc_type_', ''))
+                document['series'] = form.doc_series.data.strip()
+                document['number'] = form.doc_number.data.strip()
+            elif document_type == 'client_id':
+                document['client_id'] = int(form.client_id.data.strip())
+            elif document_type in ('policy_type_1', 'policy_type_4'):
+                document['policy_type'] = int(document_type.replace('policy_type_', ''))
+                document['number'] = form.policy_number.data.strip()
+
+            result = Schedule().get_patient_tickets(
+                person={'lastName': unicode(form.lastname.data.strip().title()),
+                        'firstName': unicode(form.firstname.data.strip().title()),
+                        'patronymic': unicode(form.patronymic.data.strip().title())},
+                document=document,
+                hospital_uid='{0}/0'.format(hospital_id),
+                birthday=unicode('{year}-{month}-{day}'.format(**form.data)),
+                gender=form.gender.data,
+                hospitalUidFrom='')
+
+            _tickets = list()
+
+            if getattr(result, 'tickets', None):
+                for ticket in getattr(result, 'tickets'):
+                    if ticket['timeslotStart'] < datetime_now():
+                        continue
+                    doctor = ticket['doctor']
+                    lpu_id, department_id = doctor['hospitalUid'].split('/')
+                    # filter by date (>now)
+                    saved_ticket = find_ticket(ticket['ticketUid'], lpu_id, department_id, doctor.uid)
+                    if saved_ticket:
+                        ticket['dequeue_href'] = url_for('.dequeue',
+                                                         lpu_id=lpu_id,
+                                                         department_id=department_id,
+                                                         uid=saved_ticket.uid)
+                        ticket['schedule_href'] = url_for('.tickets',
+                                                          lpu_id=lpu_id,
+                                                          department_id=department_id,
+                                                          doctor_id=doctor.uid)
+                        _tickets.append(ticket)
+                result['tickets'] = _tickets
+
+    return render_template('{0}/patient_tickets.html'.format(module.name),
+                           region_list=region_list,
+                           hospitals=hospitals,
+                           form=form,
+                           result=result)
 
 
 @module.errorhandler(404)

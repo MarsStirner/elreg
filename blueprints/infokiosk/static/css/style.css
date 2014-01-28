@@ -1,0 +1,108 @@
+html, body {height: 100%;}
+#bottom, #push {height:60px;}
+#footer {height:60px;}
+#wrap {
+    min-height: 100%; height: auto !important; height: 100%; margin: 0 auto -60px;
+}
+#wrap > #container {
+    /*padding-top: 10px;*/
+}
+
+body{
+    font-size: 22px;
+}
+.loader {
+    display:    none;
+    position:   fixed;
+    z-index:    1000;
+    top:        0;
+    left:       0;
+    height:     100%;
+    width:      100%;
+    background: rgba( 255, 255, 255, .8 )
+    url('../i/ajax-loader.gif')
+    50% 50%
+    no-repeat;
+}
+/* When the body has the loading class, we turn
+   the scrollbar off with overflow:hidden */
+body.loading {
+    overflow: hidden;
+}
+
+/* Anytime the body has the loading class, our
+   modal element will be visible */
+body.loading .loader {
+    display: block;
+}
+
+@media (max-width: 979px) and (min-width: 798px){
+.container, .navbar-static-top .container, .navbar-fixed-top .container, .navbar-fixed-bottom .container {
+    width: 95%;
+}
+}
+.page-header {
+    margin: 10px 0 20px;
+}
+.no-vmargin{
+    margin-top:0!important;
+    margin-bottom: 0!important;
+}
+.btn-large{
+    font-size: 28px;
+    line-height: 28px;
+}
+.menu, .menu > li{
+    margin-bottom: 10px;
+}
+.menu a.btn-large{
+    width: 100%;
+    line-height: 30px;
+}
+.btn-large [class^="icon-"], [class*=" icon-"] {
+margin-top: 7px;
+}
+
+blockquote.red {
+    border-color: #B94A48;
+}
+blockquote{
+    line-height: 24px;
+}
+th.text-center {
+    text-align: center!important;
+}
+table.no-border td, table.no-border th{
+    border: none;
+}
+.margin-bottom-10{
+    margin-bottom: 10px;
+}
+table#days caption{
+    margin: 0 5px;
+}
+input[type="text"]{
+    height: 40px;
+    padding: 4px 6px;
+    margin-bottom: 10px;
+    font-size: 28px;
+    line-height: 30px;
+}
+.keyboard{
+    margin-bottom: 30px;
+}
+input[readonly]{
+    background-color: #fff;
+}
+.small-text{
+    font-size: 14px;
+}
+input.day_month{
+    width: 40px;
+}
+input.year{
+    width: 68px;
+}
+.form-horizontal .control-group, .control-group{
+    margin-bottom: 0;
+}
