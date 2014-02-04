@@ -1,7 +1,12 @@
 <!DOCTYPE html>
 <html lang="ru">
 	<head>
-        {% include 'site/_header.html' %}
+        <meta content="ru-ru" http-equiv="Content-Language" />
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='bootstrap/css/bootstrap.min.css') }}" />
+        <link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='bootstrap/css/bootstrap-responsive.min.css') }}" />
         <title>Страница недоступна</title>
 	</head>
 	<body>
@@ -15,6 +20,9 @@
         {% endblock %}
     </section>
 	</div>
-      {% include 'site/_footer.html' %}
+      <div class="loader"></div>
+        {% if counter %}
+        <div id="counter">{{ counter|safe }}</div>
+        {% endif %}
 	</body>
 </html>
