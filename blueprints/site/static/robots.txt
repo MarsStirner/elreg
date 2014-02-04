@@ -1,0 +1,25 @@
+User-agent: msnbot
+Disallow: /
+
+User-agent: AhrefsBot
+Disallow: /
+
+User-agent: Slurp
+Disallow: /
+
+User-agent: Yandex
+Disallow: /admin/
+Disallow: /css/
+Disallow: /i/
+Disallow: /js/
+
+User-agent: Googlebot
+Disallow: /admin/
+Disallow: /css/
+Disallow: /i/
+Disallow: /js/
+
+
+User-agent: *
+Disallow: /
+
