@@ -239,8 +239,6 @@ def tickets(lpu_id, department_id, doctor_id, start=None):
 
             if add_to_table:
                 ticket_table.append(tmp_tickets[i])
-            else:
-                del tmp_tickets[i]
 
     absence_data = dict()
     for absence in absences:
