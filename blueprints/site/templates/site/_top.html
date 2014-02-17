@@ -1,7 +1,7 @@
 <div class="row-fluid page-header no_print">
     {% if logo %}<div class="span1"><a href="{{ home_link|default('/') }}" title="На главную"><img src="{{ url_for('static', filename='i/%s'|format(logo)) }}"></a></div>{% endif %}
     <div class="{% if logo %}span9{% else %}span10{% endif %} lead no-vmargin"><h2 class="no-vmargin">{{ site_name }}</h2>{{ region_name }}</div>
-    <div class="span2">{% include 'site/_clock.html' %}</div>
+{#    <div class="span2">{% include 'site/_clock.html' %}</div>#}
 </div>
 <div class="no_print prog_trckr_menu">
         <ol class="prog_trckr" data-progtrckr-steps="6">
