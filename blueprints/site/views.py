@@ -229,16 +229,16 @@ def tickets(lpu_id, department_id, doctor_id, start=None):
                     current_tickets[i.start.strftime('%Y%m%d')].append(i)
         for i in times:
             add_to_table = False
-            tmp_tickets[i] = dict()
             for _date, _tickets in current_tickets.iteritems():
+                tmp_tickets[_date] = None
                 for j in _tickets:
                     if j.start.time() == i:
-                        tmp_tickets[i][_date] = j
+                        tmp_tickets[_date] = j
                         if j.start > now and j.status in ('free', 'locked', 'disabled'):
                             add_to_table = True
 
             if add_to_table:
-                ticket_table.append(tmp_tickets[i])
+                ticket_table.append(deepcopy(tmp_tickets))
 
     absence_data = dict()
     for absence in absences:
@@ -256,7 +256,7 @@ def tickets(lpu_id, department_id, doctor_id, start=None):
                            doctor=doctor_info,
                            office=office,
                            ticket_table=ticket_table,
-                           # blocked=get_blocked_tickets(lpu_id, department_id, doctor_id),
+                           blocked=get_blocked_tickets(lpu_id, department_id, doctor_id),
                            absences=absence_data,
                            prev_monday=(monday - timedelta(days=7)).strftime('%Y%m%d'),
                            next_monday=(monday + timedelta(days=7)).strftime('%Y%m%d'),
@@ -373,7 +373,7 @@ def registration(lpu_id=None, department_id=None, doctor_id=None):
                                                              department_id=session.get('department_id'),
                                                              uid=ticket_hash))
                 send_ticket(patient_email, form.data, lpu_info, dequeue_link=dequeue_link, session_data=session)
-                # async_clear_blocked_tickets()
+                async_clear_blocked_tickets()
 
             log_message = render_template('{0}/messages/success.txt'.format(module.name),
                                           lpu=lpu_info,
@@ -387,8 +387,8 @@ def registration(lpu_id=None, department_id=None, doctor_id=None):
                                           start_time=ticket_start.strftime('%H:%M'),
                                           finish_time=ticket_end.strftime('%H:%M'))
             logger.info(log_message, extra=dict(tags=[u'успешная запись', 'elreg']))
-            # blocked_ticket_uid = gen_blocked_ticket_uid(lpu_id, department_id, doctor_id, timeslot.replace(tzinfo=None))
-            # change_ticket_status(blocked_ticket_uid, 'locked')
+            blocked_ticket_uid = gen_blocked_ticket_uid(lpu_id, department_id, doctor_id, timeslot.replace(tzinfo=None))
+            change_ticket_status(blocked_ticket_uid, 'locked')
             return redirect(url_for('.ticket_info'))
         elif ticket and hasattr(ticket, 'result'):
             # ошибка записи на приём:
@@ -435,19 +435,19 @@ def registration(lpu_id=None, department_id=None, doctor_id=None):
     # если представление было вызвано нажатием на ячейку таблицы на странице Время:
 
     # Блокируем талончик
-    # blocked_ticket = block_ticket(lpu_id,
-    #                               department_id,
-    #                               doctor_id,
-    #                               timeslot.replace(tzinfo=None),
-    #                               date=request.args.get('d'),
-    #                               start=request.args.get('s'),
-    #                               end=request.args.get('f'))
+    blocked_ticket = block_ticket(lpu_id,
+                                  department_id,
+                                  doctor_id,
+                                  timeslot.replace(tzinfo=None),
+                                  date=request.args.get('d'),
+                                  start=request.args.get('s'),
+                                  end=request.args.get('f'))
     return render_template('{0}/registration.html'.format(module.name),
                            lpu=lpu_info,
                            date=timeslot.date(),
                            start_time=ticket_start,
                            finish_time=ticket_end,
-                           # blocked_ticket=blocked_ticket,
+                           blocked_ticket=blocked_ticket,
                            office=session.get('office'),
                            doctor=session.get('doctor'),
                            form=form)
