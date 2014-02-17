@@ -50,5 +50,5 @@ login_manager.init_app(app)
 import views
 
 
-app.config['PROFILE'] = True
+app.config['PROFILE'] = config.DEBUG
 app.wsgi_app = ProfilerMiddleware(app.wsgi_app, restrictions = [30])
