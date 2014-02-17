@@ -146,19 +146,19 @@
 {% block js %}
 <script type="text/javascript">
 $(document).ready(function () {
-    $('.unblock_ticket').click(function(event){
-        var url = $(this).attr('href');
-        event.preventDefault();
-        $.ajax({
-            url: "{{ url_for('.unblock_ticket', uid=blocked_ticket['ticket_uid']) }}",
-            crossDomain: true,
-            type: 'POST',
-            cache: false, // обязательно для IE
-            success: function(){
-                window.location.href = url;
-            }
-        });
-    });
+{#    $('.unblock_ticket').click(function(event){#}
+{#        var url = $(this).attr('href');#}
+{#        event.preventDefault();#}
+{#        $.ajax({#}
+{#            url: "{{ url_for('.unblock_ticket', uid=blocked_ticket['ticket_uid']) }}",#}
+{#            crossDomain: true,#}
+{#            type: 'POST',#}
+{#            cache: false, // обязательно для IE#}
+{#            success: function(){#}
+{#                window.location.href = url;#}
+{#            }#}
+{#        });#}
+{#    });#}
 });
 </script>
 {% endblock %}

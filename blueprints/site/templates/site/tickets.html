@@ -59,7 +59,7 @@
                         {% if cell and cell|attr('start') > now %}
                         <td class="{{ cell.status }}">
                         {% if cell.status == 'free' %}
-                            {% if cell.start not in blocked.keys() %}
+                            {% if not blocked or cell.start not in blocked.keys() %}
                             <a href="{{ url_for('.registration', lpu_id=lpu_id, department_id=department_id, doctor_id=doctor_id, d=cell.start|dateformat('yyyyMMdd'), s=cell.start|datetimeformat('HHmmss', rebase=False), f=cell.finish|datetimeformat('HHmmss', rebase=False)) }}" class="btn btn-block btn-success">{{ cell.start|datetimeformat('HH:mm', rebase=False) }}</a>
                             {% else %}
                             <a class="btn btn-block btn-warning blocked_ticket" data-uid="{{ blocked[cell.start]['ticket_uid'] }}" data-blocked="{{ blocked[cell.start]['block_until']|datetimeformat('HH:mm dd.MM.yyyy', rebase=False) }}">{{ cell.start|datetimeformat('HH:mm', rebase=False) }}</a>
@@ -246,10 +246,10 @@ function free_ticket_worker($slot, event){
 }
 $(document).ready(function () {
     $('.blocked_ticket').click(function(){
-        blocked_ticket_worker($(this));
+{#        blocked_ticket_worker($(this));#}
     });
     $('.btn-success').click(function(event){
-        free_ticket_worker($(this), event);
+{#        free_ticket_worker($(this), event);#}
     });
 });
 </script>
