@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from werkzeug.contrib.profiler import ProfilerMiddleware
 from flask import Flask
 from flask.ext.principal import Principal
 from flask.ext.babel import Babel
@@ -47,3 +48,8 @@ login_manager.init_app(app)
 
 # Import all views
 import views
+
+
+if config.DEBUG:
+    app.config['PROFILE'] = True
+    app.wsgi_app = ProfilerMiddleware(app.wsgi_app, restrictions = [30])

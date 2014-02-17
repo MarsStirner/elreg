@@ -229,16 +229,19 @@ def tickets(lpu_id, department_id, doctor_id, start=None):
                     current_tickets[i.start.strftime('%Y%m%d')].append(i)
         for i in times:
             add_to_table = False
+            tmp_tickets[i] = dict()
             for _date, _tickets in current_tickets.iteritems():
-                tmp_tickets[_date] = None
+                tmp_tickets[i][_date] = None
                 for j in _tickets:
                     if j.start.time() == i:
-                        tmp_tickets[_date] = j
+                        tmp_tickets[i][_date] = j
                         if j.start > now and j.status in ('free', 'locked', 'disabled'):
                             add_to_table = True
 
             if add_to_table:
-                ticket_table.append(deepcopy(tmp_tickets))
+                ticket_table.append(tmp_tickets[i])
+            else:
+                del tmp_tickets[i]
 
     absence_data = dict()
     for absence in absences:
