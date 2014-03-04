@@ -307,6 +307,7 @@ $(document).ready(function () {
             }
             $('#captcha').closest('.control-group').removeClass('error').addClass('success');
         }
+        $('body').addClass("loading");
         return true;
     })
 });
