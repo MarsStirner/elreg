@@ -277,7 +277,14 @@
                     type: 'POST',
                     data: args,
                     success: function (data) {
-                        show_doctors(data['result']);
+                        var result = []
+                        $.each(data['result'], function(key, value) {
+                            var hospital_uid = value['hospitalUid'].split('/')[0]
+                            if (hospital_uid != 5 && hospital_uid != 15 && hospital_uid != 8 && hospital_uid != 36 && hospital_uid != 28 && hospital_uid != 42){
+                                result.push(value)
+                            }
+                        });
+                        show_doctors(result);
                     }
                 });
             }
