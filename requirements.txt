@@ -21,4 +21,4 @@ beaker
 Flask-Beaker
 #lxml
 
--r pysimplelogs/requirements.txt
+-e git+https://github.com/KorusConsulting/pysimplelogs.git#egg=pysimplelogs
