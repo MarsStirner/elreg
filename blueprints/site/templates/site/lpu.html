@@ -14,6 +14,8 @@
             <li><a href="javascript:void(0);" onclick="$('#gor2Modal').modal();">{{ hospital.name }}</a></li>
             {% elif hospital.uid == '8' %}
             <li><a href="javascript:void(0);" onclick="$('#lpu8Modal').modal();">{{ hospital.name }}</a></li>
+            {% elif hospital.uid == '9' %}
+            <li><a href="javascript:void(0);" onclick="$('#lpu9Modal').modal();">{{ hospital.name }}</a></li>
             {% elif hospital.uid == '36' %}
             <li><a href="javascript:void(0);" onclick="$('#lpu36Modal').modal();">{{ hospital.name }}</a></li>
             {% elif hospital.uid == '28' %}
@@ -49,6 +51,16 @@
     </div>
     <div class="modal-body">
         <p>Для записи на прием перейдите по <a href="{{ url_for('.division', lpu_id=16) }}">ссылке</a>.</p>
+    </div>
+</div>
+<!-- Modal -->
+<div id="lpu9Modal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="lpu9ModalLabel" aria-hidden="true">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="lpu9ModalLabel">Запись online невозможна</h3>
+    </div>
+    <div class="modal-body">
+        <p>Запись к специалистам ГБУЗ «Пензенская областная офтальмологическая больница» осуществляется врачами в ЛПУ по месту жительства.</p>
     </div>
 </div>
 <!-- Modal -->
