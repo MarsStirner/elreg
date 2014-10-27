@@ -22,6 +22,12 @@
             <li><a href="javascript:void(0);" onclick="$('#lpu28Modal').modal();">{{ hospital.name }}</a></li>
             {% elif hospital.uid == '42' %}
             <li><a href="javascript:void(0);" onclick="$('#lpu42Modal').modal();">{{ hospital.name }}</a></li>
+            {% elif hospital.uid == '14' %}
+            <li><a href="javascript:void(0);" onclick="$('#lpu14Modal').modal();">{{ hospital.name }}</a></li>
+            {% elif hospital.uid == '18' %}
+            <li><a href="javascript:void(0);" onclick="$('#lpu18Modal').modal();">{{ hospital.name }}</a></li>
+            {% elif hospital.uid == '25' %}
+            <li><a href="javascript:void(0);" onclick="$('#lpu25Modal').modal();">{{ hospital.name }}</a></li>
             {% else %}
             <li><a href="{{ url_for('.division', lpu_id=hospital.uid) }}">{{ hospital.name }}</a></li>
             {% endif %}
@@ -101,6 +107,35 @@
     </div>
     <div class="modal-body">
         <p>Для записи на прием перейдите по <a href="{{ url_for('.division', lpu_id=40) }}">ссылке</a>.</p>
+    </div>
+</div>
+<!-- Modal -->
+<div id="lpu14Modal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="lpu14ModalLabel" aria-hidden="true">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="lpu14ModalLabel">Запись на приём в<br>ГБУЗ «Городская больница № 1»</h3>
+    </div>
+    <div class="modal-body">
+        <p>Для записи на прием перейдите по <a href="{{ url_for('.division', lpu_id=16) }}">ссылке</a>.</p>
+    </div>
+</div>
+<!-- Modal -->
+<div id="lpu18Modal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="lpu18ModalLabel" aria-hidden="true">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="lpu18ModalLabel">Запись на приём в<br>ГБУЗ «Пензенская городская клиническая больница № 5»</h3>
+    </div>
+    <div class="modal-body">
+        <p>Для записи на прием перейдите по <a href="{{ url_for('.division', lpu_id=16) }}">ссылке</a>.</p>
+    </div>
+</div>
+<div id="lpu25Modal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="lpu25ModalLabel" aria-hidden="true">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="lpu25ModalLabel">Запись на приём в<br>ГБУЗ «Бековская РБ»</h3>
+    </div>
+    <div class="modal-body">
+        <p>Для записи на прием перейдите по <a href="{{ url_for('.division', lpu_id=43) }}">ссылке</a>.</p>
     </div>
 </div>
 <div class="clearfix">
