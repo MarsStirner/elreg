@@ -24,7 +24,7 @@
                             <select name="lpu" id="lpu_filter" class="span12">
                             <option value="">- любое -</option>
                             {% for hospital in hospitals|sort(attribute='name') %}
-                                {% if hospital.id not in (5, 15, 8, 28, 36, 42) %}
+                                {% if hospital.id not in (5, 15, 8, 28, 36, 42, 9) %}
                                 <option value="{{ hospital.id }}"{% if '%s/0'|format(request.view_args.get('lpu_id')) == hospital.uid or '%s/0'|format(request.args.get('lpu_id')) == hospital.uid %} selected="selected"{% endif %}>{{ hospital.name }}</option>
                                 {% endif %}
                             {% endfor %}
