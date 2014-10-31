@@ -93,7 +93,7 @@
                         .end();
                 if(data['result'].length > 0){
                     $.each(data['result'], function(key, value) {
-                        if (value['id'] != 5 && value['id'] != 15 && value['id'] != 8 && value['id'] != 36 && value['id'] != 28 && value['id'] != 42){
+                        if (value['id'] != 5 && value['id'] != 15 && value['id'] != 8 && value['id'] != 36 && value['id'] != 28 && value['id'] != 42 && value['id'] != 9){
                             $('#lpu_filter')
                                     .append($('<option>', { value : value['id'] })
                                     .text(value['name']));
@@ -280,7 +280,7 @@
                         var result = []
                         $.each(data['result'], function(key, value) {
                             var hospital_uid = value['hospitalUid'].split('/')[0]
-                            if (hospital_uid != 5 && hospital_uid != 15 && hospital_uid != 8 && hospital_uid != 36 && hospital_uid != 28 && hospital_uid != 42){
+                            if (hospital_uid != 5 && hospital_uid != 15 && hospital_uid != 8 && hospital_uid != 36 && hospital_uid != 28 && hospital_uid != 42 && hospital_uid != 9){
                                 result.push(value)
                             }
                         });
