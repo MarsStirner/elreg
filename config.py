@@ -3,6 +3,7 @@ import os
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 DEBUG = False
+PROFILE = False
 
 DB_DRIVER = 'mysql'
 DB_HOST = '127.0.0.1'

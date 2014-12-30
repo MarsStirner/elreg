@@ -38,7 +38,7 @@
     <tr><th>Врач:</th><td colspan="2">
         {% set doctor=session.get('doctor') %}
         {% set office=session.get('office') %}
-        {{ doctor['lastName'] }} {{ doctor['firstName'] }} {{ doctor['patronymic'] }}{% if office %} (кабинет: {{ office }}){% endif %}<br/>({{ doctor.get('speciality') }})
+        {% if doctor %}{{ doctor['lastName'] }} {{ doctor['firstName'] }} {{ doctor['patronymic'] }}{% if office %} (кабинет: {{ office }}){% endif %}<br/>({{ doctor.get('speciality') }}){% endif %}
     </td></tr>
     <tr><th>Дата и время приёма:</th><td colspan="2">{{ session.get('date', '') }} {{ session.get('start_time', '') }} - {{ session.get('finish_time', '') }}</td></tr>
     <tr><th colspan="3"><h4>ВНИМАНИЕ:</h4></th></tr>
