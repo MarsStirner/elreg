@@ -8,7 +8,7 @@
         {% if lpu|attr('buildings') and lpu.buildings[0] %}<dd>{{ lpu.buildings[0]|attr('name') }}{% if lpu.buildings[0]|attr('address') %} ({{ lpu.buildings[0]|attr('address') }}){% endif %}</dd>{% endif %}
         {% if lpu.phone %}<dt>Телефон:</dt><dd>{{ lpu.phone }}</dd>{% endif %}
         {% if lpu.email %}<dt>Электронная почта:</dt><dd><a href="mailto:{{ lpu.email }}">{{ lpu.email }}</a></dd>{% endif %}
-        <dt>Специализация:</dt><dd>{{ doctor.get('speciality') }}</dd>
+        <dt>Специализация:</dt><dd>{% if doctor %}{{ doctor.get('speciality') }}{% endif %}</dd>
         <dt>Врач:</dt><dd>{% if doctor %}{{ doctor.get('lastName') }} {{ doctor.get('firstName') }} {{ doctor.get('patronymic') }}{% else %}&nbsp;{% endif %}</dd>
         {% if ticket_table and office is defined %}
             <dt>Кабинет:</dt><dd>{{ office }}</dd>
