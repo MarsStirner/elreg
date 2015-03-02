@@ -665,7 +665,7 @@ def patient_tickets():
     if hospitals_list:
         for _lpu in hospitals_list:
             tmp = _lpu.uid.split('/')
-            lpu_id, department_id = int(tmp[0]), int(tmp[1])
+            lpu_id, department_id = int(tmp[0]), int(tmp[1]) if tmp[1] else 0
             if department_id == 0:
                 setattr(_lpu, 'id', lpu_id)
                 hospitals.append(_lpu)
