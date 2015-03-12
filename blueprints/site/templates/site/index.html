@@ -14,11 +14,11 @@
         </div>
         {%- endfor -%}
     </div>
-    <p class="text-right">
+    <div class="text-right">
         <a href="{{ url_for('.search') }}" class="btn btn-large" title="Поиск врача"><i class="icon-search"></i> Поиск врача</a>
         <a href="{{ url_for('.search_lpu') }}" class="btn btn-large" title="Поиск ЛПУ"><i class="icon-search"></i> Поиск мед. учреждения</a>
         <a href="{{ url_for('.patient_tickets') }}" class="btn btn-large" title="Поиск существующих записей на приём к врачу"><i class="icon-search"></i> Мои записи</a>
-    </p>
+    </div>
     <!-- Modal -->
     <div id="old_browser" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
         <div class="modal-header">
