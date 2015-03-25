@@ -137,7 +137,7 @@
                 <a href="{{ ticket['schedule_href'] }}" title="Перейти к расписанию врача">{{ doctor['name']['lastName'] }} {{ doctor['name']['firstName'] }} {{ doctor['name']['patronymic'] }}</a> ({{ doctor['speciality'] }})
                 <small>{{ ticket['location'] }}</small>
                 {{ ticket['timeslotStart']|datetimeformat('dd.MM.YYYY HH:mm', rebase=False) }}
-                <a href="{{ ticket['dequeue_href'] }}" title="Отменить запись" class="btn btn-danger"><i class="icon-white icon-trash"></i> Отменить запись</a>
+                {% if 'dequeue_href' in ticket and ticket['dequeue_href'] %}<a href="{{ ticket['dequeue_href'] }}" title="Отменить запись" class="btn btn-danger"><i class="icon-white icon-trash"></i> Отменить запись</a>{% endif %}
             </p>
         </blockquote>
     {% endfor %}

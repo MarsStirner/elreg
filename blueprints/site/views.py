@@ -714,16 +714,16 @@ def patient_tickets():
                     lpu_id, department_id = doctor['hospitalUid'].split('/')
                     # filter by date (>now)
                     saved_ticket = find_ticket(ticket['ticketUid'], lpu_id, department_id, doctor.uid)
+                    ticket['schedule_href'] = url_for('.tickets',
+                                                      lpu_id=lpu_id,
+                                                      department_id=department_id,
+                                                      doctor_id=doctor.uid)
                     if saved_ticket:
                         ticket['dequeue_href'] = url_for('.dequeue',
                                                          lpu_id=lpu_id,
                                                          department_id=department_id,
                                                          uid=saved_ticket.uid)
-                        ticket['schedule_href'] = url_for('.tickets',
-                                                          lpu_id=lpu_id,
-                                                          department_id=department_id,
-                                                          doctor_id=doctor.uid)
-                        _tickets.append(ticket)
+                    _tickets.append(ticket)
                 result['tickets'] = _tickets
 
     return render_template('{0}/patient_tickets.html'.format(module.name),
