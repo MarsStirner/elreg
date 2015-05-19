@@ -29,6 +29,9 @@ from .emails import send_ticket
 from .config import BLOCK_TICKET_TIME
 
 
+denied_lpu = (5, 15, 8, 9, 36, 28, 42, 14, 18, 25)
+
+
 @module.route('/', methods=['GET'])
 def index():
     """ Логика страницы МО
@@ -159,10 +162,8 @@ def division(lpu_id=None):
     """Логика страницы Подразделение/Специализация/Врач
     Выводится список подразделений для выбранного ЛПУ. Остальная логика
     """
-    if lpu_id in (5, 15, 8, 9, 36, 28, 42, 14, 18, 25):
+    if lpu_id in denied_lpu:
         return redirect(url_for('.index'))
-    if lpu_id == 5:
-        abort(404)
     if lpu_id == 15:
         return redirect(url_for('.division', lpu_id=16))
     session['step'] = 3
@@ -177,6 +178,8 @@ def division(lpu_id=None):
 @module.route('/time/<int:lpu_id>/<int:department_id>/<int:doctor_id>/', methods=['GET'])
 @module.route('/time/<int:lpu_id>/<int:department_id>/<int:doctor_id>/<start>/', methods=['GET'])
 def tickets(lpu_id, department_id, doctor_id, start=None):
+    if lpu_id in denied_lpu:
+        return redirect(url_for('.index'))
     session['step'] = 4
     session['lpu_id'] = lpu_id
     session['department_id'] = department_id
@@ -284,6 +287,8 @@ def registration(lpu_id=None, department_id=None, doctor_id=None):
     """
     if lpu_id is None or department_id is None or doctor_id is None:
         abort(404)
+    if lpu_id in denied_lpu:
+        return redirect(url_for('.index'))
 
     hospital_uid = '{0}/{1}'.format(lpu_id, department_id)
     lpu_info = get_lpu(hospital_uid)
@@ -483,6 +488,9 @@ def get_lpu_list(okato=None):
 def get_specialities(lpu_id, department_id):
     if not lpu_id or not department_id:
         abort(404)
+    if lpu_id in denied_lpu:
+        abort(404)
+
     data = list()
     doctors = List().listDoctors(hospital_Uid='{0}/{1}'.format(lpu_id, department_id))
     for doctor in getattr(doctors, 'doctors', []):
@@ -498,7 +506,7 @@ def get_specialities(lpu_id, department_id):
 @module.route('/ajax_lpu_doctors/<int:lpu_id>/', methods=['GET'])
 def get_lpu_doctors(lpu_id=None):
     speciality = request.args.get('sp')
-    if not lpu_id:
+    if not lpu_id or lpu_id in denied_lpu:
         abort(404)
     hospital_uid = '{0}/0'.format(lpu_id)
     params = dict(hospital_Uid=hospital_uid)
@@ -512,7 +520,7 @@ def get_lpu_doctors(lpu_id=None):
 @module.route('/ajax_lpu_specialities/', methods=['GET'])
 @module.route('/ajax_lpu_specialities/<int:lpu_id>/', methods=['GET'])
 def get_lpu_specialities(lpu_id=None):
-    if not lpu_id:
+    if not lpu_id or lpu_id in denied_lpu:
         abort(404)
     specialities = list()
     _doctors = List().listDoctors(hospital_Uid='{0}/0'.format(lpu_id))
@@ -549,7 +557,7 @@ def find_doctors(lpu_id=None):
 def get_doctors(lpu_id=None, department_id=None):
     # TODO: желательно перейти от наименования специальности к id
     speciality = request.args.get('sp')
-    if not lpu_id or not department_id or not speciality:
+    if not lpu_id or not department_id or not speciality or lpu_id in denied_lpu:
         abort(404)
     hospital_uid = '{0}/{1}'.format(lpu_id, department_id)
     data = get_doctors_with_tickets(hospital_Uid=hospital_uid,
@@ -636,7 +644,7 @@ def get_blocked_ticket(uid=None):
 @module.route('/check_ticket/', methods=['POST'])
 @module.route('/check_ticket/<int:lpu_id>/<int:department_id>/<int:doctor_id>/', methods=['POST'])
 def check_ticket(lpu_id=None, department_id=None, doctor_id=None):
-    if lpu_id is None or department_id is None or doctor_id is None:
+    if lpu_id is None or department_id is None or doctor_id is None or lpu_id in denied_lpu:
         abort(404)
 
     date_string = '{date}{time}'.format(date=request.args.get('d'), time=request.args.get('s'))
