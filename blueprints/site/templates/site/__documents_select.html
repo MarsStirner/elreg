@@ -64,11 +64,11 @@
     </div>
 </div>
 
-<div class="{% if doc_type not in ('doc_type_4', 'doc_type_7') %}hidden{% endif %} doc_div doc_type_4 doc_type_7">
+<div class="{% if doc_type not in ('doc_type_4', 'doc_type_7', 'doc_type_14') %}hidden{% endif %} doc_div doc_type_4 doc_type_7 doc_type_14">
     <div class="control-group">
         {{ form.doc_series.label(class="control-label") }}
         <div class="controls">
-        {% if doc_type in ('doc_type_4', 'doc_type_7') %}
+        {% if doc_type in ('doc_type_4', 'doc_type_7', 'doc_type_14') %}
             {{ form.doc_series(class="span1", value=session.get('doc_series', request.values.get('doc_series', '')), maxlength="10", size="2", autocomplete="off") }}
         {% else %}
             {{ form.doc_series(class="span1", value=session.get('doc_series', request.values.get('doc_series', '')), disabled=disabled, maxlength="10", size="2", autocomplete="off") }}
@@ -79,7 +79,7 @@
     <div class="control-group">
         {{ form.doc_number.label(class="control-label") }}
         <div class="controls">
-            {% if doc_type in ('doc_type_4', 'doc_type_7') %}
+            {% if doc_type in ('doc_type_4', 'doc_type_7', 'doc_type_14') %}
                 {{ form.doc_number(class="span3", default=session.get('doc_number', request.values.get('doc_number', '')), placeholder="1234567890123456", autocomplete="off") }}
             {% else %}
                 {{ form.doc_number(class="span3", default=session.get('doc_number', request.values.get('doc_number', '')), disabled=disabled, placeholder="1234567890123456", autocomplete="off") }}

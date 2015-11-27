@@ -328,7 +328,7 @@ def registration(lpu_id=None, department_id=None, doctor_id=None):
                 document['policy_type'] = int(document_type.replace('policy_type_', ''))
                 document['series'] = form.series.data.strip()
                 document['number'] = form.number.data.strip()
-            elif document_type in ('doc_type_4', 'doc_type_7'):
+            elif document_type in ('doc_type_4', 'doc_type_7', 'doc_type_14'):
                 document['document_code'] = int(document_type.replace('doc_type_', ''))
                 document['series'] = form.doc_series.data.strip()
                 document['number'] = form.doc_number.data.strip()

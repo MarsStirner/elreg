@@ -33,7 +33,8 @@ class EnqueuePatientForm(Form):
                                          ('policy_type_2', u'Полис ОМС (старого образца)'),
                                          ('policy_type_1', u'Полис ОМС (временное свидетельство для оформления)'),
                                          ('policy_type_4', u'Полис ОМС (нового образца)'),
-                                         ('doc_type_4', u'Удостоверение личности офицера')])
+                                         ('doc_type_4', u'Удостоверение личности офицера'),
+                                         ('doc_type_14', u'Паспорт РФ')])
     send_email = BooleanField(u'отправить информацию о записи на электронный адрес')
     email = StringField(u'Адрес электронной почты', [Optional(), Email(u'Введён некорректный email')])
     confirm = BooleanField()
