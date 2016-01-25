@@ -14,9 +14,11 @@
             <tr><th colspan="3">УВЕДОМЛЕНИЕ О ЗАПИСИ НА ПРИЕМ №{{ ticket_uid }}</th></tr>
             <tr><td>ФИО (Пациент):</td><td colspan="2">{{ data['lastname'] }} {{ data['firstname'] }} {{ data['patronymic'] }}</td></tr>
             <tr><td>Дата рождения:</td><td colspan="2">{{ data['day'] }}.{{ data['month'] }}.{{ data['year'] }} г.</td></tr>
-            <tr><td>Ваш идентификатор:*</td><td colspan="2">{{ ticket_uid.split('/')[1] }}</td></tr>
+            <tr><td style="text-decoration: underline;">Ваш идентификатор*:</td>
+                <td colspan="2" style="text-decoration: underline;"><b>{{ ticket_uid.split('/')[1] }}</b></td>
+            </tr>
             {% if data.get('client_id') %}
-            <tr><td>№ Амбулаторной карты:</td><td colspan="2">{{ data.get('client_id') }}</td></tr>
+            <tr><td>№ Амбулаторной карты:</td><td colspan="2"><b>{{ data.get('client_id') }}</b></td></tr>
             {% else %}
             {% if data['document_type'] == 'policy_type_2' %}
             <tr><td>Полис ОМС:</td><td colspan="2">{% if data['series'] %}{{ data['series'] }} {% endif %}{{ data['number'] }}</td></tr>
@@ -48,7 +50,7 @@
             <tr><th colspan="3">ВНИМАНИЕ:</th></tr>
             <tr><td colspan="3">В случае невозможности посещения врача в указанное время, пожалуйста, сообщите об этом лечебному учреждению по контактным данным, указанным в настоящем уведомлении, или отмените запись, воспользовавшись ссылкой: <a href="{{ dequeue_link }}">{{ dequeue_link }}</a>.</td></tr>
             <tr><td colspan="3">С настоящим уведомлением необходимо обратиться в регистратуру лечебного учреждения не менее чем за 15 минут до указанного времени приёма.</td></tr>
-            <tr><td colspan="3" style="font-size: 13px">* Ваш уникальный номер в медицинской информационной системе понадобится Вам для получения талона в электронной очереди.</td></tr>
+            <tr><td colspan="3" style="font-size: 13px">* Уникальный номер в медицинской информационной системе понадобится Вам для получения талона в электронной очереди.</td></tr>
         </table>
     </body>
 </html>
