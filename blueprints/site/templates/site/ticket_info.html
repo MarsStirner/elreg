@@ -15,7 +15,7 @@
     </thead>
     <tr><th>ФИО (Пациент):</th><td colspan="2">{{ session.get('patient', {}).get('name', '') }}</td></tr>
     {% if session.get('patient', {}).get('birthday') %}<tr><th>Дата рождения:</th><td colspan="2">{{ session.get('patient', {}).get('birthday', '') }} г.</td></tr>{% endif %}
-    <tr><td style="text-decoration: underline;">Ваш идентификатор*:</td>
+    <tr><th style="text-decoration: underline;">Ваш идентификатор*:</th>
         <td colspan="2" style="text-decoration: underline;"><b>{{ ticket_uid.split('/')[1] }}</b></td>
     </tr>
     {% if client_id %}
